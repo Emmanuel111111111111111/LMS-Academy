@@ -1,0 +1,366 @@
+.whole {
+    margin-left: 280px;
+    margin-top: 80px;
+    width: 100%;
+    padding: 16px 24px;
+    background: #F8F9FD;
+}
+.whole a {
+    font-size: 14px;
+    font-weight: 500;
+    color: #7375AD;
+}
+.welcomeBanner {
+    margin-top: 20px;
+    width: 100%;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #1D206A;
+    border-radius: 12px;
+}
+.welcomeBanner .left {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+.left img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50px;
+    border: 4px solid #FFFFFF4D;
+}
+.left .text h3 {
+    font-size: 20px;
+    font-weight: 500;
+    color: #FFFFFF;
+}
+.left .text h2 {
+    font-size: 26px;
+    font-weight: 600;
+    color: #FFFFFF;
+}
+
+.welcomeBanner button {
+    background: #FFFFFF;
+    border: 3px solid #C6D1FF4A;
+    border-radius: 4px;
+    color: #2C2F7E;
+    padding: 10px 12px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+
+.overview {
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 10px 12px;
+    margin-top: 24px;
+}
+.overview h5 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #272727;
+}
+
+.overviews {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    margin-top: 12px;
+}
+.eachOverview {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    border-radius: 10px;
+    padding: 16px;
+    gap: 8px;
+    border: 1px solid #BDD9FF;
+    box-shadow: 0px 3px 5px 0px #00000017;
+}
+.overviewText {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 22px;
+    font-weight: 500;
+    color: #374151;
+    gap: 12px;
+}
+.blueBox {
+    background: #C3D4FF;
+    border-radius: 8px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+}
+.blueBox img {
+    width: 20px;
+    height: 20px;
+}
+
+.loader {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    font-weight: 500;
+    color: #3064EA;
+}
+
+
+.courses {
+    width: 100%;
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 24px;
+}
+
+.coursesHeader {
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    font-weight: 600;
+    color: #272727;
+}
+.coursesHeader button {
+    display: inline-flex;
+    align-items: center;
+    background: #F0F0F0;
+    padding: 4px 6px;
+    gap: 4px;
+    border-radius: 7px;
+    color: #606060;
+    font-size: 12px;
+    font-weight: 500;
+    border: none;
+    outline: none;
+}
+.coursesHeader button img {
+    width: 20px;
+    height: 20px;
+}
+
+.course {
+    display: flex;
+    background: #FAFAFA;
+    border: 1px solid #BDD9FF;
+    box-shadow: 0px 3px 4px 0px #00000017;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+.courseImage {
+    flex: 30%;
+}
+.courseImage img {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px 0 0 10px;
+}
+
+.courseInfo {
+    flex: 70%;
+    padding: 16px 21px;
+    padding-left: 32px;
+}
+.infoHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #374151;
+    font-size: 16px;
+    font-weight: 600;
+}
+.infoHeader button {
+    border: 1px solid #A1B2D1;
+    outline: none;
+    background-color: transparent;
+    padding: 4px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+}
+.infoHeader button img {
+    width: 20px;
+    height: 20px;
+}
+
+.courseInfo p {
+    font-size: 12px;
+    font-weight: 300;
+    color: #374151;
+}
+
+.courseData {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+}
+.courseData img {
+    width: 16px;
+    height: 16px;
+}
+.courseData .profile img {
+    border-radius: 50px;
+    border: 1.22px solid #94B9FF66;
+}
+.courseData div {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.withLoader {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    gap: 24px;
+}
+.withLoader button {
+    flex: 30%;
+    background: var(--500, #2C2F7E);
+    border: 5px solid #E6EAFB;
+    color: #FFFFFF;
+    padding: 12px 20px;
+    border-radius: 8px;
+}
+.coursesLoader {
+    flex: 70%;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.progress {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 18px;
+    overflow: hidden;
+    align-self: center;
+    color: #2C2F7E;
+    margin-top: 6px;
+}
+
+.progress::-webkit-progress-bar {
+    background: #ABC0E5;
+}
+.progress::-webkit-progress-value {
+    background: #2C2F7E;
+    border-radius: 18px;
+}
+
+.progress::-ms-progress-bar {
+    background-color: #ABC0E5;
+}
+.progress::-ms-progress-value {
+    background: #2C2F7E;
+    border-radius: 18px;
+}
+
+.progress::-moz-progress-bar {
+    background-color: #ABC0E5;
+}
+.progress::-moz-progress-value {
+    background: #2C2F7E;
+    border-radius: 18px;
+}
+
+
+
+
+.events {
+    width: 100%;
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 24px;
+}
+
+.eventsHeader {
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    font-weight: 600;
+    color: #272727;
+}
+.eventsHeader button {
+    display: inline-flex;
+    align-items: center;
+    background: #F0F0F0;
+    padding: 4px 6px;
+    gap: 4px;
+    border-radius: 7px;
+    color: #606060;
+    font-size: 12px;
+    font-weight: 500;
+    border: none;
+    outline: none;
+}
+.eventsHeader button img {
+    width: 20px;
+    height: 20px;
+}
+
+.eventsTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+.eventsTable thead {
+    background: #F9F9F9;
+    border: 1px solid #E4E4E4;
+    font-size: 14px;
+    font-weight: 600;
+    color: #2C2F7E;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+.eventsTable th {
+    padding: 10px 4px;
+    text-align: left;
+}
+.eventsTable td {
+    padding: 10px 4px;
+}
+.eventsTable tr {
+    background: #FFFFFF;
+    border: 1px solid #E4E4E4;
+    font-size: 12px;
+    font-weight: 500;
+    color: #545454;
+    border-radius: 6px;
+}
+.eventsTable tr span {
+    font-weight: 700;
+    color: #2C2F7E;
+}
+.eventsTable tr button {
+    border: 1px solid #A1B2D1;
+    outline: none;
+    background-color: transparent;
+    padding: 4px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+}
+.eventsTable tr button img {
+    width: 20px;
+    height: 20px;
+}

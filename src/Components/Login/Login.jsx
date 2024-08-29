@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-
 import { getImageUrl } from "../../utilis";
 import styles from "./Login.module.css";
-import axios from 'axios'
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 
 export const Login = () => {
+
+  const navigate = useNavigate();
 
   const [ values, setValues ] = useState({
     email: '',
@@ -24,6 +26,7 @@ export const Login = () => {
     axios.post('http://localhost:8081/login', values)
     .then(res => console.log(res))
     .catch(err => console.log(err));
+    navigate('/dashboard');
   }
 
   const [ showPassword, setShowPassword ] = useState(false);
