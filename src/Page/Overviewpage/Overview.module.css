@@ -321,7 +321,7 @@
 
 .eventsTable {
     width: 100%;
-    border-collapse: collapse;
+    border-spacing: 0 8px;
 }
 .eventsTable thead {
     background: #F9F9F9;
@@ -329,23 +329,42 @@
     font-size: 14px;
     font-weight: 600;
     color: #2C2F7E;
-    border-radius: 4px;
-    margin-bottom: 8px;
 }
 .eventsTable th {
     padding: 10px 4px;
     text-align: left;
+    border-top: 1px solid #E4E4E4;
+    border-bottom: 1px solid #E4E4E4;
 }
 .eventsTable td {
     padding: 10px 4px;
+    border-top: 1px solid #E4E4E4;
+    border-bottom: 1px solid #E4E4E4;
+}
+.eventsTable th:first-child,
+.eventsTable td:first-child {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+    border: 1px solid #E4E4E4;
+    border-right: none;
+    padding-left: 10px;
+}
+.eventsTable th:last-child,
+.eventsTable td:last-child {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    border: 1px solid #E4E4E4;
+    border-left: none;
+}
+.eventsTable td img {
+    width: 16px;
+    height: 16px;
 }
 .eventsTable tr {
     background: #FFFFFF;
-    border: 1px solid #E4E4E4;
     font-size: 12px;
     font-weight: 500;
     color: #545454;
-    border-radius: 6px;
 }
 .eventsTable tr span {
     font-weight: 700;
@@ -363,4 +382,26 @@
 .eventsTable tr button img {
     width: 20px;
     height: 20px;
+}
+.dueTime {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+
+.showRows {
+    flex: 60%;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+.showRows select {
+    border: 1px solid #BDD9FF;
+    box-shadow: 0px 3.76px 5.64px 0px #00000017;
+    border-radius: 6px;
+    padding: 4px 8px;
+}
+.pag {
+    flex: 40%
 }
