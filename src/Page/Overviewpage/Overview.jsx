@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import styles from './Overview.module.css';
 import { getImageUrl } from "../../utilis";
 import Pagination from "../../Components/Pagination/Pagination";
@@ -9,6 +9,7 @@ export const Overview = () => {
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ itemsPerPage, setItemsPerPage ] = useState(5);
     const navigate = useNavigate();
+    const scroll = useRef(null);
 
 
     const courses = [
@@ -121,7 +122,8 @@ export const Overview = () => {
     const handlePageNumber = (itemNumber) => {
         setItemsPerPage(itemNumber);
         setCurrentPage(1);
-        window.scrollTo({ top: 0});
+        scroll.current.scrollIntoView();
+        // window.scrollTo({ top: 50});
     };
 
     return (
@@ -129,7 +131,7 @@ export const Overview = () => {
         <div className={styles.whole}>
             <a>Home</a>
 
-            <div className={styles.welcomeBanner} style={{backgroundImage: `${getImageUrl("welcome_background.png")}`}}>
+            <div className={styles.welcomeBanner}>
                 <div className={styles.left}>
                     <img src={getImageUrl('avatar.png')} />
                     <div className={styles.text}>
@@ -217,10 +219,10 @@ export const Overview = () => {
             <div className={styles.events}>
                 <div className={styles.eventsHeader}>
                     Upcoming Events
-                    <button>View All <img src={getImageUrl('greyRightAngle.png')} alt="" /></button>
+                    <button>View All<img src={getImageUrl('greyRightAngle.png')} alt="" /></button>
                 </div>
                 
-                <table className={styles.eventsTable}>
+                <table className={styles.eventsTable} ref={scroll}>
                     <thead>
                         <th><input type="checkbox" /></th>
                         <th>Event Name</th>
