@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import styles from './Overview.module.css';
 import { getImageUrl } from "../../utilis";
 import Pagination from "../../Components/Pagination/Pagination";
+import { useNavigate } from "react-router-dom";
 
 export const Overview = () => {
 
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ itemsPerPage, setItemsPerPage ] = useState(5);
+    const navigate = useNavigate();
 
 
     const courses = [
@@ -181,7 +183,7 @@ export const Overview = () => {
             <div className={styles.courses}>
                 <div className={styles.coursesHeader}>
                     Active Courses
-                    <button>View All <img src={getImageUrl('greyRightAngle.png')} alt="" /></button>
+                    <button onClick={()=>navigate('/dashboard/courses/active')}>View All <img src={getImageUrl('greyRightAngle.png')} alt="" /></button>
                 </div>
                 {courses.slice(0,2).map((course, index) => (
                     <div className={styles.course} key={index}>
@@ -243,7 +245,7 @@ export const Overview = () => {
                     <div className={styles.showRows}>
                         Show
                         <select onChange={(e) => handlePageNumber(e.target.value)} >
-                            <option value={5}>8</option>
+                            <option value={5}>5</option>
                             <option value={10}>10</option>
                             <option value={15}>15</option>
                         </select>

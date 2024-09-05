@@ -337,7 +337,7 @@
     border-bottom: 1px solid #E4E4E4;
 }
 .eventsTable td {
-    padding: 10px 4px;
+    padding: 6px 4px;
     border-top: 1px solid #E4E4E4;
     border-bottom: 1px solid #E4E4E4;
 }
@@ -391,17 +391,24 @@
 
 
 .showRows {
-    flex: 60%;
+    flex: 70%;
     display: flex;
-    gap: 12px;
+    gap: 10px;
     align-items: center;
+    font-size: 10px;
+    font-weight: 500;
+    color: #000000;
 }
 .showRows select {
     border: 1px solid #BDD9FF;
     box-shadow: 0px 3.76px 5.64px 0px #00000017;
     border-radius: 6px;
-    padding: 4px 8px;
+    padding: 4px 0 4px 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #000000;
+    outline: none;
 }
 .pag {
-    flex: 40%
+    flex: 30%
 }
