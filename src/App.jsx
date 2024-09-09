@@ -10,10 +10,9 @@ import { Homepage } from './Page/Homepage/Hompage'
 import { BlankPage } from './Page/BlankPage'
 import { DashboardLayout } from './Page/DashboardLayout'
 import { Overview } from './Page/Overviewpage/Overview'
-import { CalendarPage } from './Page/CalendarPage/Calendar';
-
 import { Coursepage } from './Page/Coursepage/Coursepage'
 import { Course } from './Components/Course/Course'
+import { CalendarPage } from './Page/CalendarPage/Calendar';
 import { Certificate } from './Components/Certificate/Certificate'
 
 function App() { 
