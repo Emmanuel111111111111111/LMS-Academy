@@ -23,9 +23,42 @@
     flex: 90%;
     width: 100%;
     display: flex;
-    text-align: center;
-    justify-content: center;
+    justify-content: space-between;
+      
+}
+
+.folding img{
+    height: 25px;
+    width:25px;
+}
+
+.link{
+   font-weight: 500;
+   size: 20px;
+   line-height: 28.71px;
+   text-decoration: none;
+   color: #ECECEC;
+}
+
+.folding{
+    display: flex;
+    width: 102px;
+    height: 32px;
+    gap: 12px;
+    
+
+}
+.links{
+    display: flex;
+    gap:20px ;
     flex-direction: column;
-    
-    
+    margin-top: 60px
+    ;
+}
+
+.logout{
+    display: flex;
+    width: 102px;
+    height: 32px;
+    gap: 12px;
 }

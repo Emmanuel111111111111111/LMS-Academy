@@ -1,0 +1,185 @@
+.whole {
+    margin-left: 280px;
+    margin-top: 80px;
+    width: 100%;
+    padding: 16px 24px;
+    background: #F8F9FD;
+}
+
+.course {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    gap: 24px;
+    margin-top: 0px;
+}
+
+.courseInfo{
+    display: flex;
+    flex-direction: column;
+
+    /* width: 25%; */
+    border-radius: 10px;
+    padding: 16px;
+    gap:8 ;
+    border: 1px solid #BDD9FF;
+    box-shadow: 0px 3px 5px 0px #00000017;
+}
+
+
+.infoHeader h3{
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 32px;
+    font-family:Work 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.infoHeader{
+    display: flex;
+    justify-content: space-between;    
+}
+
+.infoHeader img{
+    width: 24px;
+    height: 24px;
+    
+}
+.infoHeader button{
+    margin-left: 10px;
+    border: 1px solid #A1B2D1;
+    display: flex;
+    align-items: center;
+    padding: 2px 4px;
+    background: transparent;
+    border-radius: 5px;
+}
+.infoHeader button img {
+    height: 24px;
+    width: 24px;
+}
+.courseData img{
+    width: 22px;
+    height: 22px;
+}
+.crumb img {
+    width: 18px;
+    height: 18px;
+}
+
+.course p{
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 32px;
+
+}
+
+.courseData .profile,
+.courseData .students {
+    font-weight: 500;
+    font-size: 10px;
+    line-height: 32px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+.students img {
+    width: 50px;
+    height: auto;
+}
+
+.coursesLoader p{
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 32px;
+}
+
+.courseData{
+    display: flex;
+    flex-direction: column;
+
+}
+
+.bread{
+    display: flex;
+    justify-content: space-between;
+}
+.bread .profile img {
+    border-radius: 50px;
+}
+
+.crumb{
+    display: flex;
+    justify-content: space-between;
+    
+}
+.infoHeader span{
+     font-size: 12px;
+     line-height: 32px;
+     font-weight: 500;
+     color: #0c359e;
+}
+
+.withLoader button {
+    margin-top: 24px;
+    width: 100%;
+    background: var(--500, #2C2F7E);
+    border: 5px solid #E6EAFB;
+    color: #FFFFFF;
+    padding: 12px 20px;
+    border-radius: 8px;
+    align-items: center;
+    justify-content: center;
+}
+
+.title.span{
+    font-weight: 600;
+    font-size: 26px;
+    line-height: 32px;
+    color: #A1b2d1;
+}
+
+.title{
+    margin-top: 40px;
+    display: flex;
+    justify-content: space-between;
+}
+
+
+
+.progress {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 18px;
+    overflow: hidden;
+    align-self: center;
+    color: #2C2F7E;
+    margin-top: 6px;
+}
+
+.progress::-webkit-progress-bar {
+    background: #ABC0E5;
+}
+.progress::-webkit-progress-value {
+    background: #2C2F7E;
+    border-radius: 18px;
+}
+
+.progress::-ms-progress-bar {
+    background-color: #ABC0E5;
+}
+.progress::-ms-progress-value {
+    background: #2C2F7E;
+    border-radius: 18px;
+}
+
+.progress::-moz-progress-bar {
+    background-color: #ABC0E5;
+}
+.progress::-moz-progress-value {
+    background: #2C2F7E;
+    border-radius: 18px;
+}

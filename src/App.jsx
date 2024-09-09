@@ -11,8 +11,11 @@ import { Homepage } from './Page/Homepage/Hompage'
 import { BlankPage } from './Page/BlankPage'
 import { DashboardLayout } from './Page/DashboardLayout'
 import { Overview } from './Page/Overviewpage/Overview'
+import { Coursepage } from './Page/Coursepage/Coursepage'
+import { Course } from './Components/Course/Course'
+import { Certificate } from './Components/Certificate/Certificate'
 
-function App() {
+function App() { 
 
   const router = createBrowserRouter([
     { path: '/', element: <Navigate to='CWG' /> },
@@ -27,11 +30,11 @@ function App() {
       children: [
         { path: '/dashboard', element: <Navigate to="overview" /> },
         { path: 'overview', element: <Overview /> },
-        { path: 'courses', element: <BlankPage /> },
-        { path: 'courses/active', element: <BlankPage /> },
+        { path: 'courses', element: <Coursepage /> },
+        { path: 'courses/active', element: <Course /> },
         { path: 'courses/completed', element: <BlankPage /> },
         { path: 'calendar', element: <BlankPage /> },
-        { path: 'certificate', element: <BlankPage /> },
+        { path: 'certificate', element: <Certificate /> },
       ]
     },
   ])
