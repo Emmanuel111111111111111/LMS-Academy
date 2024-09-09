@@ -127,16 +127,15 @@
 
 
 
-:global(.fc-daygrid-body table),
+/* :global(.fc-daygrid-body table),
 :global(.fc-scrollgrid-sync-table) {
-  /* border-color: red; */
-}
+  /* border-color: red; *
+} */
 :global(.fc-daygrid-day-frame) {
     border-top: 2px solid #F7F7F7;
     border-right: 2px solid #F7F7F7;
     border-bottom: 2px solid transparent;
     border-left: none;
-    /* border-right: 1px solid #ff6347; */
 }
 :global(.fc .fc-scrollgrid) {
     border: none;
@@ -148,23 +147,8 @@
 }
 
 :global(.fc-timegrid-event .fc-event-title .assignment-event) {
-    color: #047857 !important; /* Dark blue text for 'Class' events */
+    color: #047857 !important;
 }
 :global(.fc-timegrid-event .fc-event-title .class-event) {
-    color: #0369A1 !important; /* Dark blue text for 'Class' events */
-}
-
-/* Horizontal grid lines (time grid view) */
-timegridSlot {
-    border-color: #ff6347;
-}
-
-/* Vertical grid lines (time grid view) */
-timegridSlotLane {
-    border-right: 1px solid #ff6347;
-}
-
-/* Grid lines in month view */
-daygridDayFrame {
-    border: 1px solid #ff6347;
+    color: #0369A1 !important;
 }
