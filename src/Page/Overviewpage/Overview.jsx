@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import styles from './Overview.module.css';
 import { getImageUrl } from "../../utilis";
 import Pagination from "../../Components/Pagination/Pagination";
+import { useNavigate } from "react-router-dom";
 
 export const Overview = () => {
 
     const [ currentPage, setCurrentPage ] = useState(1);
+    const [ itemsPerPage, setItemsPerPage ] = useState(5);
+    const navigate = useNavigate();
+    const scroll = useRef(null);
 
 
     const courses = [
@@ -107,7 +111,6 @@ export const Overview = () => {
         }
     ]
 
-    const itemsPerPage = 5;
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentEvents = events.slice(indexOfFirstItem, indexOfLastItem);
@@ -116,14 +119,21 @@ export const Overview = () => {
         setCurrentPage(pageNumber);
     };
 
+    const handlePageNumber = (itemNumber) => {
+        setItemsPerPage(itemNumber);
+        setCurrentPage(1);
+        scroll.current.scrollIntoView();
+        // window.scrollTo({ top: 50});
+    };
+
     return (
         <>
         <div className={styles.whole}>
             <a>Home</a>
 
-            <div className={styles.welcomeBanner} style={{backgroundImage: `${getImageUrl("welcome_background.png")}`}}>
+            <div className={styles.welcomeBanner}>
                 <div className={styles.left}>
-                    <img src={getImageUrl('profile.png')} />
+                    <img src={getImageUrl('avatar.png')} />
                     <div className={styles.text}>
                         <h3>Welcome Back</h3>
                         <h2>Toluwani</h2>
@@ -175,7 +185,7 @@ export const Overview = () => {
             <div className={styles.courses}>
                 <div className={styles.coursesHeader}>
                     Active Courses
-                    <button>View All <img src={getImageUrl('greyRightAngle.png')} alt="" /></button>
+                    <button onClick={()=>navigate('/dashboard/courses/active')}>View All <img src={getImageUrl('greyRightAngle.png')} alt="" /></button>
                 </div>
                 {courses.slice(0,2).map((course, index) => (
                     <div className={styles.course} key={index}>
@@ -209,9 +219,10 @@ export const Overview = () => {
             <div className={styles.events}>
                 <div className={styles.eventsHeader}>
                     Upcoming Events
-                    <button>View All <img src={getImageUrl('greyRightAngle.png')} alt="" /></button>
+                    <button>View All<img src={getImageUrl('greyRightAngle.png')} alt="" /></button>
                 </div>
-                <table className={styles.eventsTable}>
+                
+                <table className={styles.eventsTable} ref={scroll}>
                     <thead>
                         <th><input type="checkbox" /></th>
                         <th>Event Name</th>
@@ -224,7 +235,7 @@ export const Overview = () => {
                             <tr>
                                 <td><input type="checkbox" /></td>
                                 <td>{event.courseName} ... <span>{event.eventType}</span></td>
-                                <td>{event.dueTime}</td>
+                                <td><div className={styles.dueTime}><img src={getImageUrl('timer.png')} />{event.dueTime}</div></td>
                                 <td>{event.dueDate}</td>
                                 <td><button><img src={getImageUrl('threeDots.png')} /></button></td>
                             </tr>
@@ -232,12 +243,25 @@ export const Overview = () => {
                     </tbody>
                 </table>
 
-                <Pagination
-                    currentData={currentEvents}
-                    currentPage={currentPage}
-                    itemsPerPage={itemsPerPage}
-                    onPageChange={handlePageChange}
-                />
+                <div style={{ w:'100%', display:"flex", alignItems:'center' }}>
+                    <div className={styles.showRows}>
+                        Show
+                        <select onChange={(e) => handlePageNumber(e.target.value)} >
+                            <option value={5}>5</option>
+                            <option value={10}>10</option>
+                            <option value={15}>15</option>
+                        </select>
+                        Rows
+                    </div>
+                    <Pagination className={styles.pag}
+                        currentData={events}
+                        currentPage={currentPage}
+                        itemsPerPage={itemsPerPage}
+                        onPageChange={handlePageChange}
+                    />
+
+                </div>
+                
                 
             </div>
         </div>

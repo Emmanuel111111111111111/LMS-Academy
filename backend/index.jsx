@@ -22,6 +22,14 @@ app.get("/users", (req, res) => {
     })
 })
 
+app.get("/courses/{studentId}", (req, res) => {
+    const c = "SELECT * FROM courses"
+    db.query(c, (err, data) => {
+        if (err) return res.json(err)
+            return res.json(data)
+    })
+})
+
 app.post("/signup", (req, res) => {
     const sql = "INSERT INTO users (first_name, last_name, email, phone_number, learning_mode, password) VALUES (?)";
     const values = [

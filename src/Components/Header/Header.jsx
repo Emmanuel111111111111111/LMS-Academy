@@ -66,7 +66,7 @@ export const Header = () => {
                 <div className={styles.buttons}>
                     <button><img src={getImageUrl('bell.png')} /></button>
                     <button><img src={getImageUrl('settings.png')} /></button>
-                    <button className={styles.profile}><img src={getImageUrl('profile.png')} /></button>
+                    <button className={styles.profile}><img src={getImageUrl('avatar.png')} /></button>
                 </div>
             </div>
         </div>
