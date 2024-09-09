@@ -10,6 +10,7 @@ import { Homepage } from './Page/Homepage/Hompage'
 import { BlankPage } from './Page/BlankPage'
 import { DashboardLayout } from './Page/DashboardLayout'
 import { Overview } from './Page/Overviewpage/Overview'
+import { CalendarPage } from './Page/CalendarPage/Calendar';
 
 
 function App() {
@@ -30,7 +31,7 @@ function App() {
         { path: 'courses', element: <BlankPage /> },
         { path: 'courses/active', element: <BlankPage /> },
         { path: 'courses/completed', element: <BlankPage /> },
-        { path: 'calendar', element: <BlankPage /> },
+        { path: 'calendar', element: <CalendarPage /> },
         { path: 'certificate', element: <BlankPage /> },
       ]
     },
