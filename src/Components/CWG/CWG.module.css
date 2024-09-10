@@ -35,6 +35,57 @@
     
 }
 
+
+.wholeModal {
+    background: #FFFFFF;
+    max-width: 40%;
+    min-height: 400px;
+    border-radius: 12px;
+    text-align: center;
+    padding: 12px;
+    margin-top: 5%;
+    left: 30%;
+}
+
+.modalHeader h3 {
+    color: #343434;
+    font-size: 26px;
+    font-weight: 700;
+}
+.modalHeader p {
+    color: #666666;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.modalBody {
+    display: flex;
+    padding: 24px;
+    gap: 24px;
+}
+.modalBody button {
+    background: #F1F1FF;
+    border-radius: 12px;
+    padding: 50px 36px;
+    border: none;
+    outline: none;
+}
+.modalBody button img {
+    width: 144px;
+    height: 144px;
+}
+.modalBody button h4 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #343434;
+}
+.modalBody button p {
+    font-size: 14px;
+    font-weight: 500;
+    color: #666666;
+}
+
+
 @media screen and (max-width: 830px) {
     
 }

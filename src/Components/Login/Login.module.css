@@ -1,23 +1,24 @@
 .big{
     width: 100%;
-    height: 100vh;
+    height: 100%;
+    min-height: 100vh;
     background-color: black;
-    display:flex;
+    display: flex;
 }
 
 .bread{
-    /* width: 20%; */
     flex: 30%;
-    
-    padding: 204px 28.8px 96px 28.8px;
-    margin-top: -190px;
-    
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    padding: 24px 28.8px 0 28.8px;
+    height: 100%;
 }
 .bread img{
     height: 80px;
     width: 250px;
 }
-.bread h3{
+.bread h3 {
     color: #fff;
     font-weight: 700;
     font-size: 32px;
@@ -152,15 +153,15 @@ form {
     margin-top: 40px;
     font-weight: 500;
     line-height: 29.57px;
-    
     align-items: center;
 }
 
-.pan{
-   text-align: left;
-   margin-bottom: 40px;
-   margin-left: 63px;
-    
+.pan {
+    justify-content: space-between;
+    display: flex;
+    text-align: left;
+    margin-bottom: 40px;
+    margin-left: 63px;
 }
 
 .pan span{
@@ -222,12 +223,7 @@ form {
     text-decoration: none;
     margin-right: 895px;
 }
-.pan{
-    justify-content: space-between;
-    display: flex;
 
-    
-}
 
 @media screen and (max-width: 830px) {
 
