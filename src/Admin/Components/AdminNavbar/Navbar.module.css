@@ -1,0 +1,81 @@
+.theWhole {
+    width: 280px;
+    height: 100%;
+    position: fixed;
+    z-index: 6;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg, #000A27 0%, #000410 100%);
+    overflow: hidden;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.theWhole::-webkit-scrollbar {
+    display: none;
+}
+
+
+.logo {
+    width: 100%;
+    padding: 12px;
+}
+.logo img {
+    width: 90%;
+    height: auto;
+}
+
+
+.linkList {
+    display: flex;
+    flex-direction: column;
+    margin-top: 12px;
+    width: 100%;
+    gap: 12px;
+    margin-bottom: 50px;
+}
+
+.linkList a {
+    padding: 12px 25px;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 500;
+    color: #FFFFFF;
+    gap: 12px;
+    border-left: 6px solid transparent;
+}
+.linkList a:hover {
+    background-color: #969dada4;
+}
+.linkList a.active {
+    background-color: #152A4F;
+    border-left: 6px solid #FFA502;
+}
+.linkList img {
+    width: 24px;
+    height: 24px;
+}
+
+
+
+.logout {
+    margin-top: auto;
+}
+.logout a {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: #FFFFFF;
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 500;
+    padding: 12px 25px;
+    text-decoration: none;
+}
+.logout img {
+    width: 24px;
+    height: 24px;
+}

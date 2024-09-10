@@ -1,0 +1,154 @@
+.whole {
+    margin-left: 280px;
+    margin-top: 80px;
+    width: 100%;
+    padding: 16px 24px;
+    background: #F8F9FD;
+}
+
+.bigDiv {
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 10px 12px;
+    margin-top: 24px;
+    height: 100%;
+}
+
+
+.calendarHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+.calendarHeader .buttons {
+    display: flex;
+    align-items: center;
+    gap: 1px;
+}
+
+.buttons.move button {
+    background: #F4F4F5;
+    display: flex;
+    align-items: center;
+    border: none;
+    outline: none;
+    font-size: 12px;
+    color: #18181B;
+    font-weight: 500;
+}
+.move .prev {
+    padding: 4px;
+    border-radius: 7px 0 0 7px;
+}
+.move .next {
+    padding: 4px;
+    border-radius: 0 7px 7px 0;
+}
+.move .today {
+    padding: 7px 16px;
+}
+.buttons.move img {
+    width: 20px;
+    height: 20px;
+}
+
+.buttons .grid {
+    background: transparent;
+    padding: 4px 16px;
+    color: #71717A;
+    font-size: 12px;
+    font-weight: 500;
+    outline: none;
+    border: none;
+}
+.buttons .activeGrid {
+    background: #CCCDE8;
+    padding: 4px 16px;
+    color: #2C2F7E;
+    font-size: 12px;
+    font-weight: 500;
+    border: none;
+    outline: none;
+    border-radius: 8px;
+}
+
+.calendarHeader .search {
+    background: #F4F4F5;
+    padding: 4px;
+    border-radius: 5px;
+    gap: 8px;
+    display: inline-flex;
+    align-items: center;
+}
+.search img {
+    width: 20px;
+    height: 20px;
+}
+.search input {
+    border: none;
+    outline: none;
+    background-color: transparent;
+}
+
+.dayHeader {
+    width: 150px;
+    height: 40px;
+    text-align: left;
+}
+.dayHeader h1 {
+    font-size: 10px;
+    font-weight: 500;
+    color: #71717A;
+}
+.dayHeader h2 {
+    font-size: 10px;
+    font-weight: 500;
+    color: #000000;
+}
+
+
+.eventContent {
+    width: 100%;
+    height: 100%;
+    /* border-left: 2px solid #0EA5E9; */
+    /* background: #0EA5E91A; */
+    /* color: #0EA5E9; */
+    border-radius: 5px 0 0 5px;
+    padding: 2px 5px;
+}
+.eventContent p {
+    /* color: #0369A1; */
+    font-size: 12px;
+    font-weight: 500;
+}
+
+
+
+
+
+/* :global(.fc-daygrid-body table),
+:global(.fc-scrollgrid-sync-table) {
+  /* border-color: red; *
+} */
+:global(.fc-daygrid-day-frame) {
+    border-top: 2px solid #F7F7F7;
+    border-right: 2px solid #F7F7F7;
+    border-bottom: 2px solid transparent;
+    border-left: none;
+}
+:global(.fc .fc-scrollgrid) {
+    border: none;
+}
+
+:global(.fc-today),
+:global(.fc-future) {
+    background: #EFF6FF;
+}
+
+:global(.fc-timegrid-event .fc-event-title .assignment-event) {
+    color: #047857 !important;
+}
+:global(.fc-timegrid-event .fc-event-title .class-event) {
+    color: #0369A1 !important;
+}

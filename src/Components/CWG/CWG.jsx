@@ -29,7 +29,7 @@ export const CWG = () => {
 
                 <ModalBody>
                     <div className={styles.modalBody}>
-                        <button>
+                        <button onClick={()=>navigate('/Admin-login')}>
                             <img src={getImageUrl('insructors.png')} />
                             <h4>Instructor</h4>
                             <p>Let's help you get started on CWG Academy</p>

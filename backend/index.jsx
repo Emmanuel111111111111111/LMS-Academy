@@ -43,6 +43,18 @@ app.post('/login', (req, res) => {
     })
 })
 
+app.post('/adminlogin', (req, res) => {
+    const sql = 'SELECT * FROM instuctors WHERE (email = ? OR phone_number = ?) AND password = ? ';
+    db.query(sql, [req.body.email, req.body.password], (err, data) => {
+        if (err) return res.json("Login failed");
+        if(data.length > 0) {
+            return res.json("Login Successfully")
+        } else {
+            return res.json("No records")
+        }
+    })
+})
+
 app.post("/signup", (req, res) => {
     const sql = "INSERT INTO users (first_name, last_name, email, phone_number, learning_mode, password) VALUES (?)";
     const values = [
