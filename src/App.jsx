@@ -24,7 +24,6 @@ function App() {
     { path: '/Account', element: <Accountpage /> },
     { path: '/Password', element: <Passwordpage /> },
     { path: '/Reset', element: <Resetpage /> },
-    { path: '/Home', element: <Homepage /> },
     {
       path: '/dashboard', element: <DashboardLayout />,
       children: [
