@@ -59,7 +59,7 @@ export const Password = () => {
                     </form>
                     
                     <div className={styles.home}>
-                        <a href="/Home"><button className={styles.butt}>Create My Account</button> </a>
+                        <a href="/dashboard"><button className={styles.butt}>Create My Account</button> </a>
                         </div>
                 </div>
 

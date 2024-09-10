@@ -99,83 +99,6 @@ export const Course = () => {
         }
     ]
 
-    const events = [
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'July 1, 2024'
-        },
-        {
-            courseName: 'Oracle',
-            eventType: 'CLASS',
-            dueTime: '12:38:00 PM',
-            dueDate: 'July 25, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 1, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 22, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'CLASS',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 29, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 1, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'July 1, 2024'
-        },
-        {
-            courseName: 'Oracle',
-            eventType: 'CLASS',
-            dueTime: '12:38:00 PM',
-            dueDate: 'July 25, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 1, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 22, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'CLASS',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 29, 2024'
-        }
-    ]
-
-    const itemsPerPage = 5;
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentEvents = events.slice(indexOfFirstItem, indexOfLastItem);
-
-    const handlePageChange = (pageNumber) => {
-        setCurrentPage(pageNumber);
-    };
 
     return (
         <>
@@ -183,7 +106,7 @@ export const Course = () => {
                 <h5>Courses <img src={getImageUrl('Icons12.png')} alt="" /> <a href="">Active</a></h5>
                 <div>
                     <div className={styles.title}>
-                        <h1>Active Courses <span>(10)</span></h1>
+                        <h1>Active Courses <span>({courses.length})</span></h1>
                         <button><img src={getImageUrl('sort.png')} alt="" /></button>
                     </div>
                     
@@ -191,7 +114,7 @@ export const Course = () => {
                         {courses.map((cour, index) => (
                             <div className={styles.courseInfo}>
                                 <div className={styles.infoHeader}>
-                                    <h3>{cour.title}<span>{cour.location}</span></h3>
+                                    <div><h3>{cour.title}<span>{cour.location}</span></h3></div>
                                     <button><img src={getImageUrl('threeDots.png')} alt="" /></button>
                                 </div>
                                 <p>{cour.description}</p>
