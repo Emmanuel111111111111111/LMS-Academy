@@ -14,8 +14,8 @@ const db = mysql.createConnection({
 })
 
 
-app.get("/users", (req, res) => {
-    const u = "SELECT * FROM users"
+app.get("/student", (req, res) => {
+    const u = "SELECT * FROM student"
     db.query(u, (err, data) => {
         if (err) return res.json(err)
             return res.json(data)
@@ -27,6 +27,31 @@ app.get("/courses/{studentId}", (req, res) => {
     db.query(c, (err, data) => {
         if (err) return res.json(err)
             return res.json(data)
+    })
+})
+
+
+app.post('/login', (req, res) => {
+    const sql = 'SELECT * FROM student WHERE (email = ? OR phone_number = ?) AND password = ? ';
+    db.query(sql, [req.body.email, req.body.password], (err, data) => {
+        if (err) return res.json("Login failed");
+        if(data.length > 0) {
+            return res.json("Login Successfully")
+        } else {
+            return res.json("No records")
+        }
+    })
+})
+
+app.post('/adminlogin', (req, res) => {
+    const sql = 'SELECT * FROM instuctors WHERE (email = ? OR phone_number = ?) AND password = ? ';
+    db.query(sql, [req.body.email, req.body.password], (err, data) => {
+        if (err) return res.json("Login failed");
+        if(data.length > 0) {
+            return res.json("Login Successfully")
+        } else {
+            return res.json("No records")
+        }
     })
 })
 

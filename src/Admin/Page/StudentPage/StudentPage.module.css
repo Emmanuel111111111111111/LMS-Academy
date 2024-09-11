@@ -1,0 +1,176 @@
+.whole {
+    margin-left: 280px;
+    margin-top: 80px;
+    width: 100%;
+    padding: 16px 24px;
+    background: #FFFFFF;
+}
+
+.breadcrumb {
+    font-size: 14px;
+    font-weight: 500;
+    color: #2C2F7E;
+}
+.breadcrumb a {
+    font-size: 14px;
+    font-weight: 500;
+    color: #728DB9;
+    text-decoration: none;
+}
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.whole h3 {
+    margin-top: 40px;
+    margin-bottom: 12px;
+    font-size: 26px;
+    font-weight: 600;
+    color: #272727;
+}
+
+
+
+.studentsTable {
+    width: 100%;
+    border-spacing: 0 8px;
+}
+.studentsTable thead {
+    background: #F9F9F9;
+    border: 1px solid #E4E4E4;
+    font-size: 14px;
+    font-weight: 600;
+    color: #2C2F7E;
+}
+.studentsTable th {
+    padding: 10px 4px;
+    text-align: left;
+    border-top: 1px solid #E4E4E4;
+    border-bottom: 1px solid #E4E4E4;
+}
+.studentsTable td {
+    padding: 6px 4px;
+    border-top: 1px solid #E4E4E4;
+    border-bottom: 1px solid #E4E4E4;
+}
+.studentsTable th:first-child,
+.studentsTable td:first-child {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+    border: 1px solid #E4E4E4;
+    border-right: none;
+    padding-left: 10px;
+}
+.studentsTable th:last-child,
+.studentsTable td:last-child {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    border: 1px solid #E4E4E4;
+    border-left: none;
+}
+.studentsTable td img {
+    width: 16px;
+    height: 16px;
+}
+.studentsTable tr {
+    background: #FFFFFF;
+    font-size: 12px;
+    font-weight: 500;
+    color: #545454;
+}
+.studentsTable .active {
+    background: #EFFFE9;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #0C9E41;
+    width: fit-content;
+}
+.studentsTable .inactive {
+    background: #E1E1E1;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #343434;
+    width: fit-content;
+}
+.studentsTable .actionsButton {
+    border: 1px solid #A1B2D1;
+    outline: none;
+    background-color: transparent;
+    padding: 4px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+}
+.studentsTable .actionsButton img {
+    width: 20px;
+    height: 20px;
+}
+
+.actionsClosed {
+    display: none;
+}
+.theActions {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    box-shadow: 0px 4px 12px 0px #9CA3AF33;
+    border-radius: 10px;
+    padding: 8px;
+    position: absolute;
+    z-index: 5;
+    width: 220px;
+    margin-top: 5px;
+    margin-left: -150px;
+}
+.theActions h5 {
+    font-size: 12px;
+    font-weight: 600;
+    color: #4B5563;
+}
+.theActions button {
+    border: none;
+    outline: none;
+    background: #FFFFFF;
+    color: #4B5563;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+}
+.theActions button img {
+    width: 24px;
+    height: 24px;
+}
+
+
+
+.showRows {
+    flex: 70%;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 500;
+    color: #000000;
+}
+.showRows select {
+    border: 1px solid #BDD9FF;
+    box-shadow: 0px 3.76px 5.64px 0px #00000017;
+    border-radius: 6px;
+    padding: 4px 0 4px 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #000000;
+    outline: none;
+}
+.pag {
+    flex: 30%
+}

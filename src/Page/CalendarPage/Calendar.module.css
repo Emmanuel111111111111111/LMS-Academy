@@ -1,3 +1,7 @@
+* {
+    font-family: "Inter";
+}
+
 .whole {
     margin-left: 280px;
     margin-top: 80px;
@@ -20,6 +24,8 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 18px;
+    font-family: "Inter";
+
 }
 .calendarHeader .buttons {
     display: flex;
@@ -97,58 +103,42 @@
     text-align: left;
 }
 .dayHeader h1 {
-    font-size: 10px;
+    font-size: 14px;
     font-weight: 500;
     color: #71717A;
 }
 .dayHeader h2 {
-    font-size: 10px;
-    font-weight: 500;
+    font-size: 14px;
+    font-weight: 600;
     color: #000000;
 }
 
 
-.eventContent {
-    width: 100%;
-    height: 100%;
-    /* border-left: 2px solid #0EA5E9; */
-    /* background: #0EA5E91A; */
-    /* color: #0EA5E9; */
-    border-radius: 5px 0 0 5px;
-    padding: 2px 5px;
+:global(.fc-day-today) {
+    background-color: #EFF6FF !important;
 }
-.eventContent p {
-    /* color: #0369A1; */
-    font-size: 12px;
-    font-weight: 500;
+:global(.fc-timegrid-col .fc-day-today) {
+    background-color: #EFF6FF !important;
 }
 
-
-
-
-
-/* :global(.fc-daygrid-body table),
-:global(.fc-scrollgrid-sync-table) {
-  /* border-color: red; *
-} */
-:global(.fc-daygrid-day-frame) {
-    border-top: 2px solid #F7F7F7;
-    border-right: 2px solid #F7F7F7;
-    border-bottom: 2px solid transparent;
-    border-left: none;
-}
-:global(.fc .fc-scrollgrid) {
-    border: none;
-}
-
-:global(.fc-today),
-:global(.fc-future) {
-    background: #EFF6FF;
-}
-
-:global(.fc-timegrid-event .fc-event-title .assignment-event) {
+:global(.assignment-event .fc-event-title ),
+:global(.assignment-event .fc-event-time ) {
     color: #047857 !important;
 }
-:global(.fc-timegrid-event .fc-event-title .class-event) {
+:global(.class-event .fc-event-title),
+:global(.class-event .fc-event-time) {
     color: #0369A1 !important;
 }
+:global(.other-event .fc-event-title),
+:global(.other-event .fc-event-time) {
+    color: #6D28D9 !important;
+}
+
+:global(.fc-timegrid-slot) {
+    height: 45px !important;
+}
+
+/* :global(.fc-scroller) {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+} */

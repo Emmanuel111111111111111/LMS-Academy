@@ -14,7 +14,6 @@ export const CalendarPage = () => {
     const [ search, setSearch] = useState("");
     const [ viewType, setViewType ] = useState('timeGridWeek');
     const navigate = useNavigate();
-    const scroll = useRef(null);
     const calendarRef = useRef(null);
     const calendarAPI = calendarRef?.current?.getApi();
 
@@ -36,84 +35,22 @@ export const CalendarPage = () => {
             title: 'Course Title 3',
             start: new Date(2024, 8, 4, 16, 30),
             allDay: false,
-            type: 'Assignment'
+            type: 'Class'
         },
         {
             title: 'Course Title 4',
             start: new Date(2024, 8, 6, 14, 0),
             end: new Date(2024, 8, 6, 15, 0),
-            type: 'Class'
+            type: 'Assignment'
+        },
+        {
+            title: 'Course Title 5',
+            start: new Date(2024, 8, 6, 7, 30),
+            end: new Date(2024, 8, 6, 9, 0),
+            type: 'Exam'
         }
     ]
 
-    const events = [
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'July 1, 2024'
-        },
-        {
-            courseName: 'Oracle',
-            eventType: 'CLASS',
-            dueTime: '12:38:00 PM',
-            dueDate: 'July 25, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 1, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 22, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'CLASS',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 29, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 1, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'July 1, 2024'
-        },
-        {
-            courseName: 'Oracle',
-            eventType: 'CLASS',
-            dueTime: '12:38:00 PM',
-            dueDate: 'July 25, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 1, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 22, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'CLASS',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 29, 2024'
-        }
-    ]
     
     const handleChangeView = (view) => {
         calendarAPI?.changeView(view);
@@ -131,8 +68,6 @@ export const CalendarPage = () => {
         );
     });
 
-    console.log(search);
-    console.log(filteredEvents);
 
 
     return (
@@ -143,9 +78,9 @@ export const CalendarPage = () => {
 
                 <div className={styles.calendarHeader}>
                     <div className={`${styles.buttons} ${styles.move}`}>
-                        <button className={styles.prev} onClick={()=>calendarAPI?.prev()}><img src={getImageUrl('prev.png')} /></button>
+                        <button className={styles.prev} onClick={()=>calendarAPI?.prev()}><img src={getImageUrl('prevIcon.png')} /></button>
                         <button className={styles.today} onClick={()=>calendarAPI?.today()}>Today</button>
-                        <button className={styles.next} onClick={()=>calendarAPI?.next()}><img src={getImageUrl('next.png')} /></button>
+                        <button className={styles.next} onClick={()=>calendarAPI?.next()}><img src={getImageUrl('nextIcon.png')} /></button>
                     </div>
 
                     <div className={styles.buttons}>
@@ -190,20 +125,22 @@ export const CalendarPage = () => {
                         info.el.style.padding = '4px';
                         info.el.style.fontSize = '12px';
                         info.el.style.fontWeight = 500;
+                        info.el.style.textOverflow = 'ellipses';
 
-                        if (eventType === 'Class') {
+                        if (eventType.toLowerCase() === 'class') {
                             info.el.style.backgroundColor = '#0EA5E91A';
                             info.el.style.borderLeft = '3px solid #0EA5E9';
-                            info.el.style.color = '#0369A1';
-                            // info.el.style.color = '#0369A1 !important';
                             info.el.classList.add('class-event');
                         }
-                        else if (eventType === 'Assignment') {
+                        else if (eventType.toLowerCase() === 'assignment') {
                             info.el.style.backgroundColor = '#10B9811A';
                             info.el.style.borderLeft = '3px solid #10B981';
-                            info.el.style.color = '#047857';
-                            // info.el.style.color = '#047857 !important';
                             info.el.classList.add('assignment-event');
+                        }
+                        else {
+                            info.el.style.backgroundColor = '#8B5CF61A';
+                            info.el.style.borderLeft = '3px solid #8B5CF6';
+                            info.el.classList.add('other-event');
                         }
                     }}
                 />

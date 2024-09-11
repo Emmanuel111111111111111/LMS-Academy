@@ -60,7 +60,7 @@ const Pagination = ({ currentData, currentPage, itemsPerPage, onPageChange }) =>
     return (
         <div className={styles.pagination}>
             <button onClick={handlePreviousPage} disabled={currentPage === 1} className={styles.move}>
-                <img src={getImageUrl("prev.png")} alt="Previous" />
+                <img src={getImageUrl("prevIcon.png")} alt="Previous" />
             </button>
             {pages.map((page, index) =>
                 page === '...' ? (
@@ -76,7 +76,7 @@ const Pagination = ({ currentData, currentPage, itemsPerPage, onPageChange }) =>
                 )
             )}
             <button onClick={handleNextPage} disabled={currentPage === totalPages} className={styles.move}>
-                <img src={getImageUrl("next.png")} alt="Next" />
+                <img src={getImageUrl("nextIcon.png")} alt="Next" />
             </button>
         </div>
     );
