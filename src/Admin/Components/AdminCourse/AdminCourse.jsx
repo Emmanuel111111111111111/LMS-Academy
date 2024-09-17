@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getImageUrl } from "../../../utilis";
-import styles from "./Course.module.css";
+import styles from "./AdminCourse.module.css";
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 
@@ -75,67 +75,63 @@ export const AdminCourse = () => {
             students: 72,
             location: 'Physical'
         },
-        {
-            title: 'Course Title 7',
-            description: 'A short lesson description...',
-            teacher: 'Arafat Murad',
-            currentLesson: 7,
-            totalLessons: 12,
-            currentAssignment: 5,
-            duration: '10 weeks',
-            students: 72,
-            location: 'Physical'
-        },
-        {
-            title: 'Course Title 8',
-            description: 'A short lesson description...',
-            teacher: 'Arafat Murad',
-            currentLesson: 7,
-            totalLessons: 12,
-            currentAssignment: 5,
-            duration: '10 weeks',
-            students: 72,
-            location: 'Physical'
-        }
+        // {
+        //     title: 'Course Title 7',
+        //     description: 'A short lesson description...',
+        //     teacher: 'Arafat Murad',
+        //     currentLesson: 7,
+        //     totalLessons: 12,
+        //     currentAssignment: 5,
+        //     duration: '10 weeks',
+        //     students: 72,
+        //     location: 'Physical'
+        // },
+        // {
+        //     title: 'Course Title 8',
+        //     description: 'A short lesson description...',
+        //     teacher: 'Arafat Murad',
+        //     currentLesson: 7,
+        //     totalLessons: 12,
+        //     currentAssignment: 5,
+        //     duration: '10 weeks',
+        //     students: 72,
+        //     location: 'Physical'
+        // }
     ]
 
 
     return (
         <>
             <div className={styles.whole}>
-                <h5>Courses <img src={getImageUrl('Icons12.png')} alt="" /> <a href="">Active</a></h5>
+                <h5>Courses </h5>
                 <div>
                     <div className={styles.title}>
-                        <h1>Active Courses <span>({courses.length})</span></h1>
-                        <button><img src={getImageUrl('sort.png')} alt="" /></button>
+                        <h1>Active Courses</h1>
                     </div>
                     
                     <div className={styles.course}>
                         {courses.map((cour, index) => (
                             <div className={styles.courseInfo}>
+                                <div className={styles.courseImage}>
+                                   <img src={getImageUrl('frame7.png')} />
+                                </div>
                                 <div className={styles.infoHeader}>
-                                    <div><h3>{cour.title}<span>{cour.location}</span></h3></div>
+                                    <div><h3>Artificial Intelligence<span>Started</span></h3></div>
                                     <button><img src={getImageUrl('threeDots.png')} alt="" /></button>
                                 </div>
-                                <p>{cour.description}</p>
+                                <p>Lorem ipsum dolor sit amet consectetur. Feugia t blandit turpis.Lorem ipsum dolor sit amet consector.
+                                    Feugia t blandit turpis...  </p>
                                 <div className={styles.courseData}>
                                     <div className={styles.bread}>
-                                        <div className={styles.profile}><img src={getImageUrl('profile.png')} alt="" />{cour.teacher}</div>
-                                        <div className={styles.students}><img src={getImageUrl('pic.png')} alt="" />{cour.students} Students</div>
+                                        <div className={styles.profile}><img src={getImageUrl('calend.png')} alt="" />Monday, 28 June -28 August 2024</div>
+                                         <div className={styles.profile}><img src={getImageUrl('timeline.png')} alt="" />A Month</div>
                                     </div>
                                     <div className={styles.crumb}>
-                                        <div className={styles.profile}><img src={getImageUrl('timer.png')} alt="" />{cour.duration}</div>
-                                        <div className={styles.profile}><img src={getImageUrl('lesson.png')} alt="" />{cour.totalLessons} Modules</div>
-                                        <div className={styles.profile}><img src={getImageUrl('assignment.png')} alt="" />10am Wed-Fri</div>
+                                        <div className={styles.profile}><img src={getImageUrl('profile.png')} alt="" />{cour.teacher}</div>
+                                        <div className={styles.students}><img src={getImageUrl('frame5.png')} alt="" />{cour.students} Students</div>
                                     </div>
                                 </div>
-                                <div className={styles.withLoader}>
-                                    <div className={styles.coursesLoader}>
-                                        <p>{cour.currentLesson}/{cour.totalLessons} Modules</p>
-                                        <progress className={styles.progress} id="progress" max={cour.totalLessons} value={cour.currentLesson} />
-                                    </div>
-                                    <button>Continue Course</button>
-                                </div>
+                                
                             </div>
                         ))}
                         

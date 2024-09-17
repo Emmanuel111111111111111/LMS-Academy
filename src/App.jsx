@@ -21,6 +21,7 @@ import { TeachersPage } from './Admin/Page/TeacherPage/TeacherPage';
 import { StudentPage } from './Admin/Page/StudentPage/StudentPage';
 import { PendingStudentPage } from './Admin/Page/PendingStudentsPage/PendingStudentPage';
 import { ActivityLogPage } from './Admin/Page/ActivityLogPage/ActivityLogPage';
+import { AdminOverview } from './Admin/Page/AdminOverviewpage/AdminOverview';
 
 function App() { 
 
@@ -48,7 +49,7 @@ function App() {
       path: '/admin-dashboard', element: <AdminDashboardLayout />,
       children: [
         { path: '/admin-dashboard', element: <Navigate to="overview" /> },
-        { path: 'overview', element: <Overview /> },
+        { path: 'overview', element: <AdminOverview /> },
         { path: 'schedule', element: <SchedulePage /> },
         { path: 'courses', element: <AdminCourse /> },
         { path: 'courses/active', element: <AdminCourse /> },

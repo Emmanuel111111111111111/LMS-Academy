@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
-import styles from './Overview.module.css';
+import styles from './AdminOverview.module.css';
 import { getImageUrl } from "../../../utilis";
-import Pagination from "../../Components/Pagination/Pagination";
+import Pagination from "../../../Components/Pagination/Pagination";
 import { useNavigate } from "react-router-dom";
 
 export const AdminOverview = () => {
@@ -131,7 +131,7 @@ export const AdminOverview = () => {
         <div className={styles.whole}>
             <a>Home</a>
 
-            <div className={styles.welcomeBanner}>
+            {/* <div className={styles.welcomeBanner}>
                 <div className={styles.left}>
                     <img src={getImageUrl('avatar.png')} />
                     <div className={styles.text}>
@@ -140,7 +140,7 @@ export const AdminOverview = () => {
                     </div>
                 </div>
                 <button>Edit Profile</button>
-            </div>
+            </div> */}
 
             <div className={styles.overview}>
                 <h5>Overview</h5>
@@ -148,35 +148,32 @@ export const AdminOverview = () => {
                     
                     <div className={styles.eachOverview}>
                         <div className={styles.overviewText}>
-                            Total Completed Lessons
-                            <div className={styles.blueBox}><img src={getImageUrl('completed.png')} /></div>
+                            Total <br /> Lessons
+                            <div className={styles.blueBox}><img src={getImageUrl('frame10.png')} /></div>
                         </div>
                         <div className={styles.loader}>
-                            5/8
-                            <progress className={styles.progress} id="progress" value={5} max={8} />
+                            100
                         </div>
                     </div>
 
                     <div className={styles.eachOverview}>
                         <div className={styles.overviewText}>
-                            Lessons Due
-                            <div className={styles.blueBox}><img src={getImageUrl('lesson.png')} /></div>
+                            Total <br /> Students
+                            <div className={styles.blueBox}><img src={getImageUrl('frame9.png')} /></div>
                         </div>
                         <div className={styles.loader}>
-                            3/12
-                            <progress className={styles.progress} id="progress" value={3} max={12} />
+                            124
                         </div>
                     </div>
 
                     <div className={styles.eachOverview}>
                         <div className={styles.overviewText}>
-                            Assignments Due
-                            <div className={styles.blueBox}><img src={getImageUrl('assignment.png')} /></div>
+                            Total <br />Teachers
+                            <div className={styles.blueBox}><img src={getImageUrl('frame8.png')} /></div>
                         </div>
                         <div className={styles.loader}>
-                            4/6
-                            <progress className={styles.progress} id="progress" value={4} max={6} />
-                        </div>
+                            52
+                         </div>
                     </div>
                 </div>
 
@@ -185,48 +182,51 @@ export const AdminOverview = () => {
             <div className={styles.courses}>
                 <div className={styles.coursesHeader}>
                     Active Courses
-                    <button onClick={()=>navigate('/dashboard/courses/active')}>View All <img src={getImageUrl('greyRightAngle.png')} alt="" /></button>
+                   
                 </div>
-                {courses.slice(0,2).map((course, index) => (
+                <div className={styles.flow}>
+                {courses.slice(0,3).map((course, index) => (
                     <div className={styles.course} key={index}>
                         <div className={styles.courseImage}>
-                            <img src={getImageUrl('course_image.png')} />
+                            <img src={getImageUrl('frame7.png')} />
                         </div>
                         <div className={styles.courseInfo}>
                             <div className={styles.infoHeader}>
-                                <h3>{course.title}</h3>
-                                <button><img src={getImageUrl('threeDots.png')} alt="" /></button>
+                                <h3>Advertisement - <span>Online</span></h3>
+                                
                             </div>
-                            <p>{course.description}</p>
+                            <p>Lorem ipsum dolor sit amet consectetur. Feugia t blandit turpis.</p>
                             <div className={styles.courseData}>
-                                <div className={styles.profile}><img src={getImageUrl('profile.png')} alt="" />{course.teacher}</div>
-                                <div><img src={getImageUrl('lesson.png')} alt="" />Lesson {course.currentLesson}</div>
-                                <div><img src={getImageUrl('assignment.png')} alt="" />Assignment {course.currentAssignment}</div>
-                                <div><img src={getImageUrl('timer.png')} alt="" />{course.time}</div>
+                                <div><img src={getImageUrl('timer.png')} alt="" />1 hr 25 Mins</div>
+                                <div><img src={getImageUrl('frame5.png')} alt="" />54 Students</div>
+
                             </div>
                             <div className={styles.withLoader}>
                                 <div className={styles.coursesLoader}>
-                                    {course.currentLesson}/{course.totalLessons} Modules
                                     <progress className={styles.progress} id="progress" max={course.totalLessons} value={course.currentLesson} />
                                 </div>
-                                <button>Continue Course</button>
+                                
                             </div>
+                            </div>
+
+                    
                         </div>
-                    </div>
+                    
                 ))}
+                </div>
             </div>
 
             <div className={styles.events}>
                 <div className={styles.eventsHeader}>
-                    Upcoming Events
+                    Recent Activities
                     <button>View All<img src={getImageUrl('greyRightAngle.png')} alt="" /></button>
                 </div>
                 
                 <table className={styles.eventsTable} ref={scroll}>
                     <thead>
                         <th><input type="checkbox" /></th>
-                        <th>Event Name</th>
-                        <th>Due Time</th>
+                        <th>Activities</th>
+                        <th>Time and Date</th>
                         <th>Due Date</th>
                         <th>Action</th>
                     </thead>
@@ -234,10 +234,10 @@ export const AdminOverview = () => {
                         {currentEvents.map((event, index) => (
                             <tr>
                                 <td><input type="checkbox" /></td>
-                                <td>{event.courseName} ... <span>{event.eventType}</span></td>
-                                <td><div className={styles.dueTime}><img src={getImageUrl('timer.png')} />{event.dueTime}</div></td>
-                                <td>{event.dueDate}</td>
-                                <td><button><img src={getImageUrl('threeDots.png')} /></button></td>
+                                <td> <div className={styles.bread}>You created a new teacher fo...</div></td>
+                                <td><div className={styles.dueTime}>July 1, 2024 12:38:00 PM</div></td>
+                                <td><div className={styles.crumb}>{event.dueDate}</div></td>
+                                <td><button><img src={getImageUrl('View.png')} /></button></td>
                             </tr>
                         ))}
                     </tbody>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 import { getImageUrl } from "../../../utilis";
-import styles from "./Login.module.css";
+import styles from "./AdminLogin.module.css";
 import axios from 'axios'
 import { useNavigate } from "react-router-dom";
 
@@ -43,7 +43,7 @@ export const AdminLogin = () => {
           <h5><span>Back to</span> Home</h5>
         </div>
         <div className={styles.crumbs}>
-          <h1>Log in to your account</h1>
+          <h1>Welcome Back</h1>
           <p>Lets help you get started on CWG Academy</p>
         </div>
         <div className={styles.forms}>
@@ -66,7 +66,7 @@ export const AdminLogin = () => {
 
             <div className={styles.home}>
               <button className={styles.butt} type="submit">Log In</button>
-              <p>Don't Have An Account? <a href="/Account">Create An Account</a></p>
+              
             </div>
           </form>
         </div>
