@@ -6,8 +6,8 @@ import axios from 'axios';
 
 export const AdminCourse = () => {
 
-    const [currentPage, setCurrentPage] = useState(1);
-
+    const [ currentPage, setCurrentPage ] = useState(1);
+    // v
     const courses = [
         {
             title: 'Course Title 1',
@@ -98,6 +98,38 @@ export const AdminCourse = () => {
         //     location: 'Physical'
         // }
     ]
+    // const indexOfLastItem = currentPage * itemsPerPage;
+    // const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    // const currentTeachers = teachers.slice(indexOfFirstItem, indexOfLastItem);
+
+    // const handlePageChange = (pageNumber) => {
+    //     setCurrentPage(pageNumber);
+    // };
+
+    // const handlePageNumber = (itemNumber) => {
+    //     setItemsPerPage(itemNumber);
+    //     setCurrentPage(1);
+    //     scroll.current.scrollIntoView();
+    // };
+
+    // const toggleAction = (index) => {
+    //     setActionsOpen(prevState => ({
+    //         ...prevState,
+    //         [index]: !prevState[index]
+    //     }));
+    // };
+
+    // const handleClickOutside = (event) => {
+    //     if (actionsRef.current && !actionsRef.current.contains(event.target)) {
+    //         setActionsOpen(false);
+    //     }
+    // };
+    // useEffect(() => {
+    //     document.addEventListener('click', handleClickOutside, true);
+    //     return () => {
+    //         document.removeEventListener('click', handleClickOutside, true);
+    //     };
+    // }, []);
 
 
     return (
@@ -107,6 +139,10 @@ export const AdminCourse = () => {
                 <div>
                     <div className={styles.title}>
                         <h1>Active Courses</h1>
+                        <div className={styles.buttons}>
+                    <button className={styles.buttonOne}>Sort By<img src={getImageUrl('sortIcon.png')} /></button>
+                    <button className={styles.buttonTwo}><img src={getImageUrl('add.png')} />Create Event</button>
+                </div>
                     </div>
                     
                     <div className={styles.course}>

@@ -32,7 +32,7 @@ app.get("/courses/{studentId}", (req, res) => {
 
 
 app.post('/login', (req, res) => {
-    const sql = 'SELECT * FROM student WHERE (email = ? OR phone_number = ?) AND password = ? ';
+    const sql = 'SELECT * FROM student WHERE email = ? AND password = ? ';
     db.query(sql, [req.body.email, req.body.password], (err, data) => {
         if (err) return res.json("Login failed");
         if(data.length > 0) {
