@@ -1,8 +1,11 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable react/jsx-key */
 import React, { useEffect, useRef, useState } from "react";
 import styles from './TeacherPage.module.css';
 import { getImageUrl } from "../../../utilis";
 import Pagination from "../../../Components/Pagination/Pagination"; 
-
+import Modal from "../../Components/AdminCourse/Modal";
 export const TeachersPage = () => {
 
     const [ currentPage, setCurrentPage ] = useState(1);
@@ -10,7 +13,9 @@ export const TeachersPage = () => {
     const [ actionsOpen, setActionsOpen ] = useState({});
     const scroll = useRef(null);
     const actionsRef = useRef(null);
-
+    const [open, setOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    
 
 
     const teachers = [
@@ -133,6 +138,16 @@ export const TeachersPage = () => {
             setActionsOpen(false);
         }
     };
+    const handleClose = () => {
+        setOpen(false);
+    };
+ 
+    const handleOpen = () => {
+        setOpen(true);
+    };
+    const toggleDropdown = () => {
+        setIsOpen(!isOpen);
+      };
     useEffect(() => {
         document.addEventListener('click', handleClickOutside, true);
         return () => {
@@ -153,9 +168,42 @@ export const TeachersPage = () => {
 
                 <div className={styles.buttons}>
                     <button className={styles.buttonOne}>Sort By<img src={getImageUrl('sortIcon.png')} /></button>
-                    <button className={styles.buttonTwo}><img src={getImageUrl('whitePlus.png')} />Add New Teacher</button>
+                    <button className={styles.buttonTwo} onClick={handleOpen}><img src={getImageUrl('whitePlus.png')} />Add New Teacher</button>
                 </div>
             </div>
+            <Modal isOpen={open} >
+                        <>
+                            <div className={styles.course_modal}>
+                                <div className={styles.head}>
+                                    <h3>Add New Teacher</h3>
+                                    <button onClick={handleClose} className={styles.close}><img src={getImageUrl('close.png')} alt="" /></button>
+                                </div><div className={styles.content}>
+                                        <div>
+                                            <h5>Instructor's Name</h5>
+                                            <input type="text" placeholder="Enter Event Name"></input>
+                                        </div>
+                                        <div>
+                                            <h5>Course</h5>
+                                            <button onClick={toggleDropdown}><span>Select Course</span> <img src={getImageUrl('arrown_down_black.png')} alt="" /></button>
+                                        </div>
+                                        <div>
+                                            <h5>Date Added</h5>
+                                            <button onClick={toggleDropdown}><span>Select Date</span> <img src={getImageUrl('darkcalendarIcon.png')} alt="" /></button>
+                                        </div>
+
+                                    </div><div className={styles.contain}>
+                                        <div>
+                                            <h5>Email Address</h5>
+                                            <input type ="text" placeholder="Enter Email Address"></input>
+                                        </div>
+                                        <div>
+                                            <h5>Phone Number</h5>
+                                            <input type ="text" placeholder="Enter Phone Number "></input>
+                                        </div>
+                                    </div><button className={styles.submit}>Submit</button>
+                            </div>
+                        </>
+                    </Modal>
             
             <table className={styles.teacherTable}>
                 <thead>

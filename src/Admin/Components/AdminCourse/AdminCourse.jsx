@@ -3,10 +3,29 @@ import { getImageUrl } from "../../../utilis";
 import styles from "./AdminCourse.module.css";
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import Modal from "./Modal";
 
 export const AdminCourse = () => {
 
     const [ currentPage, setCurrentPage ] = useState(1);
+    const [isOpen, setIsOpen] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [buttonType, setButtonType] = useState("");
+ 
+    const handleClose = () => {
+        setOpen(false);
+    };
+ 
+    const handleOpen = (type) => {
+        setButtonType(type);
+        setOpen(true);
+    };
+    const toggleDropdown = () => {
+        setIsOpen(!isOpen);
+      };
+      const toggleDropdown2 = () => {
+        
+      };
     // v
     const courses = [
         {
@@ -141,8 +160,46 @@ export const AdminCourse = () => {
                         <h1>Active Courses</h1>
                         <div className={styles.buttons}>
                     <button className={styles.buttonOne}>Sort By<img src={getImageUrl('sortIcon.png')} /></button>
-                    <button className={styles.buttonTwo}><img src={getImageUrl('add.png')} />Create Event</button>
+                    <button className={styles.buttonTwo} onClick={toggleDropdown} ><img src={getImageUrl('add.png')} />Create Event</button>
                 </div>
+                                {isOpen &&(
+                    <ul>
+                        <li><img src={getImageUrl('Course.png')} alt="" /><button onClick={() => handleOpen("COURSE")}>COURSE</button></li>
+                        <li><img src={getImageUrl('Check.png')} alt="" /><button onClick={() => handleOpen("ASSIGNMENTS")}>ASSIGNMENTS</button></li>
+                        <li><img src={getImageUrl('help.png')} alt="" /><button onClick={() => handleOpen("QUIZ")}>QUIZ</button></li>
+                    </ul>
+                )}
+                <Modal isOpen={open} >
+                        <>
+                            <div className={styles.course_modal}><div className={styles.head}>
+                                    <h3>{buttonType === "COURSE" ? "Create Course" : buttonType === "ASSIGNMENTS"?"Create Assignment":"Create Quiz"}</h3>
+                                    <button onClick={handleClose} className={styles.close}><img src={getImageUrl('close.png')} alt="" /></button>
+                                </div>
+                                <div className={styles.content}>
+                                        <div>
+                                            <h5>{buttonType === "COURSE" ? "Event Name" : buttonType === "ASSIGNMENTS"?"Content title":"Event Name"}</h5>
+                                            <input type="text" placeholder="Enter Event Name"></input>
+                                        </div>
+                                        <div>
+                                            <h5>{buttonType === "COURSE" ? "Event Type" : buttonType === "ASSIGNMENTS"?"Duration":"Event Type"}</h5>
+                                            <button onClick={toggleDropdown2}><span>Select Event Type</span> <img src={getImageUrl('arrown_down_black.png')} alt="" /></button>
+                                        </div>
+
+                                    </div>
+                                    <div className={styles.contain}>
+                                        <div>
+                                            <h5>Start Date & Time</h5>
+                                            <button onClick={toggleDropdown2}><span>Select Date & Time</span> <img src={getImageUrl('arrown_down_black.png')} alt="" /></button>
+                                        </div>
+                                        <div>
+                                            <h5>Due Date</h5>
+                                            <button onClick={toggleDropdown2}><span>Select Due Date</span> <img src={getImageUrl('arrown_down_black.png')} alt="" /></button>
+                                        </div>
+                                    </div>
+                                    <button className={styles.submit}>Submit</button>
+                            </div>
+                        </>
+                    </Modal>
                     </div>
                     
                     <div className={styles.course}>
