@@ -87,6 +87,10 @@
     justify-content: center;
     display: flex;
 }
+.courseImage img {
+    width: 100%;
+    height: auto;
+}
 
 .courseInfo{
     display: flex;
