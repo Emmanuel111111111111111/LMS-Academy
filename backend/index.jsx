@@ -14,6 +14,10 @@ const db = mysql.createConnection({
 })
 
 
+app.get("/", (req, res) => {
+    return res.json("BACKEND CONNECTED");
+})
+
 app.get("/student", (req, res) => {
     const u = "SELECT * FROM student"
     db.query(u, (err, data) => {

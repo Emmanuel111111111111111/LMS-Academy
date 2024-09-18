@@ -65,7 +65,8 @@ export const Account = () => {
                             <label htmlFor="learning_mode">Preferred Mode of learning</label>
                             <select name="learning_mode" onChange={handleInput} >
                                 <option value="">Select your preferred learning mode</option>
-                                <option value="optionOne">Option 1</option>
+                                <option value="online">Online</option>
+                                <option value="physical">Physical</option>
                             </select>
                         </div>
 
