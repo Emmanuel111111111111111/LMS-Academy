@@ -18,19 +18,45 @@ app.get("/", (req, res) => {
     return res.json("BACKEND CONNECTED");
 })
 
-app.get("/student", (req, res) => {
+app.get("/students", (req, res) => {
     const u = "SELECT * FROM student"
     db.query(u, (err, data) => {
         if (err) return res.json(err)
-            return res.json(data)
+            res.send(data)
     })
 })
 
-app.get("/courses/{studentId}", (req, res) => {
-    const c = "SELECT * FROM courses"
+app.get("/courses", (req, res) => {
+    const c = "SELECT * FROM course"
     db.query(c, (err, data) => {
-        if (err) return res.json(err)
-            return res.json(data)
+        if (err) {
+            return res.json(err);
+        } else {
+            res.send(data);
+        }
+    })
+})
+
+app.get("/courses/:student_id", (req, res) => {
+    const id = req.params.student_id;
+    // console.log(id);
+    const c = "SELECT * FROM course INNER JOIN enrollment ON course.course_id = enrollment.course_id WHERE enrollment.student_id = ?"
+    db.query(c, id, (err, data) => {
+        if (err) return res.json(err);
+        else {
+            res.send(data);
+        }
+    })
+})
+
+app.get("/teachers", (req, res) => {
+    const c = "SELECT * FROM instructor"
+    db.query(c, (err, data) => {
+        if (err) {
+            return res.json(err);
+        } else {
+            res.send(data);
+        }
     })
 })
 
@@ -40,9 +66,9 @@ app.post('/login', (req, res) => {
     db.query(sql, [req.body.email, req.body.password], (err, data) => {
         if (err) return res.json("Login failed");
         if(data.length > 0) {
-            return res.json("Login Successfully")
+            return res.json(data);
         } else {
-            return res.json("No records")
+            return res.json("No records");
         }
     })
 })
