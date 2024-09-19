@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-key */
 import React, { useRef, useState } from "react";
 import styles from './Overview.module.css';
 import { getImageUrl } from "../../utilis";
@@ -130,8 +131,11 @@ export const Overview = () => {
         <>
         <div className={styles.whole}>
             <a>Home</a>
-
-            <div className={styles.welcomeBanner}>
+                <div className={styles.searchBar}>
+                    <img src={getImageUrl('searchIcon.png')} />
+                    <input type="text" placeholder="Search" />
+                </div>
+            <div className={styles.welcomeBanner}>{/* this needs to move below overview*/}
                 <div className={styles.left}>
                     <img src={getImageUrl('avatar.png')} />
                     <div className={styles.text}>
@@ -200,9 +204,11 @@ export const Overview = () => {
                             <p>{course.description}</p>
                             <div className={styles.courseData}>
                                 <div className={styles.profile}><img src={getImageUrl('profile.png')} alt="" />{course.teacher}</div>
-                                <div><img src={getImageUrl('lesson.png')} alt="" />Lesson {course.currentLesson}</div>
-                                <div><img src={getImageUrl('assignment.png')} alt="" />Assignment {course.currentAssignment}</div>
-                                <div><img src={getImageUrl('timer.png')} alt="" />{course.time}</div>
+                                <div className={styles.coursedatas}>
+                                    <div><img src={getImageUrl('lesson.png')} alt="" />Lesson {course.currentLesson}</div>
+                                    <div><img src={getImageUrl('assignment.png')} alt="" />Assignment {course.currentAssignment}</div>
+                                    <div><img src={getImageUrl('timer.png')} alt="" />{course.time}</div>
+                                </div>
                             </div>
                             <div className={styles.withLoader}>
                                 <div className={styles.coursesLoader}>
