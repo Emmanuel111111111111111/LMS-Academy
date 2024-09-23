@@ -17,6 +17,7 @@ const Modal = ({ isOpen, children }) => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+                zIndex: '6'
             }}
         >
             <div>
