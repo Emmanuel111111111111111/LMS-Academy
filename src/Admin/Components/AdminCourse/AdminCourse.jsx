@@ -197,7 +197,7 @@ export const AdminCourse = () => {
                             <div className={styles.contain}>
                                 <div>
                                     <h5>Start Date & Time</h5>
-                                    <input type="datetime" name="" id="" />
+                                    <input type="datetime-local" name="" id="" />
                                 </div>
                                 <div>
                                     <h5>Due Date</h5>

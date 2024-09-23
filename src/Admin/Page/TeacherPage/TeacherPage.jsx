@@ -184,23 +184,29 @@ export const TeachersPage = () => {
                             </div>
                             <div>
                                 <h5>Course</h5>
-                                <button onClick={toggleDropdown}><span>Select Course</span> <img src={getImageUrl('arrown_down_black.png')} alt="" /></button>
+                                <select name="" id="">
+                                    <option value="">Select Course</option>
+                                </select>
+                                {/* <button onClick={toggleDropdown}><span>Select Course</span> <img src={getImageUrl('arrown_down_black.png')} alt="" /></button> */}
                             </div>
                             <div>
                                 <h5>Date Added</h5>
-                                <button onClick={toggleDropdown}><span>Select Date</span> <img src={getImageUrl('darkcalendarIcon.png')} alt="" /></button>
+                                <input type="date" name="" id="" />
+                                {/* <button onClick={toggleDropdown}><span>Select Date</span> <img src={getImageUrl('darkcalendarIcon.png')} alt="" /></button> */}
                             </div>
 
-                        </div><div className={styles.contain}>
+                        </div>
+                        <div className={styles.contain}>
                             <div>
                                 <h5>Email Address</h5>
-                                <input type="text" placeholder="Enter Email Address"></input>
+                                <input type="email" placeholder="Enter Email Address"></input>
                             </div>
                             <div>
                                 <h5>Phone Number</h5>
-                                <input type="text" placeholder="Enter Phone Number "></input>
+                                <input type="tel" placeholder="Enter Phone Number "></input>
                             </div>
-                        </div><button className={styles.submit}>Submit</button>
+                        </div>
+                        <button className={styles.submit}>Submit</button>
                     </div>
                     </>
                 </Modal>

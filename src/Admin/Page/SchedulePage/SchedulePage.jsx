@@ -12,8 +12,8 @@ import { format } from 'date-fns';
 
 export const SchedulePage = () => {
 
-    const [ search, setSearch] = useState("");
-    const [ viewType, setViewType ] = useState('timeGridWeek');
+    const [search, setSearch] = useState("");
+    const [viewType, setViewType] = useState('timeGridWeek');
     const navigate = useNavigate();
     const calendarRef = useRef(null);
     const calendarAPI = calendarRef?.current?.getApi();
@@ -22,13 +22,11 @@ export const SchedulePage = () => {
     const handleClose = () => {
         setOpen(false);
     };
- 
+
     const handleOpen = () => {
         setOpen(true);
     };
-    const toggleDropdown = () => {
-        
-    };
+
 
     const courses = [
         {
@@ -63,7 +61,7 @@ export const SchedulePage = () => {
         }
     ]
 
-    
+
     const handleChangeView = (view) => {
         calendarAPI?.changeView(view);
         setViewType(view);
@@ -96,49 +94,55 @@ export const SchedulePage = () => {
                     <button className={styles.buttonTwo} onClick={handleOpen}><img src={getImageUrl('whitePlus.png')} />Create Event</button>
                 </div>
             </div>
-                <Modal isOpen={open} >
+
+            <Modal isOpen={open} >
                 <div className={styles.course_modal}>
                     <div className={styles.head}>
                         <h3>Create Event </h3>
                         <button onClick={handleClose} className={styles.close}><img src={getImageUrl('close.png')} alt="" /></button>
-                    </div><div className={styles.content}>
-                            <div>
-                                <h5>Event Name</h5>
-                                <input type="text" placeholder="Enter Event Name"></input>
-                            </div>
-                            <div>
-                                <h5>Event Type</h5>
-                                <button onClick={toggleDropdown}><span>Select Event Type</span> <img src={getImageUrl('arrown_down_black.png')} alt="" /></button>
-                            </div>
+                    </div>
 
-                        </div><div className={styles.contain}>
-                            <div>
-                                <h5>Start Date & Time</h5>
-                                <button onClick={toggleDropdown}><span>Select Date & Time</span> <img src={getImageUrl('arrown_down_black.png')} alt="" /></button>
-                            </div>
-                            <div>
-                                <h5>Due Date</h5>
-                                <button onClick={toggleDropdown}><span>Select Due Date</span> <img src={getImageUrl('arrown_down_black.png')} alt="" /></button>
-                            </div>
-                        </div><button className={styles.submit}>Submit</button>
+                    <div className={styles.content}>
+                        <div>
+                            <h5>Event Name</h5>
+                            <input type="text" placeholder="Enter Event Name"></input>
+                        </div>
+                        <div>
+                            <h5>Event Type</h5>
+                            <select name="" id="">
+                                <option value="">Select Event Type</option>
+                            </select>
+                        </div>
+
+                    </div>
+                    <div className={styles.contain}>
+                        <div>
+                            <h5>Start Date & Time</h5>
+                            <input type="datetime-local" name="" id="" />
+                        </div>
+                        <div>
+                            <h5>Due Date</h5>
+                            <input type="date" name="" id="" />
+                        </div>
+                    </div><button className={styles.submit}>Submit</button>
                 </div>
-        </Modal>
+            </Modal>
             <div className={styles.biggerDiv}>
-            
+
                 <div className={styles.bigDiv}>
 
                     <div className={styles.calendarHeader}>
                         <div className={`${styles.buttons} ${styles.move}`}>
-                            <button className={styles.prev} onClick={()=>calendarAPI?.prev()}><img src={getImageUrl('prevIcon.png')} /></button>
-                            <button className={styles.today} onClick={()=>calendarAPI?.today()}>Today</button>
-                            <button className={styles.next} onClick={()=>calendarAPI?.next()}><img src={getImageUrl('nextIcon.png')} /></button>
+                            <button className={styles.prev} onClick={() => calendarAPI?.prev()}><img src={getImageUrl('prevIcon.png')} /></button>
+                            <button className={styles.today} onClick={() => calendarAPI?.today()}>Today</button>
+                            <button className={styles.next} onClick={() => calendarAPI?.next()}><img src={getImageUrl('nextIcon.png')} /></button>
                         </div>
 
                         <div className={styles.buttons}>
-                            <button className={viewType === 'timeGridDay' ? styles.activeGrid : styles.grid} onClick={()=>handleChangeView('timeGridDay')}>Day</button>
-                            <button className={viewType === 'timeGridWeek' ? styles.activeGrid : styles.grid} onClick={()=>handleChangeView('timeGridWeek')}>Week</button>
-                            <button className={viewType === 'dayGridMonth' ? styles.activeGrid : styles.grid} onClick={()=>handleChangeView('dayGridMonth')}>Month</button>
-                            <button className={viewType === 'dayGridYear' ? styles.activeGrid : styles.grid} onClick={()=>handleChangeView('dayGridYear')}>Year</button>
+                            <button className={viewType === 'timeGridDay' ? styles.activeGrid : styles.grid} onClick={() => handleChangeView('timeGridDay')}>Day</button>
+                            <button className={viewType === 'timeGridWeek' ? styles.activeGrid : styles.grid} onClick={() => handleChangeView('timeGridWeek')}>Week</button>
+                            <button className={viewType === 'dayGridMonth' ? styles.activeGrid : styles.grid} onClick={() => handleChangeView('dayGridMonth')}>Month</button>
+                            <button className={viewType === 'dayGridYear' ? styles.activeGrid : styles.grid} onClick={() => handleChangeView('dayGridYear')}>Year</button>
                         </div>
 
                         <div className={styles.search}>
@@ -146,9 +150,9 @@ export const SchedulePage = () => {
                             <input onChange={handleSearch} type="text" placeholder="Search" />
                         </div>
                     </div>
-                    
+
                     <FullCalendar
-                        plugins={[dayGridPlugin,timeGridPlugin,interactionPlugin]}
+                        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                         initialDate={'2024-09-04'}
                         ref={calendarRef}
                         initialView={'timeGridWeek'}
@@ -162,7 +166,7 @@ export const SchedulePage = () => {
                             const date = args.date;
                             const dayOfWeek = date.toLocaleDateString('en-US', { weekday: 'short' });
                             const dayOfMonth = date.getDate();
-                    
+
                             return (
                                 <div className={styles.dayHeader}>
                                     <h1>{dayOfWeek.toUpperCase()}</h1>
@@ -195,7 +199,7 @@ export const SchedulePage = () => {
                             }
                         }}
                     />
-                    
+
                 </div>
             </div>
         </div>

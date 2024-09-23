@@ -190,6 +190,8 @@
 .pag {
     flex: 30%
 }
+
+
 .course_modal{
     display: flex;
     flex-direction: column;
@@ -199,9 +201,8 @@
     border: 1px solid #BDD9FF;
     box-shadow: 0px 3px 5px 0px #00000017;
     background-color: #Fff;
-    height: 461px;
-    width: 460px; 
-    
+    height: fit-content;
+    width: 460px;
 }
 .close{
     background: #fff;
@@ -210,7 +211,7 @@
 .submit{
     align-items: center;
     background: #2C2F7E;
-    padding: 4px 6px;
+    padding: 14px 20px;
     gap: 4px;
     border-radius: 7px;
     color: #F0F0F0;
@@ -240,38 +241,13 @@
 .content div {
     display: flex;
     flex-direction: column;
-    
 }
-.content input{
+.content input,
+.content select {
     margin-top: 10px;
     padding: 10px 12px 10px 12px;
     border-radius: 8px 8px 8px 8px;
-    border: 1px solid #ccc;
-    width: Fill (458px)px;
-    height: Fixed (49px)px;
-}
-.content button{
-    display: inline-flex;
-    align-items: center;
-    margin-top: 10px;
-    padding: 10px 12px 10px 12px;
-    border-radius: 8px 8px 8px 8px;
-    border: 1px solid #ccc;
-    width: Fill (458px)px;
-    height: 40px;
-    background-color: #Fff;
-    color: #000;
-    
-}
-.content button span {
-    flex-grow: 2;
-    text-align:justify; 
-    padding-left: 1px; 
-  }
-.content div button img {
-    width: 15px;
-    height: 18px;
-    color: #000;
+    border: 1px solid #B4BCDD;
 }
 
 .contain{
@@ -280,17 +256,18 @@
     justify-content: space-between;
     margin-top: 2px;
     margin-bottom: 30px;
+    gap: 12px;
 }
 .contain div{
     display: flex;
     flex-direction: column;
+    width: 100%;
 }
-
-.contain input{
+.contain input {
     margin-top: 10px;
     padding: 10px 12px 10px 12px;
     border-radius: 8px 8px 8px 8px;
     border: 1px solid #ccc;
-    width: Fill (458px)px;
-    height: Fixed (49px)px;
+    background-color: #Fff;
+    color: #000;
 }
