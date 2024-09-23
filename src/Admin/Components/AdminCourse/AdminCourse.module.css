@@ -100,7 +100,7 @@
     border: 1px solid #BDD9FF;
     box-shadow: 0px 3px 5px 0px #00000017;
     background-color: #Fff;
-    height: 461px;
+    min-height: 400px;
     width: 560px;
 }
 .close {
@@ -110,7 +110,7 @@
 .submit {
     align-items: center;
     background: #2C2F7E;
-    padding: 4px 6px;
+    padding: 14px 20px;
     gap: 4px;
     border-radius: 7px;
     color: #F0F0F0;
@@ -125,11 +125,8 @@
     justify-content: space-between;
 }
 .content {
-    /* margin-bottom: 15px; */
     display: flex;
     flex-direction: column;
-    /* width: F;
-    height: Fixed (81px); */
     justify-content: space-between;
     gap: 15px;
 }
@@ -144,28 +141,24 @@
     margin-top: 10px;
     padding: 10px 12px 10px 12px;
     border-radius: 8px 8px 8px 8px;
-    border: 1px solid #ccc;
-    height: 100%;
-    height: Fixed (49px)px;
+    border: 1px solid #B4BCDD;
 }
 
 .contain{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    gap: 24px;
 }
 .contain div{
     display: flex;
     flex-direction: column;
+    width: 100%;
 }
 .contain input{
-    display: inline-flex;
-    align-items: center;
     padding: 10px 12px 10px 12px;
     border-radius: 8px 8px 8px 8px;
-    border: 1px solid #ccc;
-    width: 250px;
-    height: 40px;
+    border: 1px solid #B4BCDD;
     background-color: #Fff;
     color: #000;
 }
@@ -197,6 +190,7 @@
     gap:8 ;
     border: 1px solid #BDD9FF;
     box-shadow: 0px 3px 5px 0px #00000017;
+    cursor: pointer;
 }
 
 
@@ -397,4 +391,18 @@
 .progress::-moz-progress-value {
     background: #2C2F7E;
     border-radius: 18px;
+}
+
+
+
+.courseInfo_modal {
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    padding: 16px;
+    border: 1px solid #BDD9FF;
+    box-shadow: 0px 3px 5px 0px #00000017;
+    background-color: #Fff;
+    min-height: 400px;
+    width: 700px;
 }

@@ -9,22 +9,33 @@ export const AdminCourse = () => {
 
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ isOpen, setIsOpen ] = useState(false);
-    const [ open, setOpen ] = useState(false);
+    const [ openCreate, setOpenCreate ] = useState(false);
+    const [ openCourseInfo, setOpenCourseInfo ] = useState(false);
     const [ buttonType, setButtonType ] = useState("");
     const [ actionsOpen, setActionsOpen ] = useState({});
+    const [ selected, setSelected ] = useState(null);
     const actionsRef = useRef(null);
     const createRef = useRef(null);
 
 
 
-    const handleClose = () => {
-        setOpen(false);
+    const handleCloseCreate = () => {
+        setOpenCreate(false);
+    };
+    const handleOpenCreate = (type) => {
+        setButtonType(type);
+        setOpenCreate(true);
     };
 
-    const handleOpen = (type) => {
-        setButtonType(type);
-        setOpen(true);
+    const handleOpenCourse = (index) => {
+        setSelected(index)
+        setOpenCourseInfo(true);
     };
+    const handleCloseCourseInfo = (index) => {
+        setSelected(0)
+        setOpenCourseInfo(false);
+    };
+
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
     };
@@ -38,6 +49,7 @@ export const AdminCourse = () => {
             [index]: !prevState[index]
         }));
     };
+
     const handleClickOutside = (event) => {
         if (actionsRef.current && !actionsRef.current.contains(event.target)) {
             setActionsOpen(false);
@@ -158,17 +170,17 @@ export const AdminCourse = () => {
                     </div>
                     {isOpen && (
                         <ul className={styles.createDiv} ref={createRef}>
-                            <button onClick={() => handleOpen("COURSE")}><img src={getImageUrl('courseIcon.png')} />COURSE</button>
-                            <button onClick={() => handleOpen("ASSIGNMENTS")}><img src={getImageUrl('assignments.png')} />ASSIGNMENTS</button>
-                            <button onClick={() => handleOpen("QUIZ")}><img src={getImageUrl('quizIcon.png')} />QUIZ</button>
+                            <button onClick={() => handleOpenCreate("COURSE")}><img src={getImageUrl('courseIcon.png')} />COURSE</button>
+                            <button onClick={() => handleOpenCreate("ASSIGNMENTS")}><img src={getImageUrl('assignments.png')} />ASSIGNMENTS</button>
+                            <button onClick={() => handleOpenCreate("QUIZ")}><img src={getImageUrl('quizIcon.png')} />QUIZ</button>
                         </ul>
                     )}
-                    <Modal isOpen={open} >
+                    <Modal isOpen={openCreate}>
                         <>
                         <div className={styles.course_modal}>
                             <div className={styles.head}>
                                 <h3>{buttonType === "COURSE" ? "Create Course" : buttonType === "ASSIGNMENTS" ? "Create Assignment" : "Create Quiz"}</h3>
-                                <button onClick={handleClose} className={styles.close}><img src={getImageUrl('close.png')} /></button>
+                                <button onClick={handleCloseCreate} className={styles.close}><img src={getImageUrl('close.png')} /></button>
                             </div>
                             <div className={styles.content}>
                                 <div>
@@ -181,18 +193,15 @@ export const AdminCourse = () => {
                                         <option value="">Select Event Type</option>
                                     </select>
                                 </div>
-
                             </div>
                             <div className={styles.contain}>
                                 <div>
                                     <h5>Start Date & Time</h5>
                                     <input type="datetime" name="" id="" />
-                                    {/* <button onClick={toggleDropdown2}><span>Select Date & Time</span> <img src={getImageUrl('arrown_down_black.png')} alt="" /></button> */}
                                 </div>
                                 <div>
                                     <h5>Due Date</h5>
                                     <input type="date" name="" id="" />
-                                    {/* <button onClick={toggleDropdown2}><span>Select Due Date</span> <img src={getImageUrl('arrown_down_black.png')} alt="" /></button> */}
                                 </div>
                             </div>
                             <button className={styles.submit}>Submit</button>
@@ -203,7 +212,7 @@ export const AdminCourse = () => {
 
                 <div className={styles.course}>
                     {courses.map((cour, index) => (
-                        <div className={styles.courseInfo} >
+                        <div key={index} className={styles.courseInfo} onClick={()=>handleOpenCourse(index)}>
                             <div className={styles.courseImage}>
                                 <img src={getImageUrl('frame7.png')} />
                             </div>
@@ -230,12 +239,25 @@ export const AdminCourse = () => {
                                     <div className={styles.students}><img src={getImageUrl('frame5.png')} alt="" />{cour.students} Students</div>
                                 </div>
                             </div>
-
                         </div>
+                        
                     ))}
                 </div>
             </div>
         </div>
+
+        <Modal isOpen={openCourseInfo} >
+            <>
+            <div className={styles.courseInfo_modal}>
+                <div className={styles.head}>
+                    <h3>{buttonType === "COURSE" ? "Create Course" : buttonType === "ASSIGNMENTS" ? "Create Assignment" : "Create Quiz"}</h3>
+                    <button onClick={handleCloseCourseInfo} className={styles.close}><img src={getImageUrl('close.png')} /></button>
+                </div>
+                MODAL CONTENT
+                Selected course index is: {selected}
+            </div>
+            </>
+        </Modal>
         </>
     )
 
