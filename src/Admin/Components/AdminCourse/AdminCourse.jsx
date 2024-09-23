@@ -1,13 +1,70 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { getImageUrl } from "../../../utilis";
 import styles from "./AdminCourse.module.css";
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import Modal from "./Modal";
 
 export const AdminCourse = () => {
 
     const [ currentPage, setCurrentPage ] = useState(1);
-    // v
+    const [ isOpen, setIsOpen ] = useState(false);
+    const [ openCreate, setOpenCreate ] = useState(false);
+    const [ openCourseInfo, setOpenCourseInfo ] = useState(false);
+    const [ buttonType, setButtonType ] = useState("");
+    const [ actionsOpen, setActionsOpen ] = useState({});
+    const [ selected, setSelected ] = useState(null);
+    const actionsRef = useRef(null);
+    const createRef = useRef(null);
+
+
+
+    const handleCloseCreate = () => {
+        setOpenCreate(false);
+    };
+    const handleOpenCreate = (type) => {
+        setButtonType(type);
+        setOpenCreate(true);
+    };
+
+    const handleOpenCourse = (index) => {
+        setSelected(index)
+        setOpenCourseInfo(true);
+    };
+    const handleCloseCourseInfo = (index) => {
+        setSelected(0)
+        setOpenCourseInfo(false);
+    };
+
+    const toggleDropdown = () => {
+        setIsOpen(!isOpen);
+    };
+    const toggleDropdown2 = () => {
+
+    };
+    
+    const toggleAction = (index) => {
+        setActionsOpen(prevState => ({
+            ...prevState,
+            [index]: !prevState[index]
+        }));
+    };
+
+    const handleClickOutside = (event) => {
+        if (actionsRef.current && !actionsRef.current.contains(event.target)) {
+            setActionsOpen(false);
+        }
+        if (createRef.current && !createRef.current.contains(event.target)) {
+            setIsOpen(false);
+        }
+    };
+    useEffect(() => {
+        document.addEventListener('click', handleClickOutside, true);
+        return () => {
+            document.removeEventListener('click', handleClickOutside, true);
+        };
+    }, []);
+
     const courses = [
         {
             title: 'Course Title 1',
@@ -98,258 +155,109 @@ export const AdminCourse = () => {
         //     location: 'Physical'
         // }
     ]
-    // const indexOfLastItem = currentPage * itemsPerPage;
-    // const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    // const currentTeachers = teachers.slice(indexOfFirstItem, indexOfLastItem);
-
-    // const handlePageChange = (pageNumber) => {
-    //     setCurrentPage(pageNumber);
-    // };
-
-    // const handlePageNumber = (itemNumber) => {
-    //     setItemsPerPage(itemNumber);
-    //     setCurrentPage(1);
-    //     scroll.current.scrollIntoView();
-    // };
-
-    // const toggleAction = (index) => {
-    //     setActionsOpen(prevState => ({
-    //         ...prevState,
-    //         [index]: !prevState[index]
-    //     }));
-    // };
-
-    // const handleClickOutside = (event) => {
-    //     if (actionsRef.current && !actionsRef.current.contains(event.target)) {
-    //         setActionsOpen(false);
-    //     }
-    // };
-    // useEffect(() => {
-    //     document.addEventListener('click', handleClickOutside, true);
-    //     return () => {
-    //         document.removeEventListener('click', handleClickOutside, true);
-    //     };
-    // }, []);
-
+    
 
     return (
         <>
-            <div className={styles.whole}>
-                <h5>Courses </h5>
-                <div>
-                    <div className={styles.title}>
-                        <h1>Active Courses</h1>
-                        <div className={styles.buttons}>
-                    <button className={styles.buttonOne}>Sort By<img src={getImageUrl('sortIcon.png')} /></button>
-                    <button className={styles.buttonTwo}><img src={getImageUrl('add.png')} />Create Event</button>
+        <div className={styles.whole}>
+            <h5>Courses </h5>
+            <div>
+                <div className={styles.title}>
+                    <h1>Active Courses</h1>
+                    <div className={styles.buttons}>
+                        <button className={styles.buttonOne}>Sort By<img src={getImageUrl('sortIcon.png')} /></button>
+                        <button className={styles.buttonTwo} onClick={toggleDropdown} ><img src={getImageUrl('add.png')} />Create Event</button>
+                    </div>
+                    {isOpen && (
+                        <ul className={styles.createDiv} ref={createRef}>
+                            <button onClick={() => handleOpenCreate("COURSE")}><img src={getImageUrl('courseIcon.png')} />COURSE</button>
+                            <button onClick={() => handleOpenCreate("ASSIGNMENTS")}><img src={getImageUrl('assignments.png')} />ASSIGNMENTS</button>
+                            <button onClick={() => handleOpenCreate("QUIZ")}><img src={getImageUrl('quizIcon.png')} />QUIZ</button>
+                        </ul>
+                    )}
+                    <Modal isOpen={openCreate}>
+                        <>
+                        <div className={styles.course_modal}>
+                            <div className={styles.head}>
+                                <h3>{buttonType === "COURSE" ? "Create Course" : buttonType === "ASSIGNMENTS" ? "Create Assignment" : "Create Quiz"}</h3>
+                                <button onClick={handleCloseCreate} className={styles.close}><img src={getImageUrl('close.png')} /></button>
+                            </div>
+                            <div className={styles.content}>
+                                <div>
+                                    <h5>{buttonType === "COURSE" ? "Event Name" : buttonType === "ASSIGNMENTS" ? "Content title" : "Event Name"}</h5>
+                                    <input type="text" placeholder="Enter Event Name"></input>
+                                </div>
+                                <div>
+                                    <h5>{buttonType === "COURSE" ? "Event Type" : buttonType === "ASSIGNMENTS" ? "Duration" : "Event Type"}</h5>
+                                    <select name="" id="" onClick={toggleDropdown2}>
+                                        <option value="">Select Event Type</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className={styles.contain}>
+                                <div>
+                                    <h5>Start Date & Time</h5>
+                                    <input type="datetime" name="" id="" />
+                                </div>
+                                <div>
+                                    <h5>Due Date</h5>
+                                    <input type="date" name="" id="" />
+                                </div>
+                            </div>
+                            <button className={styles.submit}>Submit</button>
+                        </div>
+                        </>
+                    </Modal>
                 </div>
-                    </div>
-                    
-                    <div className={styles.course}>
-                        {courses.map((cour, index) => (
-                            <div className={styles.courseInfo}>
-                                <div className={styles.courseImage}>
-                                   <img src={getImageUrl('frame7.png')} />
-                                </div>
-                                <div className={styles.infoHeader}>
-                                    <div><h3>Artificial Intelligence<span>Started</span></h3></div>
-                                    <button><img src={getImageUrl('threeDots.png')} alt="" /></button>
-                                </div>
-                                <p>Lorem ipsum dolor sit amet consectetur. Feugia t blandit turpis.Lorem ipsum dolor sit amet consector.
-                                    Feugia t blandit turpis...  </p>
-                                <div className={styles.courseData}>
-                                    <div className={styles.bread}>
-                                        <div className={styles.profile}><img src={getImageUrl('calend.png')} alt="" />Monday, 28 June -28 August 2024</div>
-                                         <div className={styles.profile}><img src={getImageUrl('timeline.png')} alt="" />A Month</div>
-                                    </div>
-                                    <div className={styles.crumb}>
-                                        <div className={styles.profile}><img src={getImageUrl('profile.png')} alt="" />{cour.teacher}</div>
-                                        <div className={styles.students}><img src={getImageUrl('frame5.png')} alt="" />{cour.students} Students</div>
-                                    </div>
-                                </div>
-                                
-                            </div>
-                        ))}
-                        
 
-                        {/* <div className={styles.courseInfo}>
-                            <div className={styles.infoHeader}>
-                                <h3>Course Title 1 <span>Physical</span></h3>
-                                <button><img src={getImageUrl('Vector.png')} alt="" /></button>
+                <div className={styles.course}>
+                    {courses.map((cour, index) => (
+                        <div key={index} className={styles.courseInfo} onClick={()=>handleOpenCourse(index)}>
+                            <div className={styles.courseImage}>
+                                <img src={getImageUrl('frame7.png')} />
                             </div>
-                            <p>A short lesson description...</p>
+                            <div className={styles.infoHeader}>
+                                <div><h3>Artificial Intelligence<span>Started</span></h3></div>
+                                <div>
+                                    <button className={styles.actionsButton} onClick={() => toggleAction(index)}><img src={getImageUrl('threeDots.png')} /></button>
+                                    <div className={`${styles.actionsClosed} ${actionsOpen[index] && styles.theActions}`} ref={actionsRef}>
+                                        <h5>ACTION</h5>
+                                        <button><img src={getImageUrl('approve.png')} />SUSPEND</button>
+                                        <button><img src={getImageUrl('delete.png')} />DECLINE</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <p>Lorem ipsum dolor sit amet consectetur. Feugia t blandit turpis.Lorem ipsum dolor sit amet consector.
+                                Feugia t blandit turpis...  </p>
                             <div className={styles.courseData}>
                                 <div className={styles.bread}>
-                                    <div className={styles.profile}><img src={getImageUrl('prof.png')} alt="" />Arafat Murad</div>
-                                    <div className={styles.profile}><img src={getImageUrl('Students.png')} alt="" />72 Students</div>
+                                    <div className={styles.profile}><img src={getImageUrl('calend.png')} alt="" />Monday, 28 June -28 August 2024</div>
+                                    <div className={styles.profile}><img src={getImageUrl('timeline.png')} alt="" />A Month</div>
                                 </div>
                                 <div className={styles.crumb}>
-                                    <div className={styles.profile}><img src={getImageUrl('timer.png')} alt="" />10 Weeks</div>
-                                    <div className={styles.profile}><img src={getImageUrl('lesson.png')} alt="" />16 Modules</div>
-                                    <div className={styles.profile}><img src={getImageUrl('assignment.png')} alt="" />10am Wed-Fri</div>
+                                    <div className={styles.profile}><img src={getImageUrl('profile.png')} alt="" />{cour.teacher}</div>
+                                    <div className={styles.students}><img src={getImageUrl('frame5.png')} alt="" />{cour.students} Students</div>
                                 </div>
-                            </div>
-                            <div className={styles.withLoader}>
-                                <div className={styles.coursesLoader}>
-                                    <p>7/12 Modules</p>
-                                    <progress className={styles.progress} id="progress" max={150} value={50} />
-                                </div>
-                                <button>Continue Course</button>
                             </div>
                         </div>
-                        <div className={styles.courseInfo}>
-                            <div className={styles.infoHeader}>
-                                <h3>Course Title 1 <span>Physical</span></h3>
-                                <button><img src={getImageUrl('Vector.png')} alt="" /></button>
-                            </div>
-                            <p>A short lesson description...</p>
-                            <div className={styles.courseData}>
-                                <div className={styles.bread}>
-                                    <div className={styles.profile}><img src={getImageUrl('prof.png')} alt="" />Arafat Murad</div>
-                                    <div className={styles.profile}><img src={getImageUrl('Students.png')} alt="" />72 Students</div>
-                                </div>
-                                <div className={styles.crumb}>
-                                    <div className={styles.profile}><img src={getImageUrl('timer.png')} alt="" />10 Weeks</div>
-                                    <div className={styles.profile}><img src={getImageUrl('lesson.png')} alt="" />16 Modules</div>
-                                    <div className={styles.profile}><img src={getImageUrl('assignment.png')} alt="" />10am Wed-Fri</div>
-                                </div>
-                            </div>
-                            <div className={styles.withLoader}>
-                                <div className={styles.coursesLoader}>
-                                    <p>7/12 Modules</p>
-                                    <progress className={styles.progress} id="progress" max={10} value={9} />
-                                </div>
-                                <button>Continue Course</button>
-                            </div>
-                        </div>
-                        <div className={styles.courseInfo}>
-                            <div className={styles.infoHeader}>
-                                <h3>Course Title 1 <span>Physical</span></h3>
-                                <button><img src={getImageUrl('Vector.png')} alt="" /></button>
-                            </div>
-                            <p>A short lesson description...</p>
-                            <div className={styles.courseData}>
-                                <div className={styles.bread}>
-                                    <div className={styles.profile}><img src={getImageUrl('prof.png')} alt="" />Arafat Murad</div>
-                                    <div className={styles.profile}><img src={getImageUrl('Students.png')} alt="" />72 Students</div>
-                                </div>
-                                <div className={styles.crumb}>
-                                    <div className={styles.profile}><img src={getImageUrl('timer.png')} alt="" />10 Weeks</div>
-                                    <div className={styles.profile}><img src={getImageUrl('lesson.png')} alt="" />16 Modules</div>
-                                    <div className={styles.profile}><img src={getImageUrl('assignment.png')} alt="" />10am Wed-Fri</div>
-                                </div>
-                            </div>
-                            <div className={styles.withLoader}>
-                                <div className={styles.coursesLoader}>
-                                    <p>7/12 Modules</p>
-                                    <progress className={styles.progress} id="progress" max={150} value={50} />
-                                </div>
-                                <button>Continue Course</button>
-                            </div>
-                        </div>
-                        <div className={styles.courseInfo}>
-                            <div className={styles.infoHeader}>
-                                <h3>Course Title 1 <span>Physical</span></h3>
-                                <button><img src={getImageUrl('Vector.png')} alt="" /></button>
-                            </div>
-                            <p>A short lesson description...</p>
-                            <div className={styles.courseData}>
-                                <div className={styles.bread}>
-                                    <div className={styles.profile}><img src={getImageUrl('prof.png')} alt="" />Arafat Murad</div>
-                                    <div className={styles.profile}><img src={getImageUrl('Students.png')} alt="" />72 Students</div>
-                                </div>
-                                <div className={styles.crumb}>
-                                    <div className={styles.profile}><img src={getImageUrl('timer.png')} alt="" />10 Weeks</div>
-                                    <div className={styles.profile}><img src={getImageUrl('lesson.png')} alt="" />16 Modules</div>
-                                    <div className={styles.profile}><img src={getImageUrl('assignment.png')} alt="" />10am Wed-Fri</div>
-                                </div>
-                            </div>
-                            <div className={styles.withLoader}>
-                                <div className={styles.coursesLoader}>
-                                    <p>7/12 Modules</p>
-                                    <progress className={styles.progress} id="progress" max={150} value={50} />
-                                </div>
-                                <button>Continue Course</button>
-                            </div>
-                        </div>
-                        <div className={styles.courseInfo}>
-                            <div className={styles.infoHeader}>
-                                <h3>Course Title 1 <span>Physical</span></h3>
-                                <button><img src={getImageUrl('Vector.png')} alt="" /></button>
-                            </div>
-                            <p>A short lesson description...</p>
-                            <div className={styles.courseData}>
-                                <div className={styles.bread}>
-                                    <div className={styles.profile}><img src={getImageUrl('prof.png')} alt="" />Arafat Murad</div>
-                                    <div className={styles.profile}><img src={getImageUrl('Students.png')} alt="" />72 Students</div>
-                                </div>
-                                <div className={styles.crumb}>
-                                    <div className={styles.profile}><img src={getImageUrl('timer.png')} alt="" />10 Weeks</div>
-                                    <div className={styles.profile}><img src={getImageUrl('lesson.png')} alt="" />16 Modules</div>
-                                    <div className={styles.profile}><img src={getImageUrl('assignment.png')} alt="" />10am Wed-Fri</div>
-                                </div>
-                            </div>
-                            <div className={styles.withLoader}>
-                                <div className={styles.coursesLoader}>
-                                    <p>7/12 Modules</p>
-                                    <progress className={styles.progress} id="progress" max={150} value={50} />
-                                </div>
-                                <button>Continue Course</button>
-                            </div>
-                        </div>
-                        <div className={styles.courseInfo}>
-                            <div className={styles.infoHeader}>
-                                <h3>Course Title 1 <span>Physical</span></h3>
-                                <button><img src={getImageUrl('Vector.png')} alt="" /></button>
-                            </div>
-                            <p>A short lesson description...</p>
-                            <div className={styles.courseData}>
-                                <div className={styles.bread}>
-                                    <div className={styles.profile}><img src={getImageUrl('prof.png')} alt="" />Arafat Murad</div>
-                                    <div className={styles.profile}><img src={getImageUrl('Students.png')} alt="" />72 Students</div>
-                                </div>
-                                <div className={styles.crumb}>
-                                    <div className={styles.profile}><img src={getImageUrl('timer.png')} alt="" />10 Weeks</div>
-                                    <div className={styles.profile}><img src={getImageUrl('lesson.png')} alt="" />16 Modules</div>
-                                    <div className={styles.profile}><img src={getImageUrl('assignment.png')} alt="" />10am Wed-Fri</div>
-                                </div>
-                            </div>
-                            <div className={styles.withLoader}>
-                                <div className={styles.coursesLoader}>
-                                    <p>7/12 Modules</p>
-                                    <progress className={styles.progress} id="progress" max={150} value={50} />
-                                </div>
-                                <button>Continue Course</button>
-                            </div>
-                        </div>
-                        <div className={styles.courseInfo}>
-                            <div className={styles.infoHeader}>
-                                <h3>Course Title 1 <span>Physical</span></h3>
-                                <button><img src={getImageUrl('Vector.png')} alt="" /></button>
-                            </div>
-                            <p>A short lesson description...</p>
-                            <div className={styles.courseData}>
-                                <div className={styles.bread}>
-                                    <div className={styles.profile}><img src={getImageUrl('prof.png')} alt="" />Arafat Murad</div>
-                                    <div className={styles.profile}><img src={getImageUrl('Students.png')} alt="" />72 Students</div>
-                                </div>
-                                <div className={styles.crumb}>
-                                    <div className={styles.profile}><img src={getImageUrl('timer.png')} alt="" />10 Weeks</div>
-                                    <div className={styles.profile}><img src={getImageUrl('lesson.png')} alt="" />16 Modules</div>
-                                    <div className={styles.profile}><img src={getImageUrl('assignment.png')} alt="" />10am Wed-Fri</div>
-                                </div>
-                            </div>
-                            <div className={styles.withLoader}>
-                                <div className={styles.coursesLoader}>
-                                    <p>7/12 Modules</p>
-                                    <progress className={styles.progress} id="progress" max={150} value={50} />
-                                </div>
-                                <button>Continue Course</button>
-                            </div>
-                        </div> */}
-                    </div>
+                        
+                    ))}
                 </div>
             </div>
+        </div>
+
+        <Modal isOpen={openCourseInfo} >
+            <>
+            <div className={styles.courseInfo_modal}>
+                <div className={styles.head}>
+                    <h3>{buttonType === "COURSE" ? "Create Course" : buttonType === "ASSIGNMENTS" ? "Create Assignment" : "Create Quiz"}</h3>
+                    <button onClick={handleCloseCourseInfo} className={styles.close}><img src={getImageUrl('close.png')} /></button>
+                </div>
+                MODAL CONTENT
+                Selected course index is: {selected}
+            </div>
+            </>
+        </Modal>
         </>
     )
 

@@ -179,7 +179,119 @@
     font-size: 12px;
     font-weight: 500;
 }
+.course_modal{
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    padding: 16px;
+    gap:8 ;
+    border: 1px solid #BDD9FF;
+    box-shadow: 0px 3px 5px 0px #00000017;
+    background-color: #Fff;
+    height: 400px;
+    width: 460px; 
+    
+}
+.close{
+    background: #fff;
+    border: none;
+}
+.submit{
+    align-items: center;
+    background: #2C2F7E;
+    padding: 4px 6px;
+    gap: 4px;
+    border-radius: 7px;
+    color: #F0F0F0;
+    font-size: 18px;
+    font-weight: 500;
+    border: none;
+    outline: none;
+}
+.head{
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+.content {
+    margin-bottom:15px;
+    margin-top: 25px;
+    display: flex;
+    flex-direction: column;
+    width: Fill (458px);
+    height: Fixed (81px);
+    border-radius: 8px 0px 0px 0px;
+    border: 1px 0px 0px 0px;
+    justify-content: space-between;
+    gap: 15px;
+}
 
+.content div {
+    display: flex;
+    flex-direction: column;
+    
+}
+.content input{
+    margin-top: 10px;
+    padding: 10px 12px 10px 12px;
+    border-radius: 8px 8px 8px 8px;
+    border: 1px solid #ccc;
+    width: Fill (458px)px;
+    height: Fixed (49px)px;
+}
+.content button{
+    display: inline-flex;
+    align-items: center;
+    margin-top: 10px;
+    padding: 10px 12px 10px 12px;
+    border-radius: 8px 8px 8px 8px;
+    border: 1px solid #ccc;
+    width: Fill (458px)px;
+    height: 40px;
+    background-color: #Fff;
+    color: #000;
+    
+}
+.content button span {
+    flex-grow: 2;
+    text-align:justify; 
+    padding-left: 1px; 
+  }
+.content div button img {
+    width: 15px;
+    height: 18px;
+    color: #000;
+}
+
+.contain{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 2px;
+    margin-bottom: 30px;
+}
+.contain div{
+    display: flex;
+    flex-direction: column;
+}
+.contain button{
+    display: inline-flex;
+    align-items: center;
+    margin-top: 10px;
+    padding: 10px 12px 10px 12px;
+    border-radius: 8px 8px 8px 8px;
+    border: 1px solid #ccc;
+    width: 200px;
+    height: 40px;
+    background-color: #Fff;
+    color: #000;
+    
+}
+.contain button span {
+    flex-grow: 2;
+    text-align:justify; 
+    padding-left: 1px; 
+  }
 
 
 

@@ -6,6 +6,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import Modal from "../../Components/AdminCourse/Modal";
 import { format } from 'date-fns';
 
 
@@ -16,7 +17,18 @@ export const SchedulePage = () => {
     const navigate = useNavigate();
     const calendarRef = useRef(null);
     const calendarAPI = calendarRef?.current?.getApi();
-
+    const [isOpen, setIsOpen] = useState(false);
+    const [open, setOpen] = useState(false);
+    const handleClose = () => {
+        setOpen(false);
+    };
+ 
+    const handleOpen = () => {
+        setOpen(true);
+    };
+    const toggleDropdown = () => {
+        
+    };
 
     const courses = [
         {
@@ -81,10 +93,36 @@ export const SchedulePage = () => {
 
                 <div className={styles.buttons}>
                     <button className={styles.buttonOne}>Sort By<img src={getImageUrl('sortIcon.png')} /></button>
-                    <button className={styles.buttonTwo}><img src={getImageUrl('whitePlus.png')} />Create Event</button>
+                    <button className={styles.buttonTwo} onClick={handleOpen}><img src={getImageUrl('whitePlus.png')} />Create Event</button>
                 </div>
             </div>
+                <Modal isOpen={open} >
+                <div className={styles.course_modal}>
+                    <div className={styles.head}>
+                        <h3>Create Event </h3>
+                        <button onClick={handleClose} className={styles.close}><img src={getImageUrl('close.png')} alt="" /></button>
+                    </div><div className={styles.content}>
+                            <div>
+                                <h5>Event Name</h5>
+                                <input type="text" placeholder="Enter Event Name"></input>
+                            </div>
+                            <div>
+                                <h5>Event Type</h5>
+                                <button onClick={toggleDropdown}><span>Select Event Type</span> <img src={getImageUrl('arrown_down_black.png')} alt="" /></button>
+                            </div>
 
+                        </div><div className={styles.contain}>
+                            <div>
+                                <h5>Start Date & Time</h5>
+                                <button onClick={toggleDropdown}><span>Select Date & Time</span> <img src={getImageUrl('arrown_down_black.png')} alt="" /></button>
+                            </div>
+                            <div>
+                                <h5>Due Date</h5>
+                                <button onClick={toggleDropdown}><span>Select Due Date</span> <img src={getImageUrl('arrown_down_black.png')} alt="" /></button>
+                            </div>
+                        </div><button className={styles.submit}>Submit</button>
+                </div>
+        </Modal>
             <div className={styles.biggerDiv}>
             
                 <div className={styles.bigDiv}>

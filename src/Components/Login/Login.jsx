@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import { getImageUrl } from "../../utilis";
 import styles from "./Login.module.css";
-import axios from 'axios'
+import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 
 
