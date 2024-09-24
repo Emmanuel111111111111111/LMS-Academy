@@ -412,22 +412,9 @@
     flex: 30%
 }
 .searchBar {
-    display: flex;
-    border-bottom: 2px solid #C4C4C4;
-    padding: 12px 0;
-    gap: 12px;
+    display: none;
 }
-.searchBar input {
-    border: none;
-    outline: none;
-    font-size: 16px;
-    font-weight: 500;
-    color: #9191B2;
-}
-.searchBar img {
-    width: 24px;
-    height: 24px;
-}
+
 
 
 
@@ -439,6 +426,23 @@
         margin: auto;
         margin-top: 80px;
         
+    }
+    .searchBar {
+        display: flex;
+        border-bottom: 2px solid #C4C4C4;
+        padding: 12px 0;
+        gap: 12px;
+    }
+    .searchBar input {
+        border: none;
+        outline: none;
+        font-size: 16px;
+        font-weight: 500;
+        color: #9191B2;
+    }
+    .searchBar img {
+        width: 24px;
+        height: 24px;
     }
     .welcomeBanner{
         flex-direction: column;

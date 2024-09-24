@@ -22,6 +22,9 @@
     font-weight: 600;
     color: #2C2F7E;
 }
+.headerLeft img{
+    display:none;
+}
 
 .links {
     display: inline-flex;
@@ -116,5 +119,8 @@
         margin-right: 100px;
         gap: 0px;
         margin-left: 5px;
+    }
+    .headerLeft img{
+        display:flex;
     }
 }

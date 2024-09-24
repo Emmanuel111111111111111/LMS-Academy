@@ -103,11 +103,19 @@ export const Course = () => {
     return (
         <>
             <div className={styles.whole}>
-                <h5>Courses <img src={getImageUrl('Icons12.png')} alt="" /> <a href="">Active</a></h5>
+                <h5 className={styles.above}>Courses <img src={getImageUrl('Icons12.png')} alt="" /> <a href="">Active</a></h5>
+                <h5 className={styles.below}>Courses <img src={getImageUrl('Icons12.png')} alt="" /> <a href="">Active</a></h5>
                 <div>
+                    
                     <div className={styles.title}>
+                        <div className={styles.active}>
                         <h1>Active Courses <span>({courses.length})</span></h1>
-                        <button><img src={getImageUrl('sort.png')} alt="" /></button>
+                        </div>
+                        <div className={styles.searchBar}>
+                    <img src={getImageUrl('searchIcon.png')} />
+                    <input type="text" placeholder="Search" />
+                         </div>
+                        <button className={styles.sort} ><img src={getImageUrl('sort.png')} alt="" /></button>
                     </div>
                     
                     <div className={styles.course}>
