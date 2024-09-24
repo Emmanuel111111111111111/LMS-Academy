@@ -104,7 +104,7 @@
 
 .infoHeader{
     display: flex;
-    justify-content: space-between;    
+    justify-content: space-between;
 }
 
 .infoHeader h3{
@@ -130,9 +130,10 @@
     border: 1px solid #A1B2D1;
     display: flex;
     align-items: center;
-    padding: 2px 4px;
+    padding: 4px;
     background: transparent;
     border-radius: 5px;
+    height: fit-content;
 }
 .infoHeader button img {
     height: 20px;

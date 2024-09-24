@@ -193,3 +193,16 @@
     background: #10A400;
     border-radius: 18px;
 }
+
+
+@media screen and (max-width: 830px) {
+ .whole{
+    margin-left: 280px;
+    margin-top: 80px;
+    width: 50%;
+    padding: 16px 24px;
+    background: #F8F9FD;
+    display: flex;
+    flex-direction: column;
+ }
+}

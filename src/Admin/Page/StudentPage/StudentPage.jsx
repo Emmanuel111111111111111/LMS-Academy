@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from './StudentPage.module.css';
 import { getImageUrl } from "../../../utilis";
 import Pagination from "../../../Components/Pagination/Pagination";
+import axios from 'axios';
+
 
 export const StudentPage = () => {
 
@@ -10,115 +12,130 @@ export const StudentPage = () => {
     const [ actionsOpen, setActionsOpen ] = useState({});
     const scroll = useRef(null);
     const actionsRef = useRef(null);
+    const [ students, setStudents ] = useState([]);
+    
+    useEffect(() => {
+        fetchStudents();
+    }, []);
 
-
-
-    const students = [
-        {
-            name: 'John Raymond',
-            course: 'Machine Learning',
-            date: 'July 1, 2024',
-            phone_number: '09041638647',
-            email: 'johndow2024@gmail.com',
-            status: 'Active'
-        },
-        {
-            name: 'John Raymond',
-            course: 'Machine Learning',
-            date: 'July 1, 2024',
-            phone_number: '09041638647',
-            email: 'johndow2024@gmail.com',
-            status: 'Inactive'
-        },
-        {
-            name: 'John Raymond',
-            course: 'Machine Learning',
-            date: 'July 1, 2024',
-            phone_number: '09041638647',
-            email: 'johndow2024@gmail.com',
-            status: 'Inactive'
-        },
-        {
-            name: 'John Raymond',
-            course: 'Machine Learning',
-            date: 'July 1, 2024',
-            phone_number: '09041638647',
-            email: 'johndow2024@gmail.com',
-            status: 'Inactive'
-        },
-        {
-            name: 'John Raymond',
-            course: 'Machine Learning',
-            date: 'July 1, 2024',
-            phone_number: '09041638647',
-            email: 'johndow2024@gmail.com',
-            status: 'Active'
-        },
-        {
-            name: 'John Raymond',
-            course: 'Machine Learning',
-            date: 'July 1, 2024',
-            phone_number: '09041638647',
-            email: 'johndow2024@gmail.com',
-            status: 'Inactive'
-        },
-        {
-            name: 'John Raymond',
-            course: 'Machine Learning',
-            date: 'July 1, 2024',
-            phone_number: '09041638647',
-            email: 'johndow2024@gmail.com',
-            status: 'Active'
-        },
-        {
-            name: 'John Raymond',
-            course: 'Machine Learning',
-            date: 'July 1, 2024',
-            phone_number: '09041638647',
-            email: 'johndow2024@gmail.com',
-            status: 'Inactive'
-        },
-        {
-            name: 'John Raymond',
-            course: 'Machine Learning',
-            date: 'July 1, 2024',
-            phone_number: '09041638647',
-            email: 'johndow2024@gmail.com',
-            status: 'Inactive'
-        },
-        {
-            name: 'John Raymond',
-            course: 'Machine Learning',
-            date: 'July 1, 2024',
-            phone_number: '09041638647',
-            email: 'johndow2024@gmail.com',
-            status: 'Active'
-        },
-        {
-            name: 'John Raymond',
-            course: 'Machine Learning',
-            date: 'July 1, 2024',
-            phone_number: '09041638647',
-            email: 'johndow2024@gmail.com',
-            status: 'Active'
-        },
-        {
-            name: 'John Raymond',
-            course: 'Machine Learning',
-            date: 'July 1, 2024',
-            phone_number: '09041638647',
-            email: 'johndow2024@gmail.com',
-            status: 'Inactive'
-        },
-        {
-            name: 'John Raymond',
-            course: 'Machine Learning',
-            date: 'July 1, 2024',
-            phone_number: '09041638647',
-            email: 'johndow2024@gmail.com',
-            status: 'Active'
+    const fetchStudents = async () => {
+        try {
+            const result = await axios("http://localhost:8081/students");
+            console.log(result);
+            setStudents(result.data);
+        } catch (err) {
+            console.log(err);
         }
-    ]
+    }
+
+
+
+    // const students = [
+    //     {
+    //         name: 'John Raymond',
+    //         course: 'Machine Learning',
+    //         date: 'July 1, 2024',
+    //         phone_number: '09041638647',
+    //         email: 'johndow2024@gmail.com',
+    //         status: 'Active'
+    //     },
+    //     {
+    //         name: 'John Raymond',
+    //         course: 'Machine Learning',
+    //         date: 'July 1, 2024',
+    //         phone_number: '09041638647',
+    //         email: 'johndow2024@gmail.com',
+    //         status: 'Inactive'
+    //     },
+    //     {
+    //         name: 'John Raymond',
+    //         course: 'Machine Learning',
+    //         date: 'July 1, 2024',
+    //         phone_number: '09041638647',
+    //         email: 'johndow2024@gmail.com',
+    //         status: 'Inactive'
+    //     },
+    //     {
+    //         name: 'John Raymond',
+    //         course: 'Machine Learning',
+    //         date: 'July 1, 2024',
+    //         phone_number: '09041638647',
+    //         email: 'johndow2024@gmail.com',
+    //         status: 'Inactive'
+    //     },
+    //     {
+    //         name: 'John Raymond',
+    //         course: 'Machine Learning',
+    //         date: 'July 1, 2024',
+    //         phone_number: '09041638647',
+    //         email: 'johndow2024@gmail.com',
+    //         status: 'Active'
+    //     },
+    //     {
+    //         name: 'John Raymond',
+    //         course: 'Machine Learning',
+    //         date: 'July 1, 2024',
+    //         phone_number: '09041638647',
+    //         email: 'johndow2024@gmail.com',
+    //         status: 'Inactive'
+    //     },
+    //     {
+    //         name: 'John Raymond',
+    //         course: 'Machine Learning',
+    //         date: 'July 1, 2024',
+    //         phone_number: '09041638647',
+    //         email: 'johndow2024@gmail.com',
+    //         status: 'Active'
+    //     },
+    //     {
+    //         name: 'John Raymond',
+    //         course: 'Machine Learning',
+    //         date: 'July 1, 2024',
+    //         phone_number: '09041638647',
+    //         email: 'johndow2024@gmail.com',
+    //         status: 'Inactive'
+    //     },
+    //     {
+    //         name: 'John Raymond',
+    //         course: 'Machine Learning',
+    //         date: 'July 1, 2024',
+    //         phone_number: '09041638647',
+    //         email: 'johndow2024@gmail.com',
+    //         status: 'Inactive'
+    //     },
+    //     {
+    //         name: 'John Raymond',
+    //         course: 'Machine Learning',
+    //         date: 'July 1, 2024',
+    //         phone_number: '09041638647',
+    //         email: 'johndow2024@gmail.com',
+    //         status: 'Active'
+    //     },
+    //     {
+    //         name: 'John Raymond',
+    //         course: 'Machine Learning',
+    //         date: 'July 1, 2024',
+    //         phone_number: '09041638647',
+    //         email: 'johndow2024@gmail.com',
+    //         status: 'Active'
+    //     },
+    //     {
+    //         name: 'John Raymond',
+    //         course: 'Machine Learning',
+    //         date: 'July 1, 2024',
+    //         phone_number: '09041638647',
+    //         email: 'johndow2024@gmail.com',
+    //         status: 'Inactive'
+    //     },
+    //     {
+    //         name: 'John Raymond',
+    //         course: 'Machine Learning',
+    //         date: 'July 1, 2024',
+    //         phone_number: '09041638647',
+    //         email: 'johndow2024@gmail.com',
+    //         status: 'Active'
+    //     }
+    // ]
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -178,14 +195,15 @@ export const StudentPage = () => {
                     {currentStudents.map((student, index) => (
                         <tr>
                             <td><input type="checkbox" /></td>
-                            <td>{student.name}</td>
+                            <td>{student.first_name} {student.last_name}</td>
                             <td>{student.course}</td>
                             <td>{student.date}</td>
-                            <td>{student.phone_number}</td>
                             <td>{student.email}</td>
+                            <td>{student.phone_number}</td>
                             <td>
-                                <div className={student.status.toLowerCase() === 'active' ? styles.active : styles.inactive}>
-                                    {student.status}
+                                {/* <div className={student.status.toLowerCase() === 'active' ? styles.active : styles.inactive}> */}
+                                <div>
+                                    Active
                                 </div>
                             </td>
                             <td>

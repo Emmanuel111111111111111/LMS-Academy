@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from './TeacherPage.module.css';
 import { getImageUrl } from "../../../utilis";
 import Pagination from "../../../Components/Pagination/Pagination"; 
+import axios from 'axios';
 
 export const TeachersPage = () => {
 
@@ -10,102 +11,117 @@ export const TeachersPage = () => {
     const [ actionsOpen, setActionsOpen ] = useState({});
     const scroll = useRef(null);
     const actionsRef = useRef(null);
+    const [ teachers, setTeachers ] = useState([]);
+    
+    useEffect(() => {
+        fetchTeachers();
+    }, []);
 
-
-
-    const teachers = [
-        {
-            name: 'John Raymond',
-            course: 'Machine Learning',
-            date: 'July 1, 2024',
-            email: 'johndow2024@gmail.com',
-            phone_number: '09041638647'
-        },
-        {
-            name: 'John Raymond',
-            course: 'Machine Learning',
-            date: 'July 1, 2024',
-            email: 'johndow2024@gmail.com',
-            phone_number: '09041638647'
-        },
-        {
-            name: 'John Raymond',
-            course: 'Machine Learning',
-            date: 'July 1, 2024',
-            email: 'johndow2024@gmail.com',
-            phone_number: '09041638647'
-        },
-        {
-            name: 'John Raymond',
-            course: 'Machine Learning',
-            date: 'July 1, 2024',
-            email: 'johndow2024@gmail.com',
-            phone_number: '09041638647'
-        },
-        {
-            name: 'John Raymond',
-            course: 'Machine Learning',
-            date: 'July 1, 2024',
-            email: 'johndow2024@gmail.com',
-            phone_number: '09041638647'
-        },
-        {
-            name: 'John Raymond',
-            course: 'Machine Learning',
-            date: 'July 1, 2024',
-            email: 'johndow2024@gmail.com',
-            phone_number: '09041638647'
-        },
-        {
-            name: 'John Raymond',
-            course: 'Machine Learning',
-            date: 'July 1, 2024',
-            email: 'johndow2024@gmail.com',
-            phone_number: '09041638647'
-        },
-        {
-            name: 'John Raymond',
-            course: 'Machine Learning',
-            date: 'July 1, 2024',
-            email: 'johndow2024@gmail.com',
-            phone_number: '09041638647'
-        },
-        {
-            name: 'John Raymond',
-            course: 'Machine Learning',
-            date: 'July 1, 2024',
-            email: 'johndow2024@gmail.com',
-            phone_number: '09041638647'
-        },
-        {
-            name: 'John Raymond',
-            course: 'Machine Learning',
-            date: 'July 1, 2024',
-            email: 'johndow2024@gmail.com',
-            phone_number: '09041638647'
-        },
-        {
-            name: 'John Raymond',
-            course: 'Machine Learning',
-            date: 'July 1, 2024',
-            email: 'johndow2024@gmail.com',
-            phone_number: '09041638647'
-        },
-        {
-            name: 'John Raymond',
-            course: 'Machine Learning',
-            date: 'July 1, 2024',
-            email: 'johndow2024@gmail.com',
-            phone_number: '09041638647'
-        },
-        {
-            name: 'John Raymond',
-            course: 'Machine Learning',
-            date: 'July 1, 2024',
-            email: 'johndow2024@gmail.com',
-            phone_number: '09041638647'
+    const fetchTeachers = async () => {
+        try {
+            const result = await axios("http://localhost:8081/teachers");
+            console.log(result);
+            setTeachers(result.data);
+        } catch (err) {
+            console.log(err);
         }
-    ]
+    }
+
+
+
+    // const teachers = [
+    //     {
+    //         name: 'John Raymond',
+    //         course: 'Machine Learning',
+    //         date: 'July 1, 2024',
+    //         email: 'johndow2024@gmail.com',
+    //         phone_number: '09041638647'
+    //     },
+    //     {
+    //         name: 'John Raymond',
+    //         course: 'Machine Learning',
+    //         date: 'July 1, 2024',
+    //         email: 'johndow2024@gmail.com',
+    //         phone_number: '09041638647'
+    //     },
+    //     {
+    //         name: 'John Raymond',
+    //         course: 'Machine Learning',
+    //         date: 'July 1, 2024',
+    //         email: 'johndow2024@gmail.com',
+    //         phone_number: '09041638647'
+    //     },
+    //     {
+    //         name: 'John Raymond',
+    //         course: 'Machine Learning',
+    //         date: 'July 1, 2024',
+    //         email: 'johndow2024@gmail.com',
+    //         phone_number: '09041638647'
+    //     },
+    //     {
+    //         name: 'John Raymond',
+    //         course: 'Machine Learning',
+    //         date: 'July 1, 2024',
+    //         email: 'johndow2024@gmail.com',
+    //         phone_number: '09041638647'
+    //     },
+    //     {
+    //         name: 'John Raymond',
+    //         course: 'Machine Learning',
+    //         date: 'July 1, 2024',
+    //         email: 'johndow2024@gmail.com',
+    //         phone_number: '09041638647'
+    //     },
+    //     {
+    //         name: 'John Raymond',
+    //         course: 'Machine Learning',
+    //         date: 'July 1, 2024',
+    //         email: 'johndow2024@gmail.com',
+    //         phone_number: '09041638647'
+    //     },
+    //     {
+    //         name: 'John Raymond',
+    //         course: 'Machine Learning',
+    //         date: 'July 1, 2024',
+    //         email: 'johndow2024@gmail.com',
+    //         phone_number: '09041638647'
+    //     },
+    //     {
+    //         name: 'John Raymond',
+    //         course: 'Machine Learning',
+    //         date: 'July 1, 2024',
+    //         email: 'johndow2024@gmail.com',
+    //         phone_number: '09041638647'
+    //     },
+    //     {
+    //         name: 'John Raymond',
+    //         course: 'Machine Learning',
+    //         date: 'July 1, 2024',
+    //         email: 'johndow2024@gmail.com',
+    //         phone_number: '09041638647'
+    //     },
+    //     {
+    //         name: 'John Raymond',
+    //         course: 'Machine Learning',
+    //         date: 'July 1, 2024',
+    //         email: 'johndow2024@gmail.com',
+    //         phone_number: '09041638647'
+    //     },
+    //     {
+    //         name: 'John Raymond',
+    //         course: 'Machine Learning',
+    //         date: 'July 1, 2024',
+    //         email: 'johndow2024@gmail.com',
+    //         phone_number: '09041638647'
+    //     },
+    //     {
+    //         name: 'John Raymond',
+    //         course: 'Machine Learning',
+    //         date: 'July 1, 2024',
+    //         email: 'johndow2024@gmail.com',
+    //         phone_number: '09041638647'
+    //     }
+    // ]
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -169,9 +185,9 @@ export const TeachersPage = () => {
                 </thead>
                 <tbody>
                     {currentTeachers.map((teacher, index) => (
-                        <tr>
+                        <tr key={index}>
                             <td><input type="checkbox" /></td>
-                            <td>{teacher.name}</td>
+                            <td>{teacher.first_name} {teacher.last_name}</td>
                             <td>{teacher.course}</td>
                             <td>{teacher.date}</td>
                             <td>{teacher.email}</td>

@@ -7,129 +7,91 @@ import axios from 'axios';
 export const AdminCourse = () => {
 
     const [ currentPage, setCurrentPage ] = useState(1);
-    // v
-    const courses = [
-        {
-            title: 'Course Title 1',
-            description: 'A short lesson description...',
-            teacher: 'Arafat Murad',
-            currentLesson: 7,
-            totalLessons: 12,
-            currentAssignment: 6,
-            duration: '10 weeks',
-            students: 72,
-            location: 'Physical'
-        },
-        {
-            title: 'Course Title 2',
-            description: 'A short lesson description...',
-            teacher: 'Arafat Murad',
-            currentLesson: 16,
-            totalLessons: 30,
-            currentAssignment: 7,
-            duration: '10 weeks',
-            students: 72,
-            location: 'Physical'
-        },
-        {
-            title: 'Course Title 3',
-            description: 'A short lesson description...',
-            teacher: 'Arafat Murad',
-            currentLesson: 7,
-            totalLessons: 12,
-            currentAssignment: 5,
-            duration: '10 weeks',
-            students: 72,
-            location: 'Physical'
-        },
-        {
-            title: 'Course Title 4',
-            description: 'A short lesson description...',
-            teacher: 'Arafat Murad',
-            currentLesson: 7,
-            totalLessons: 12,
-            currentAssignment: 5,
-            duration: '10 weeks',
-            students: 72,
-            location: 'Physical'
-        },
-        {
-            title: 'Course Title 5',
-            description: 'A short lesson description...',
-            teacher: 'Arafat Murad',
-            currentLesson: 7,
-            totalLessons: 12,
-            currentAssignment: 5,
-            duration: '10 weeks',
-            students: 72,
-            location: 'Physical'
-        },
-        {
-            title: 'Course Title 6',
-            description: 'A short lesson description...',
-            teacher: 'Arafat Murad',
-            currentLesson: 7,
-            totalLessons: 12,
-            currentAssignment: 5,
-            duration: '10 weeks',
-            students: 72,
-            location: 'Physical'
-        },
-        // {
-        //     title: 'Course Title 7',
-        //     description: 'A short lesson description...',
-        //     teacher: 'Arafat Murad',
-        //     currentLesson: 7,
-        //     totalLessons: 12,
-        //     currentAssignment: 5,
-        //     duration: '10 weeks',
-        //     students: 72,
-        //     location: 'Physical'
-        // },
-        // {
-        //     title: 'Course Title 8',
-        //     description: 'A short lesson description...',
-        //     teacher: 'Arafat Murad',
-        //     currentLesson: 7,
-        //     totalLessons: 12,
-        //     currentAssignment: 5,
-        //     duration: '10 weeks',
-        //     students: 72,
-        //     location: 'Physical'
-        // }
-    ]
-    // const indexOfLastItem = currentPage * itemsPerPage;
-    // const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    // const currentTeachers = teachers.slice(indexOfFirstItem, indexOfLastItem);
+    const [ courses, setCourses ] = useState([]);
+    
+    useEffect(() => {
+        fetchCourses();
+    }, []);
 
-    // const handlePageChange = (pageNumber) => {
-    //     setCurrentPage(pageNumber);
-    // };
+    const fetchCourses = async () => {
+        try {
+            const result = await axios("http://localhost:8081/courses");
+            console.log(result);
+            setCourses(result.data);
+        } catch (err) {
+            console.log(err);
+        }
+    }
 
-    // const handlePageNumber = (itemNumber) => {
-    //     setItemsPerPage(itemNumber);
-    //     setCurrentPage(1);
-    //     scroll.current.scrollIntoView();
-    // };
 
-    // const toggleAction = (index) => {
-    //     setActionsOpen(prevState => ({
-    //         ...prevState,
-    //         [index]: !prevState[index]
-    //     }));
-    // };
-
-    // const handleClickOutside = (event) => {
-    //     if (actionsRef.current && !actionsRef.current.contains(event.target)) {
-    //         setActionsOpen(false);
+    // const courses = [
+    //     {
+    //         title: 'Course Title 1',
+    //         description: 'A short lesson description...',
+    //         teacher: 'Arafat Murad',
+    //         currentLesson: 7,
+    //         totalLessons: 12,
+    //         currentAssignment: 6,
+    //         duration: '10 weeks',
+    //         students: 72,
+    //         location: 'Physical'
+    //     },
+    //     {
+    //         title: 'Course Title 2',
+    //         description: 'A short lesson description...',
+    //         teacher: 'Arafat Murad',
+    //         currentLesson: 16,
+    //         totalLessons: 30,
+    //         currentAssignment: 7,
+    //         duration: '10 weeks',
+    //         students: 72,
+    //         location: 'Physical'
+    //     },
+    //     {
+    //         title: 'Course Title 3',
+    //         description: 'A short lesson description...',
+    //         teacher: 'Arafat Murad',
+    //         currentLesson: 7,
+    //         totalLessons: 12,
+    //         currentAssignment: 5,
+    //         duration: '10 weeks',
+    //         students: 72,
+    //         location: 'Physical'
+    //     },
+    //     {
+    //         title: 'Course Title 4',
+    //         description: 'A short lesson description...',
+    //         teacher: 'Arafat Murad',
+    //         currentLesson: 7,
+    //         totalLessons: 12,
+    //         currentAssignment: 5,
+    //         duration: '10 weeks',
+    //         students: 72,
+    //         location: 'Physical'
+    //     },
+    //     {
+    //         title: 'Course Title 5',
+    //         description: 'A short lesson description...',
+    //         teacher: 'Arafat Murad',
+    //         currentLesson: 7,
+    //         totalLessons: 12,
+    //         currentAssignment: 5,
+    //         duration: '10 weeks',
+    //         students: 72,
+    //         location: 'Physical'
+    //     },
+    //     {
+    //         title: 'Course Title 6',
+    //         description: 'A short lesson description...',
+    //         teacher: 'Arafat Murad',
+    //         currentLesson: 7,
+    //         totalLessons: 12,
+    //         currentAssignment: 5,
+    //         duration: '10 weeks',
+    //         students: 72,
+    //         location: 'Physical'
     //     }
-    // };
-    // useEffect(() => {
-    //     document.addEventListener('click', handleClickOutside, true);
-    //     return () => {
-    //         document.removeEventListener('click', handleClickOutside, true);
-    //     };
-    // }, []);
+    // ]
 
 
     return (
@@ -141,18 +103,20 @@ export const AdminCourse = () => {
                         <h1>Active Courses</h1>
                         <div className={styles.buttons}>
                     <button className={styles.buttonOne}>Sort By<img src={getImageUrl('sortIcon.png')} /></button>
-                    <button className={styles.buttonTwo}><img src={getImageUrl('add.png')} />Create Event</button>
+                    <a href="/vdetail"><button className={styles.buttonTwo}><img src={getImageUrl('add.png')} />Create Event</button></a>
                 </div>
                     </div>
                     
                     <div className={styles.course}>
                         {courses.map((cour, index) => (
-                            <div className={styles.courseInfo}>
+                            <div className={styles.courseInfo} key={index}>
                                 <div className={styles.courseImage}>
                                    <img src={getImageUrl('frame7.png')} />
                                 </div>
                                 <div className={styles.infoHeader}>
-                                    <div><h3>Artificial Intelligence<span>Started</span></h3></div>
+                                    <div>
+                                        <h3>{cour.name}<span>Started</span></h3>
+                                    </div>
                                     <button><img src={getImageUrl('threeDots.png')} alt="" /></button>
                                 </div>
                                 <p>Lorem ipsum dolor sit amet consectetur. Feugia t blandit turpis.Lorem ipsum dolor sit amet consector.

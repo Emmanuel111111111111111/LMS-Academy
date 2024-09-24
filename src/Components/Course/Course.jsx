@@ -7,97 +7,121 @@ import axios from 'axios';
 export const Course = () => {
 
     const [currentPage, setCurrentPage] = useState(1);
+    const [ courses, setCourses ] = useState([]);
+    const [ studentId, setStudentId ] = useState("0");
 
-    const courses = [
-        {
-            title: 'Course Title 1',
-            description: 'A short lesson description...',
-            teacher: 'Arafat Murad',
-            currentLesson: 7,
-            totalLessons: 12,
-            currentAssignment: 6,
-            duration: '10 weeks',
-            students: 72,
-            location: 'Physical'
-        },
-        {
-            title: 'Course Title 2',
-            description: 'A short lesson description...',
-            teacher: 'Arafat Murad',
-            currentLesson: 16,
-            totalLessons: 30,
-            currentAssignment: 7,
-            duration: '10 weeks',
-            students: 72,
-            location: 'Physical'
-        },
-        {
-            title: 'Course Title 3',
-            description: 'A short lesson description...',
-            teacher: 'Arafat Murad',
-            currentLesson: 7,
-            totalLessons: 12,
-            currentAssignment: 5,
-            duration: '10 weeks',
-            students: 72,
-            location: 'Physical'
-        },
-        {
-            title: 'Course Title 4',
-            description: 'A short lesson description...',
-            teacher: 'Arafat Murad',
-            currentLesson: 7,
-            totalLessons: 12,
-            currentAssignment: 5,
-            duration: '10 weeks',
-            students: 72,
-            location: 'Physical'
-        },
-        {
-            title: 'Course Title 5',
-            description: 'A short lesson description...',
-            teacher: 'Arafat Murad',
-            currentLesson: 7,
-            totalLessons: 12,
-            currentAssignment: 5,
-            duration: '10 weeks',
-            students: 72,
-            location: 'Physical'
-        },
-        {
-            title: 'Course Title 6',
-            description: 'A short lesson description...',
-            teacher: 'Arafat Murad',
-            currentLesson: 7,
-            totalLessons: 12,
-            currentAssignment: 5,
-            duration: '10 weeks',
-            students: 72,
-            location: 'Physical'
-        },
-        {
-            title: 'Course Title 7',
-            description: 'A short lesson description...',
-            teacher: 'Arafat Murad',
-            currentLesson: 7,
-            totalLessons: 12,
-            currentAssignment: 5,
-            duration: '10 weeks',
-            students: 72,
-            location: 'Physical'
-        },
-        {
-            title: 'Course Title 8',
-            description: 'A short lesson description...',
-            teacher: 'Arafat Murad',
-            currentLesson: 7,
-            totalLessons: 12,
-            currentAssignment: 5,
-            duration: '10 weeks',
-            students: 72,
-            location: 'Physical'
+
+    useEffect(() => {
+       console.log(sessionStorage);
+       setStudentId(sessionStorage.getItem("id"));
+    }, []);
+    console.log(studentId);
+
+
+    useEffect(() => {
+        fetchStudentCourses();
+    }, []);
+
+    const fetchStudentCourses = async () => {
+        try {
+            const result = await axios(`http://localhost:8081/courses/${studentId}`);
+            console.log(result);
+            setCourses(result.data);
+        } catch (err) {
+            console.log(err);
         }
-    ]
+    }
+
+    // const courses = [
+    //     {
+    //         title: 'Course Title 1',
+    //         description: 'A short lesson description...',
+    //         teacher: 'Arafat Murad',
+    //         currentLesson: 7,
+    //         totalLessons: 12,
+    //         currentAssignment: 6,
+    //         duration: '10 weeks',
+    //         students: 72,
+    //         location: 'Physical'
+    //     },
+    //     {
+    //         title: 'Course Title 2',
+    //         description: 'A short lesson description...',
+    //         teacher: 'Arafat Murad',
+    //         currentLesson: 16,
+    //         totalLessons: 30,
+    //         currentAssignment: 7,
+    //         duration: '10 weeks',
+    //         students: 72,
+    //         location: 'Physical'
+    //     },
+    //     {
+    //         title: 'Course Title 3',
+    //         description: 'A short lesson description...',
+    //         teacher: 'Arafat Murad',
+    //         currentLesson: 7,
+    //         totalLessons: 12,
+    //         currentAssignment: 5,
+    //         duration: '10 weeks',
+    //         students: 72,
+    //         location: 'Physical'
+    //     },
+    //     {
+    //         title: 'Course Title 4',
+    //         description: 'A short lesson description...',
+    //         teacher: 'Arafat Murad',
+    //         currentLesson: 7,
+    //         totalLessons: 12,
+    //         currentAssignment: 5,
+    //         duration: '10 weeks',
+    //         students: 72,
+    //         location: 'Physical'
+    //     },
+    //     {
+    //         title: 'Course Title 5',
+    //         description: 'A short lesson description...',
+    //         teacher: 'Arafat Murad',
+    //         currentLesson: 7,
+    //         totalLessons: 12,
+    //         currentAssignment: 5,
+    //         duration: '10 weeks',
+    //         students: 72,
+    //         location: 'Physical'
+    //     },
+    //     {
+    //         title: 'Course Title 6',
+    //         description: 'A short lesson description...',
+    //         teacher: 'Arafat Murad',
+    //         currentLesson: 7,
+    //         totalLessons: 12,
+    //         currentAssignment: 5,
+    //         duration: '10 weeks',
+    //         students: 72,
+    //         location: 'Physical'
+    //     },
+    //     {
+    //         title: 'Course Title 7',
+    //         description: 'A short lesson description...',
+    //         teacher: 'Arafat Murad',
+    //         currentLesson: 7,
+    //         totalLessons: 12,
+    //         currentAssignment: 5,
+    //         duration: '10 weeks',
+    //         students: 72,
+    //         location: 'Physical'
+    //     },
+    //     {
+    //         title: 'Course Title 8',
+    //         description: 'A short lesson description...',
+    //         teacher: 'Arafat Murad',
+    //         currentLesson: 7,
+    //         totalLessons: 12,
+    //         currentAssignment: 5,
+    //         duration: '10 weeks',
+    //         students: 72,
+    //         location: 'Physical'
+    //     }
+    // ]
 
 
     return (
@@ -112,9 +136,9 @@ export const Course = () => {
                     
                     <div className={styles.course}>
                         {courses.map((cour, index) => (
-                            <div className={styles.courseInfo}>
+                            <div className={styles.courseInfo} key={index}>
                                 <div className={styles.infoHeader}>
-                                    <div><h3>{cour.title}<span>{cour.location}</span></h3></div>
+                                    <div><h3>{cour.name}<span>{cour.locatio}</span></h3></div>
                                     <button><img src={getImageUrl('threeDots.png')} alt="" /></button>
                                 </div>
                                 <p>{cour.description}</p>

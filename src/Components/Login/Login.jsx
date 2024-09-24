@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { getImageUrl } from "../../utilis";
 import styles from "./Login.module.css";
@@ -14,6 +14,10 @@ export const Login = () => {
   const [ errorMessage, setErrorMesage ] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // sessionStorage.clear();
+  }, [])
+
  
 
   function handleSubmit(event) {
@@ -22,7 +26,16 @@ export const Login = () => {
       .then(res => {
         console.log(res)
         if (res.data === "No records") setErrorMesage(true);
-        else if (res.data === "Login Successfully") navigate('/dashboard');
+        else if (res.data.length === 1) {
+          console.log("signed in");
+          sessionStorage.setItem("id", res.data[0].student_id);
+          sessionStorage.setItem("first_name", res.data[0].first_name);
+          sessionStorage.setItem("last_name", res.data[0].last_name);
+          sessionStorage.setItem("email", res.data[0].email);
+          console.log(res.data[0].first_name);
+
+          navigate('/dashboard');
+        }
       })
       .catch(err => console.log(err));   
   }

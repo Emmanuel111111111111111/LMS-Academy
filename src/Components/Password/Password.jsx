@@ -8,6 +8,7 @@ import axios from 'axios';
 export const Password = () => {
 
     const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const location = useLocation();
 
     const [ values, setValues ] = useState(location.state);
@@ -43,16 +44,17 @@ export const Password = () => {
                     <form onSubmit={handleSubmit}>
                         <div className={styles.formgroup}>
                             <label for="name">Password</label>
-                            <input placeholder="Create a new password" name="password" onChange={handleInput} />
+                            <div className={styles.password}>
+                                <input type={showPassword ? 'text' : 'password'} placeholder="Create your password" name="ID" onChange={handleInput} />
+                                <button type="button" onClick={() => setShowPassword((showPassword) => !showPassword)}><img src={getImageUrl("visibility_off.png")} alt="view" /></button>
+                            </div>
                         </div>
                         <div className={styles.formgroup}>
                             <label for="Re-type password">Retype your password</label>
                             <div className={styles.password}>
-
                                 <input type={showPassword ? 'text' : 'password'} placeholder="Retype your password" name="ID" />
-                                <button type="button" onClick={() => setShowPassword((showPassword) => !showPassword)}><img src={getImageUrl("Group 18.png")} alt="view" /></button>
-
-                            </div> *
+                                <button type="button" onClick={() => setShowConfirmPassword((showConfirmPassword) => !showConfirmPassword)}><img src={getImageUrl("visibility_off.png")} alt="view" /></button>
+                            </div>
                         </div>
 
 
@@ -60,7 +62,7 @@ export const Password = () => {
                     
                     <div className={styles.home}>
                         <a href="/dashboard"><button className={styles.butt}>Create My Account</button> </a>
-                        </div>
+                    </div>
                 </div>
 
             </div>

@@ -22,6 +22,7 @@ import { StudentPage } from './Admin/Page/StudentPage/StudentPage';
 import { PendingStudentPage } from './Admin/Page/PendingStudentsPage/PendingStudentPage';
 import { ActivityLogPage } from './Admin/Page/ActivityLogPage/ActivityLogPage';
 import { AdminOverview } from './Admin/Page/AdminOverviewpage/AdminOverview';
+import { Detail } from './Admin/Components/Detail/Detail';
 
 function App() { 
 
@@ -43,6 +44,7 @@ function App() {
         { path: 'courses/completed', element: <BlankPage /> },
         { path: 'calendar', element: <CalendarPage /> },
         { path: 'certificate', element: <Certificate /> },
+       
       ]
     },
     {
@@ -59,6 +61,7 @@ function App() {
         { path: 'student', element: <StudentPage /> },
         { path: 'student/pending', element: <PendingStudentPage /> },
         { path: 'activitylog', element: <ActivityLogPage /> },
+        { path: 'detail', element: <Detail /> },
       ]
     },
   ])
