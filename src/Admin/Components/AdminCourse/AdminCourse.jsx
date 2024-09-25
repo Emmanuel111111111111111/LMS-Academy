@@ -166,7 +166,7 @@ export const AdminCourse = () => {
                     <h1>Active Courses</h1>
                     <div className={styles.buttons}>
                         <button className={styles.buttonOne}>Sort By<img src={getImageUrl('sortIcon.png')} /></button>
-                        <button className={styles.buttonTwo} onClick={toggleDropdown} ><img src={getImageUrl('add.png')} />Create Event</button>
+                        <button className={styles.buttonTwo} onClick={toggleDropdown} ><img src={getImageUrl('add.png')} />Create New</button>
                     </div>
                     {isOpen && (
                         <ul className={styles.createDiv} ref={createRef}>
