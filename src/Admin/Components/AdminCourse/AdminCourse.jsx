@@ -161,7 +161,7 @@ export const AdminCourse = () => {
         <>
         <div className={styles.whole}>
 
-            <div className={styles.breadcrumb}><a href="/admin-dashboard/courses">Courses</a> {'>'} Upcoming</div>
+            <div className={styles.breadcrumb}><a href="/admin-dashboard/courses">Courses</a> {'>'} Active</div>
 
             <div>
                 <div className={styles.title}>
