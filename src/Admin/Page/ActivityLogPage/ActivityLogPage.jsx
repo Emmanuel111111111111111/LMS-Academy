@@ -131,7 +131,9 @@ export const ActivityLogPage = () => {
                             <td>{activity.action}</td>
                             <td>{activity.date_time}</td>
                             <td>{activity.due_date}</td>
-                            <td><button className={styles.actionsButton} onClick={()=>toggleAction(index)}>View All</button></td>
+                            <td>
+                                <button className={styles.actionsButton} onClick={()=>toggleAction(index)}><img src={getImageUrl('threeDots.png')} /></button>
+                            </td>
                         </tr>
                     ))}
                 </tbody>

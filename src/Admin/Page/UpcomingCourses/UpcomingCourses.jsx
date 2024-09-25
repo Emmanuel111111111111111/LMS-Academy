@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { getImageUrl } from "../../../utilis";
-import styles from "./AdminCourse.module.css";
+import styles from "./UpcomingCourse.module.css";
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
-import Modal from "./Modal";
+import Modal from "../../Components/AdminCourse/Modal";
 
-export const AdminCourse = () => {
+export const UpcomingCourses = () => {
 
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ isOpen, setIsOpen ] = useState(false);
@@ -160,10 +160,12 @@ export const AdminCourse = () => {
     return (
         <>
         <div className={styles.whole}>
-            <h5>Courses </h5>
+    
+            <div className={styles.breadcrumb}><a href="/admin-dashboard/courses">Courses</a> {'>'} Upcoming</div>
+
             <div>
                 <div className={styles.title}>
-                    <h1>Active Courses</h1>
+                    <h1>Upcoming Courses</h1>
                     <div className={styles.buttons}>
                         <button className={styles.buttonOne}>Sort By<img src={getImageUrl('sortIcon.png')} /></button>
                         <button className={styles.buttonTwo} onClick={toggleDropdown} ><img src={getImageUrl('add.png')} />Create Event</button>

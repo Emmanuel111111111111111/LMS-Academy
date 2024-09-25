@@ -102,29 +102,34 @@ export const SchedulePage = () => {
                         <button onClick={handleClose} className={styles.close}><img src={getImageUrl('close.png')} alt="" /></button>
                     </div>
 
-                    <div className={styles.content}>
-                        <div>
-                            <h5>Event Name</h5>
-                            <input type="text" placeholder="Enter Event Name"></input>
+                    <div style={{overflow: 'auto'}}>
+                        <div className={styles.content}>
+                            <div>
+                                <h5>Event Name</h5>
+                                <input type="text" placeholder="Enter Event Name"></input>
+                            </div>
+                            <div>
+                                <h5>Event Type</h5>
+                                <select name="" id="">
+                                    <option value="">Select Event Type</option>
+                                </select>
+                            </div>
+
                         </div>
-                        <div>
-                            <h5>Event Type</h5>
-                            <select name="" id="">
-                                <option value="">Select Event Type</option>
-                            </select>
+                        <div className={styles.contain}>
+                            <div>
+                                <h5>Start Date & Time</h5>
+                                <input type="datetime-local" name="" id="" />
+                            </div>
+                            <div>
+                                <h5>Due Date</h5>
+                                <input type="date" name="" id="" />
+                            </div>
                         </div>
 
                     </div>
-                    <div className={styles.contain}>
-                        <div>
-                            <h5>Start Date & Time</h5>
-                            <input type="datetime-local" name="" id="" />
-                        </div>
-                        <div>
-                            <h5>Due Date</h5>
-                            <input type="date" name="" id="" />
-                        </div>
-                    </div><button className={styles.submit}>Submit</button>
+
+                    <button className={styles.submit}>Submit</button>
                 </div>
             </Modal>
             <div className={styles.biggerDiv}>

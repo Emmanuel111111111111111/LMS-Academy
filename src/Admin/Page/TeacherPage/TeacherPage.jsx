@@ -177,35 +177,37 @@ export const TeachersPage = () => {
                         <div className={styles.head}>
                             <h3>Add New Teacher</h3>
                             <button onClick={handleClose} className={styles.close}><img src={getImageUrl('close.png')} alt="" /></button>
-                        </div><div className={styles.content}>
-                            <div>
-                                <h5>Instructor's Name</h5>
-                                <input type="text" placeholder="Enter Event Name"></input>
-                            </div>
-                            <div>
-                                <h5>Course</h5>
-                                <select name="" id="">
-                                    <option value="">Select Course</option>
-                                </select>
-                                {/* <button onClick={toggleDropdown}><span>Select Course</span> <img src={getImageUrl('arrown_down_black.png')} alt="" /></button> */}
-                            </div>
-                            <div>
-                                <h5>Date Added</h5>
-                                <input type="date" name="" id="" />
-                                {/* <button onClick={toggleDropdown}><span>Select Date</span> <img src={getImageUrl('darkcalendarIcon.png')} alt="" /></button> */}
-                            </div>
-
                         </div>
-                        <div className={styles.contain}>
-                            <div>
-                                <h5>Email Address</h5>
-                                <input type="email" placeholder="Enter Email Address"></input>
+                        
+                        <div style={{overflow: 'auto'}}>
+                            <div className={styles.content}>
+                                <div>
+                                    <h5>Instructor's Name</h5>
+                                    <input type="text" placeholder="Enter Event Name"></input>
+                                </div>
+                                <div>
+                                    <h5>Course</h5>
+                                    <select name="" id="">
+                                        <option value="">Select Course</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <h5>Date Added</h5>
+                                    <input type="date" name="" id="" />
+                                </div>
                             </div>
-                            <div>
-                                <h5>Phone Number</h5>
-                                <input type="tel" placeholder="Enter Phone Number "></input>
+                            <div className={styles.contain}>
+                                <div>
+                                    <h5>Email Address</h5>
+                                    <input type="email" placeholder="Enter Email Address"></input>
+                                </div>
+                                <div>
+                                    <h5>Phone Number</h5>
+                                    <input type="tel" placeholder="Enter Phone Number "></input>
+                                </div>
                             </div>
                         </div>
+                        
                         <button className={styles.submit}>Submit</button>
                     </div>
                     </>
