@@ -160,7 +160,9 @@ export const AdminCourse = () => {
     return (
         <>
         <div className={styles.whole}>
-            <h5>Courses </h5>
+
+            <div className={styles.breadcrumb}><a href="/admin-dashboard/courses">Courses</a> {'>'} Upcoming</div>
+
             <div>
                 <div className={styles.title}>
                     <h1>Active Courses</h1>

@@ -6,10 +6,19 @@
     background: #F8F9FD;
 }
 
-.whole h5 {
+.breadcrumb {
     font-size: 14px;
     font-weight: 500;
     color: #2C2F7E;
+}
+.breadcrumb a {
+    font-size: 14px;
+    font-weight: 500;
+    color: #728DB9;
+    text-decoration: none;
+}
+.breadcrumb a:hover {
+    text-decoration: underline;
 }
 
 .buttons {
