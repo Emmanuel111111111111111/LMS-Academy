@@ -47,6 +47,7 @@ export const Header = () => {
         <div className={styles.header}>
 
             <div className={styles.headerLeft}>
+                <img src={getImageUrl('menu.png')} />
                 <h3>{PageTitle}</h3>
                 <div className={styles.links}>
                     {linkList.map(({ title, link }, index) => (

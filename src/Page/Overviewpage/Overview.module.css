@@ -411,3 +411,98 @@
 .pag {
     flex: 30%
 }
+.searchBar {
+    display: none;
+}
+
+
+
+
+@media screen and (max-width: 400px) {
+    .whole{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        margin: auto;
+        margin-top: 80px;
+        
+    }
+    .searchBar {
+        display: flex;
+        border-bottom: 2px solid #C4C4C4;
+        padding: 12px 0;
+        gap: 12px;
+    }
+    .searchBar input {
+        border: none;
+        outline: none;
+        font-size: 16px;
+        font-weight: 500;
+        color: #9191B2;
+    }
+    .searchBar img {
+        width: 24px;
+        height: 24px;
+    }
+    .welcomeBanner{
+        flex-direction: column;
+        justify-content: center; 
+        left: 0;
+        right: 0;
+        width: 80%;
+        margin-left: 30px;
+        order: 2;
+    }
+    .left{
+        flex-direction: column; 
+        align-items: center;
+    }
+    .text{
+        align-items: center;
+    }
+    .overviews{
+        flex-direction: column;
+        width: 100%;
+        justify-content: center; 
+        left: 0;
+        right: 0;
+        order:1;
+    }
+    .courses{
+        flex-direction: column;
+        width: 100%;
+        justify-content: center; 
+        left: 0;
+        right: 0;
+        order:3;
+    }
+    .course{
+        flex-direction: column;
+        width: 100%;
+        justify-content: center; 
+        left: 0;
+        right: 0;
+        order:1;
+    }
+    .courseData{
+        flex-direction: column;
+        
+    }
+    .courseData div{
+        gap:10px;
+    }
+     .profile{
+        margin-right: 100px;
+    }
+    .courseData .coursedatas{
+        font-size: 10px;
+    }
+    .events{
+        flex-direction: column;
+        width: 100%;
+        justify-content: center; 
+        left: 0;
+        right: 0;
+        order:4;
+    }
+  }

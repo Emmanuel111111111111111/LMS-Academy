@@ -20,7 +20,7 @@
     display: flex;
     justify-content: space-between;
 }
-.title button {
+.sort {
     display: inline-flex;
     align-items: center;
     background: #F0F0F0;
@@ -33,7 +33,7 @@
     border: none;
     outline: none;
 }
-.title button img {
+.sort img {
     width: 70px;
     height: 24px;
 }
@@ -211,4 +211,84 @@
 .progress::-moz-progress-value {
     background: #2C2F7E;
     border-radius: 18px;
+}
+.searchBar {
+    display: none;
+}
+.below{
+    display: none;
+}
+
+@media screen and (max-width: 400px) {
+    .whole{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        margin: auto;
+        margin-top: 80px;
+    }
+    .title{
+        flex-direction: column;
+        justify-content: center; 
+        left: 0;
+        right: 0;
+        width: 100%;
+        gap: 20px;
+        order:1;
+    }
+    .active{
+        order:3;
+    }
+    .active h1{
+        font-size: 20px;
+    }
+    .sort{
+        width: 100%;
+        height: 40px;
+        padding-left: 100px;
+        order:2;
+    }
+    .sort img{
+        width: 77px;
+         height: 40px;
+    }
+    .course{
+        grid-template-columns: repeat(1, auto);
+        order: 2;
+    }
+    .courseInfo{
+        flex-direction: column;
+        width: 100%;
+        justify-content: center; 
+        left: 0;
+        right: 0;
+    }
+    .above{
+        display: none;
+    }
+    .above  img , a{
+        display: none;
+        
+    }
+    .below{
+        display:flex;
+    }
+    .searchBar {
+        display: flex;
+        border-bottom: 2px solid #C4C4C4;
+        padding: 12px 0;
+        gap: 12px;
+        order: 1;
+    }
+    .searchBar input {
+        border: none;
+        outline: none;
+        font-size: 16px;
+        font-weight: 500;
+        color: #9191B2;
+    }
+    .searchBar img {
+        width: 24px;
+        height: 24px;
+    }
 }
