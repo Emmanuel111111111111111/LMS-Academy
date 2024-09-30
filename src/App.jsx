@@ -22,6 +22,7 @@ import { StudentPage } from './Admin/Page/StudentPage/StudentPage';
 import { PendingStudentPage } from './Admin/Page/PendingStudentsPage/PendingStudentPage';
 import { ActivityLogPage } from './Admin/Page/ActivityLogPage/ActivityLogPage';
 import { AdminOverview } from './Admin/Page/AdminOverviewpage/AdminOverview';
+import { AdminNewCoursepage } from './Admin/Page/AdminNewCoursePage/AdminNewCoursepage';
 
 function App() { 
 
@@ -54,6 +55,7 @@ function App() {
         { path: 'courses', element: <AdminCourse /> },
         { path: 'courses/active', element: <AdminCourse /> },
         { path: 'courses/completed', element: <BlankPage /> },
+        { path: 'courses/new', element: <AdminNewCoursepage /> },
         { path: 'tasks', element: <BlankPage /> },
         { path: 'teacher', element: <TeachersPage /> },
         { path: 'student', element: <StudentPage /> },

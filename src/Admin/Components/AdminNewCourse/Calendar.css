@@ -1,0 +1,183 @@
+.react-calendar {
+  width: 400px;
+  max-width: 80%;
+  background-color: transparent; /* Remove the white background */
+  color: #222;
+  border-radius: 8px;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.125em;
+  height: 250px;
+  padding-left: 30px;
+  margin-left: 30px;
+}
+
+.react-calendar--doubleView {
+  width: 700px;
+}
+
+.react-calendar--doubleView .react-calendar__viewContainer {
+  display: flex;
+  margin: -0.5em;
+}
+
+.react-calendar--doubleView .react-calendar__viewContainer > * {
+  width: 50%;
+  margin: 0.5em;
+}
+
+.react-calendar,
+.react-calendar *,
+.react-calendar *:before,
+.react-calendar *:after {
+  box-sizing: border-box;
+}
+
+.react-calendar button {
+  margin: 0;
+  border: 0;
+  outline: none;
+}
+
+.react-calendar button:enabled:hover {
+  cursor: pointer;
+}
+
+.react-calendar__navigation {
+  display: flex;
+  height: 44px;
+  margin-bottom: 1em;
+}
+
+.react-calendar__navigation button {
+  color: #2C2F7E; /* Changed from #6f48eb */
+  min-width: 44px;
+  background: none;
+  font-size: 16px;
+  margin-top: 8px;
+}
+
+.react-calendar__navigation button:enabled:hover,
+.react-calendar__navigation button:enabled:focus {
+  background-color: #f8f8fa;
+}
+
+.react-calendar__navigation button[disabled] {
+  background-color: #f0f0f0;
+}
+
+abbr[title] {
+  text-decoration: none;
+}
+
+/* Reduce the size of weekdays (Mon, Tue, etc.) */
+.react-calendar__month-view__weekdays {
+  text-align: center;
+  text-transform: uppercase;
+  font: inherit;
+  font-size: 0.6em; 
+  font-weight: bold;
+}
+
+.react-calendar__month-view__weekdays__weekday {
+  padding: 0.5em;
+}
+
+.react-calendar__tile {
+  max-width: 100%;
+  padding: 5px 4px; 
+  background: none;
+  text-align: center;
+  line-height: 16px;
+  font: inherit;
+  font-size: 0.6em; 
+}
+
+.react-calendar__tile:disabled {
+  background-color: #f0f0f0;
+  color: #ababab;
+}
+
+.react-calendar__month-view__days__day--neighboringMonth:disabled,
+.react-calendar__decade-view__years__year--neighboringDecade:disabled,
+.react-calendar__century-view__decades__decade--neighboringCentury:disabled {
+  color: #cdcdcd;
+}
+
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+  background-color: #f8f8fa;
+  color: #2C2F7E; /* Changed from #6f48eb */
+  border-radius: 200px;
+}
+
+.react-calendar__tile--now {
+  background: #00f8d3;
+  border-radius: 200px;
+  font-weight: bold;
+  color: #2C2F7E; /* Changed from #6f48eb */
+}
+
+.react-calendar__tile--now:enabled:hover,
+.react-calendar__tile--now:enabled:focus {
+  background: #ffffa9;
+}
+
+.react-calendar__tile--hasActive {
+  background: #2C2F7E;
+}
+
+.react-calendar__tile--hasActive:enabled:hover,
+.react-calendar__tile--hasActive:enabled:focus {
+  background: #2C2F7E;
+}
+
+.react-calendar__tile--active {
+  background: #2C2F7E; /* Changed from #006edc */
+  border-radius: 6px;
+  font-weight: bold;
+  color: white;
+}
+
+.react-calendar__tile--active:enabled:hover,
+.react-calendar__tile--active:enabled:focus {
+  background: #2C2F7E;
+  color: white;
+}
+
+.react-calendar--selectRange .react-calendar__tile--hover {
+  background-color: #e6e6e6;
+}
+
+.react-calendar__tile--range {
+  background: #f8f8fa;
+  color: #2C2F7E; /* Changed from #6f48eb */
+  border-radius: 0;
+}
+
+.react-calendar__tile--rangeStart {
+  border-radius: 500px;
+  background: #2C2F7E; /* Changed from #6f48eb */
+  color: white;
+}
+
+.react-calendar__tile--rangeEnd {
+  border-radius: 500px;
+  background: #2C2F7E; /* Changed from #6f48eb */
+  color: white;
+}
+
+/* Make the day numbers for the previous and next months (neighboring months) have low opacity */
+.react-calendar__month-view__days__day--neighboringMonth {
+  opacity: 0.3; /* Adjust opacity for neighboring month days */
+}
+
+/* Make the current month's day numbers bold */
+.react-calendar__month-view__days__day {
+  font-weight: bold; /* Bold for current month's day numbers */
+}
+
+/* Optionally: If you want to customize the opacity on hover/focus for neighboring months */
+.react-calendar__month-view__days__day--neighboringMonth:enabled:hover,
+.react-calendar__month-view__days__day--neighboringMonth:enabled:focus {
+  opacity: 0.5; /* Slightly increase opacity on hover/focus */
+}
