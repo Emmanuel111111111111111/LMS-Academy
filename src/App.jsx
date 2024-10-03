@@ -25,6 +25,7 @@ import { AdminOverview } from './Admin/Page/AdminOverviewpage/AdminOverview';
 import { UpcomingCourses } from './Admin/Page/UpcomingCourses/UpcomingCourses';
 import { CompletedCourses } from './Admin/Page/CompletedCourses/CompletedCourses';
 import { AllCourses } from './Admin/Page/AllCourses/AllCourses';
+import { CompletedCourse } from './Page/CompletedCourses/CompletedCourses';
 
 function App() { 
 
@@ -43,7 +44,7 @@ function App() {
         { path: 'overview', element: <Overview /> },
         { path: 'courses', element: <Coursepage /> },
         { path: 'courses/active', element: <Course /> },
-        { path: 'courses/completed', element: <BlankPage /> },
+        { path: 'courses/completed', element: <CompletedCourse /> },
         { path: 'calendar', element: <CalendarPage /> },
         { path: 'certificate', element: <Certificate /> },
       ]

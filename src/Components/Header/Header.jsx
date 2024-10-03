@@ -26,7 +26,7 @@ export const Header = () => {
             PageTitle = "Courses";
             linkList = [
                 {title: "Active", link: "/dashboard/courses/active"},
-                {title: "Completed", link: "/dashboard/coures/completed"}
+                {title: "Completed", link: "/dashboard/courses/completed"}
             ];
             break;
         

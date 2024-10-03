@@ -43,7 +43,8 @@ export const CompletedCourses = () => {
 
     };
     
-    const toggleAction = (index) => {
+    const toggleAction = (event, index) => {
+        event.stopPropagation();
         setActionsOpen(prevState => ({
             ...prevState,
             [index]: !prevState[index]
@@ -131,29 +132,7 @@ export const CompletedCourses = () => {
             duration: '10 weeks',
             students: 72,
             location: 'Physical'
-        },
-        // {
-        //     title: 'Course Title 7',
-        //     description: 'A short lesson description...',
-        //     teacher: 'Arafat Murad',
-        //     currentLesson: 7,
-        //     totalLessons: 12,
-        //     currentAssignment: 5,
-        //     duration: '10 weeks',
-        //     students: 72,
-        //     location: 'Physical'
-        // },
-        // {
-        //     title: 'Course Title 8',
-        //     description: 'A short lesson description...',
-        //     teacher: 'Arafat Murad',
-        //     currentLesson: 7,
-        //     totalLessons: 12,
-        //     currentAssignment: 5,
-        //     duration: '10 weeks',
-        //     students: 72,
-        //     location: 'Physical'
-        // }
+        }
     ]
     
 
@@ -225,7 +204,7 @@ export const CompletedCourses = () => {
                             <div className={styles.infoHeader}>
                                 <div><h3>Artificial Intelligence<span>Started</span></h3></div>
                                 <div>
-                                    <button className={styles.actionsButton} onClick={() => toggleAction(index)}><img src={getImageUrl('threeDots.png')} /></button>
+                                    <button className={styles.actionsButton} onClick={(event) => toggleAction(event, index)}><img src={getImageUrl('threeDots.png')} /></button>
                                     <div className={`${styles.actionsClosed} ${actionsOpen[index] && styles.theActions}`} ref={actionsRef}>
                                         <h5>ACTION</h5>
                                         <button><img src={getImageUrl('edit.png')} />EDIT</button>

@@ -6,8 +6,6 @@ import axios from 'axios';
 
 export const Course = () => {
 
-    const [currentPage, setCurrentPage] = useState(1);
-
     const courses = [
         {
             title: 'Course Title 1',
@@ -103,7 +101,9 @@ export const Course = () => {
     return (
         <>
             <div className={styles.whole}>
-                <h5>Courses <img src={getImageUrl('Icons12.png')} alt="" /> <a href="">Active</a></h5>
+                
+                <div className={styles.breadcrumb}><a href="/dashboard/courses">Courses</a> {'>'} Active</div>
+                
                 <div>
                     <div className={styles.title}>
                         <h1>Active Courses <span>({courses.length})</span></h1>

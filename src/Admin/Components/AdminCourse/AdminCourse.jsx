@@ -43,7 +43,8 @@ export const AdminCourse = () => {
 
     };
     
-    const toggleAction = (index) => {
+    const toggleAction = (event, index) => {
+        event.stopPropagation();
         setActionsOpen(prevState => ({
             ...prevState,
             [index]: !prevState[index]
@@ -225,7 +226,7 @@ export const AdminCourse = () => {
                             <div className={styles.infoHeader}>
                                 <div><h3>Artificial Intelligence<span>Started</span></h3></div>
                                 <div>
-                                    <button className={styles.actionsButton} onClick={() => toggleAction(index)}><img src={getImageUrl('threeDots.png')} /></button>
+                                    <button className={styles.actionsButton} onClick={(event) => toggleAction(event, index)}><img src={getImageUrl('threeDots.png')} /></button>
                                     <div className={`${styles.actionsClosed} ${actionsOpen[index] && styles.theActions}`} ref={actionsRef}>
                                         <h5>ACTION</h5>
                                         <button><img src={getImageUrl('edit.png')} />EDIT</button>
