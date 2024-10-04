@@ -2,69 +2,88 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from './ActivityLogPage.module.css';
 import { getImageUrl } from "../../../utilis";
 import Pagination from "../../../Components/Pagination/Pagination"; 
+import axios from 'axios';
+import { format } from 'date-fns';
+
 
 export const ActivityLogPage = () => {
 
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ itemsPerPage, setItemsPerPage ] = useState(5);
     const [ actionsOpen, setActionsOpen ] = useState({});
+    const [ activities, setActivities ] = useState([]);
+
     const scroll = useRef(null);
     const actionsRef = useRef(null);
 
+    useEffect(() => {
+        fetchActivityLog();
+    }, []);
 
-
-    const activities = [
-        {
-            action: 'You created a new teacher for Machine Learning',
-            date_time: 'July 1, 2024 12:38:00 PM',
-            due_date: 'July 1, 2024'
-        },
-        {
-            action: 'You created a new teacher for Machine Learning',
-            date_time: 'July 1, 2024 12:38:00 PM',
-            due_date: 'July 1, 2024'
-        },
-        {
-            action: 'You created a new teacher for Machine Learning',
-            date_time: 'July 1, 2024 12:38:00 PM',
-            due_date: 'July 1, 2024'
-        },
-        {
-            action: 'You created a new teacher for Machine Learning',
-            date_time: 'July 1, 2024 12:38:00 PM',
-            due_date: 'July 1, 2024'
-        },
-        {
-            action: 'You created a new teacher for Machine Learning',
-            date_time: 'July 1, 2024 12:38:00 PM',
-            due_date: 'July 1, 2024'
-        },
-        {
-            action: 'You created a new teacher for Machine Learning',
-            date_time: 'July 1, 2024 12:38:00 PM',
-            due_date: 'July 1, 2024'
-        },
-        {
-            action: 'You created a new teacher for Machine Learning',
-            date_time: 'July 1, 2024 12:38:00 PM',
-            due_date: 'July 1, 2024'
-        },
-        {
-            action: 'You created a new teacher for Machine Learning',
-            date_time: 'July 1, 2024 12:38:00 PM',
-            due_date: 'July 1, 2024'
-        },
-        {
-            action: 'You created a new teacher for Machine Learning',
-            date_time: 'July 1, 2024 12:38:00 PM',
-            due_date: 'July 1, 2024'
-        },
-        {
-            action: 'You created a new teacher for Machine Learning',
-            date_time: 'July 1, 2024 12:38:00 PM',
-            due_date: 'July 1, 2024'
+    const fetchActivityLog = async () => {
+        try {
+            const result = await axios("http://localhost:8081/activity-log");
+            console.log(result);
+            setActivities(result.data);
+        } catch (err) {
+            console.log(err);
         }
-    ]
+    }
+
+
+
+    // const activities = [
+    //     {
+    //         action: 'You created a new teacher for Machine Learning',
+    //         date_time: 'July 1, 2024 12:38:00 PM',
+    //         due_date: 'July 1, 2024'
+    //     },
+    //     {
+    //         action: 'You created a new teacher for Machine Learning',
+    //         date_time: 'July 1, 2024 12:38:00 PM',
+    //         due_date: 'July 1, 2024'
+    //     },
+    //     {
+    //         action: 'You created a new teacher for Machine Learning',
+    //         date_time: 'July 1, 2024 12:38:00 PM',
+    //         due_date: 'July 1, 2024'
+    //     },
+    //     {
+    //         action: 'You created a new teacher for Machine Learning',
+    //         date_time: 'July 1, 2024 12:38:00 PM',
+    //         due_date: 'July 1, 2024'
+    //     },
+    //     {
+    //         action: 'You created a new teacher for Machine Learning',
+    //         date_time: 'July 1, 2024 12:38:00 PM',
+    //         due_date: 'July 1, 2024'
+    //     },
+    //     {
+    //         action: 'You created a new teacher for Machine Learning',
+    //         date_time: 'July 1, 2024 12:38:00 PM',
+    //         due_date: 'July 1, 2024'
+    //     },
+    //     {
+    //         action: 'You created a new teacher for Machine Learning',
+    //         date_time: 'July 1, 2024 12:38:00 PM',
+    //         due_date: 'July 1, 2024'
+    //     },
+    //     {
+    //         action: 'You created a new teacher for Machine Learning',
+    //         date_time: 'July 1, 2024 12:38:00 PM',
+    //         due_date: 'July 1, 2024'
+    //     },
+    //     {
+    //         action: 'You created a new teacher for Machine Learning',
+    //         date_time: 'July 1, 2024 12:38:00 PM',
+    //         due_date: 'July 1, 2024'
+    //     },
+    //     {
+    //         action: 'You created a new teacher for Machine Learning',
+    //         date_time: 'July 1, 2024 12:38:00 PM',
+    //         due_date: 'July 1, 2024'
+    //     }
+    // ]
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -128,8 +147,8 @@ export const ActivityLogPage = () => {
                     {currentActivities.map((activity, index) => (
                         <tr>
                             <td><input type="checkbox" /></td>
-                            <td>{activity.action}</td>
-                            <td>{activity.date_time}</td>
+                            <td>{activity.activity}</td>
+                            <td>{format(new Date (activity.date), 'MMMM dd, yyyy hh:mm a')}</td>
                             <td>{activity.due_date}</td>
                             <td><button className={styles.actionsButton} onClick={()=>toggleAction(index)}>View All</button></td>
                         </tr>

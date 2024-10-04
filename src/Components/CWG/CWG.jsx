@@ -44,7 +44,6 @@ export const CWG = () => {
                     </div>
                 </ModalBody>
             </ModalContent>
-
         </Modal>
 
         </>

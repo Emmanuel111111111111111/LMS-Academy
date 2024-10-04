@@ -170,6 +170,8 @@ export const StudentPage = () => {
         };
     }, []);
 
+    const currentDate = new Date();
+
 
 
 
@@ -201,9 +203,8 @@ export const StudentPage = () => {
                             <td>{student.email}</td>
                             <td>{student.phone_number}</td>
                             <td>
-                                {/* <div className={student.status.toLowerCase() === 'active' ? styles.active : styles.inactive}> */}
-                                <div>
-                                    Active
+                                <div className={new Date (student.last_logged) < new Date(currentDate.getTime() - 7 * 24 * 60 * 60 * 1000) ? styles.inactive : styles.active}>
+                                    {new Date(student.last_logged) < new Date(currentDate.getTime() - 7 * 24 * 60 * 60 * 1000) ? 'Inactive' : 'Active'}
                                 </div>
                             </td>
                             <td>
