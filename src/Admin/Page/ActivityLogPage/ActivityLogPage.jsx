@@ -150,7 +150,9 @@ export const ActivityLogPage = () => {
                             <td>{activity.activity}</td>
                             <td>{format(new Date (activity.date), 'MMMM dd, yyyy hh:mm a')}</td>
                             <td>{activity.due_date}</td>
-                            <td><button className={styles.actionsButton} onClick={()=>toggleAction(index)}>View All</button></td>
+                            <td>
+                                <button className={styles.actionsButton} onClick={()=>toggleAction(index)}><img src={getImageUrl('threeDots.png')} /></button>
+                            </td>
                         </tr>
                     ))}
                 </tbody>

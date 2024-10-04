@@ -28,47 +28,51 @@ export const Account = () => {
 
     return (
         <div className={styles.big}>
+
             <div className={styles.bread}>
                 <img src={getImageUrl("Frame 349.png")} alt="" />
                 <h3>The ultimate financial management solution.Seize control,gain insightful data.</h3>
             </div>
+
             <div className={styles.crumb}>
-                <div className={styles.pan}>
-                    <a href="/CWG"> <img src={getImageUrl("arrow.png")} alt="" /></a>
-                    <h5><span>Back to</span> Home</h5>
-                </div>
+
+                <a href="/CWG" className={styles.pan}>
+                    <img src={getImageUrl("arrow.png")} alt="" />
+                    Back to <span>Home</span>
+                </a>
+
                 <div className={styles.crumbs}>
                     <h1>Create your account</h1>
                     <p>Lets help you get started on CWG Academy</p>
                 </div>
-                <div className={styles.forms}>
-                    <form onSubmit={handleSubmit}>
-                        <div className={styles.name}>
-                            <div className={styles.formgroup}>
-                                <label htmlFor="first_name">First Name</label>
-                                <input placeholder="Enter your first name" name="first_name" onChange={handleInput} />
-                            </div>
-                            <div className={styles.formgroup}>
-                                <label htmlFor="last_name">Last Name</label>
-                                <input placeholder="Enter your last name" name="last_name" onChange={handleInput} />
-                            </div>
+                
+                <form onSubmit={handleSubmit}>
+                    <div className={styles.name}>
+                        <div className={styles.formgroup}>
+                            <label htmlFor="first_name">First Name</label>
+                            <input placeholder="Enter your first name" name="first_name" onChange={handleInput} />
                         </div>
                         <div className={styles.formgroup}>
-                            <label htmlFor="phone_number">Phone Number</label>
-                            <input placeholder="Enter your phone number" name="phone_number" onChange={handleInput} />
+                            <label htmlFor="last_name">Last Name</label>
+                            <input placeholder="Enter your last name" name="last_name" onChange={handleInput} />
                         </div>
-                        <div className={styles.formgroup}>
-                            <label htmlFor="email">Email address</label>
-                            <input placeholder="Enter your email address" name="email" onChange={handleInput} />
-                        </div>
-                        <div className={styles.formgroup}>
-                            <label htmlFor="learning_mode">Preferred Mode of learning</label>
-                            <select name="learning_mode" onChange={handleInput} >
-                                <option value="">Select your preferred learning mode</option>
-                                <option value="online">Online</option>
-                                <option value="physical">Physical</option>
-                            </select>
-                        </div>
+                    </div>
+                    <div className={styles.formgroup}>
+                        <label htmlFor="phone_number">Phone Number</label>
+                        <input placeholder="Enter your phone number" name="phone_number" onChange={handleInput} />
+                    </div>
+                    <div className={styles.formgroup}>
+                        <label htmlFor="email">Email address</label>
+                        <input placeholder="Enter your email address" name="email" onChange={handleInput} />
+                    </div>
+                    <div className={styles.formgroup}>
+                        <label htmlFor="learning_mode">Preferred Mode of learning</label>
+                        <select name="learning_mode" onChange={handleInput} >
+                            <option value="">Select your preferred learning mode</option>
+                            <option value="online">Online</option>
+                            <option value="physical">Physical</option>
+                        </select>
+                    </div>
 
                         <div className={styles.check}>
                             <input type="checkbox" name="agree" required />
@@ -79,13 +83,12 @@ export const Account = () => {
                             <p>Receive marketing emails and communications about our products.</p>
                         </div>
 
-                        <div className={styles.home}>
-                            <a><button className={styles.butt}>Next</button></a>
-                            <p>Already have An Account? <a href="/Login">Sign In</a></p>
-                        </div>
+                    <div className={styles.home}>
+                        <button className={styles.butt}>Next</button>
+                        <p>Already have An Account? <a href="/Login">Sign In</a></p>
+                    </div>
+                </form>
 
-                    </form>
-                </div>
             </div>
         </div>
 

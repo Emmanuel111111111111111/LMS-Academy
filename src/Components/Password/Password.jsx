@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getImageUrl } from "../../utilis";
 import styles from "./Password.module.css";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 
@@ -10,6 +10,7 @@ export const Password = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const location = useLocation();
+    const navigate = useNavigate();
 
     const [ values, setValues ] = useState(location.state);
     console.log(values);
@@ -28,14 +29,19 @@ export const Password = () => {
 
     return (
         <div className={styles.big}>
+
             <div className={styles.bread}>
                 <img src={getImageUrl("Frame 349.png")} alt="" />
                 <h3>The ultimate financial management solution. Seize control,gain insightful data.</h3>
             </div>
+
             <div className={styles.crumb}>
-                <div className={styles.pan}>
-                    <a href="/CWG"><h5><span>Back</span> to Home</h5></a>
-                </div>
+
+                <a href="/CWG" className={styles.pan}>
+                    <img src={getImageUrl("arrow.png")} alt="" />
+                    Back to <span>Home</span>
+                </a>
+
                 <div className={styles.crumbs}>
                     <h1>Create your password</h1>
                     <p>Lets help you get started on CWG Academy</p>
@@ -57,6 +63,7 @@ export const Password = () => {
                             </div>
                         </div>
 
+                    {/* <button className={styles.butt} onClick={()=>navigate('/dashboard')}>Create My Account</button> */}
 
                     </form>
                     

@@ -30,10 +30,10 @@ export const AdminHeader = () => {
         case "/admin-dashboard/courses/completed":
             PageTitle = "Courses";
             linkList = [
-                {title: "All", link: "/admin-dashboard/coures"},
+                {title: "All", link: "/admin-dashboard/courses"},
                 {title: "Active", link: "/admin-dashboard/courses/active"},
-                {title: "Upcoming", link: "/admin-dashboard/coures/upcoming"},
-                {title: "Completed", link: "/admin-dashboard/coures/completed"},
+                {title: "Upcoming", link: "/admin-dashboard/courses/upcoming"},
+                {title: "Completed", link: "/admin-dashboard/courses/completed"},
             ];
             break;
         

@@ -180,14 +180,15 @@
 .course_modal{
     display: flex;
     flex-direction: column;
-    border-radius: 10px;
+    border-radius: 16px;
     padding: 16px;
     gap:8 ;
     border: 1px solid #BDD9FF;
     box-shadow: 0px 3px 5px 0px #00000017;
     background-color: #Fff;
     height: fit-content;
-    width: 460px; 
+    min-width: 460px;
+    max-height: 80vh;
 }
 .close{
     background: #fff;
@@ -205,10 +206,12 @@
     border: none;
     outline: none;
 }
-.head{
+.head {
     margin-top: 10px;
     display: flex;
     justify-content: space-between;
+    padding-bottom: 8px;
+    border-bottom: 1.5px solid #F3F4F6;
 }
 .content {
     margin-bottom:15px;
@@ -227,12 +230,27 @@
     display: flex;
     flex-direction: column;
 }
+.content h5 {
+    font-size: 16px;
+    font-weight: 500;
+    color: #4B5563;
+}
 .content input,
 .content select {
     margin-top: 10px;
     padding: 10px 12px 10px 12px;
     border-radius: 8px 8px 8px 8px;
     border: 1px solid #B4BCDD;
+    outline: none;
+    font-size: 16px;
+    font-weight: 400;
+    color: #4B5563;
+}
+.content input::placeholder,
+.content select {
+    font-size: 16px;
+    font-weight: 400;
+    color: #9CA3AF;
 }
 
 .contain{
@@ -243,19 +261,27 @@
     margin-bottom: 30px;
     gap: 12px;
 }
-.contain div{
+.contain div {
     display: flex;
     flex-direction: column;
     width: 100%;
+}
+.contain h5 {
+    font-size: 16px;
+    font-weight: 500;
+    color: #4B5563;
 }
 .contain input {
     margin-top: 10px;
     padding: 10px 12px 10px 12px;
     border-radius: 8px 8px 8px 8px;
-    border: 1px solid #ccc;
+    border: 1px solid #B4BCDD;
+    outline: none;
     background-color: #Fff;
     color: #000;
-    
+    font-size: 14px;
+    font-weight: 400;
+    color: #9CA3AF;
 }
 
 

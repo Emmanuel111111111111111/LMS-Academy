@@ -22,6 +22,10 @@ import { StudentPage } from './Admin/Page/StudentPage/StudentPage';
 import { PendingStudentPage } from './Admin/Page/PendingStudentsPage/PendingStudentPage';
 import { ActivityLogPage } from './Admin/Page/ActivityLogPage/ActivityLogPage';
 import { AdminOverview } from './Admin/Page/AdminOverviewpage/AdminOverview';
+import { UpcomingCourses } from './Admin/Page/UpcomingCourses/UpcomingCourses';
+import { CompletedCourses } from './Admin/Page/CompletedCourses/CompletedCourses';
+import { AllCourses } from './Admin/Page/AllCourses/AllCourses';
+import { CompletedCourse } from './Page/CompletedCourses/CompletedCourses';
 import { Detail } from './Admin/Components/Detail/Detail';
 
 function App() { 
@@ -41,7 +45,7 @@ function App() {
         { path: 'overview', element: <Overview /> },
         { path: 'courses', element: <Coursepage /> },
         { path: 'courses/active', element: <Course /> },
-        { path: 'courses/completed', element: <BlankPage /> },
+        { path: 'courses/completed', element: <CompletedCourse /> },
         { path: 'calendar', element: <CalendarPage /> },
         { path: 'certificate', element: <Certificate /> },
        
@@ -53,9 +57,10 @@ function App() {
         { path: '/admin-dashboard', element: <Navigate to="overview" /> },
         { path: 'overview', element: <AdminOverview /> },
         { path: 'schedule', element: <SchedulePage /> },
-        { path: 'courses', element: <AdminCourse /> },
+        { path: 'courses', element: <AllCourses /> },
         { path: 'courses/active', element: <AdminCourse /> },
-        { path: 'courses/completed', element: <BlankPage /> },
+        { path: 'courses/upcoming', element: <UpcomingCourses /> },
+        { path: 'courses/completed', element: <CompletedCourses /> },
         { path: 'tasks', element: <BlankPage /> },
         { path: 'teacher', element: <TeachersPage /> },
         { path: 'student', element: <StudentPage /> },

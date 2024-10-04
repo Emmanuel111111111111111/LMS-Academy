@@ -96,8 +96,9 @@ export const AdminCourse = () => {
     const toggleDropdown2 = () => {
 
     };
-
-    const toggleAction = (index) => {
+    
+    const toggleAction = (event, index) => {
+        event.stopPropagation();
         setActionsOpen(prevState => ({
             ...prevState,
             [index]: !prevState[index]
@@ -217,60 +218,62 @@ export const AdminCourse = () => {
 
     return (
         <>
-            <div className={styles.whole}>
-                <h5>Courses </h5>
-                <div>
-                    <div className={styles.title}>
-                        <h1>Active Courses</h1>
-                        <div className={styles.buttons}>
-                            <button className={styles.buttonOne}>Sort By<img src={getImageUrl('sortIcon.png')} /></button>
-                            <button className={styles.buttonTwo} onClick={toggleDropdown} ><img src={getImageUrl('add.png')} />Create Event</button>
-                        </div>
-                        {isOpen && (
-                            <ul className={styles.createDiv} ref={createRef}>
-                                <button onClick={() => handleOpenCreate("COURSE")}><img src={getImageUrl('courseIcon.png')} />COURSE</button>
-                                <button onClick={() => handleOpenCreate("ASSIGNMENTS")}><img src={getImageUrl('assignments.png')} />ASSIGNMENTS</button>
-                                <button onClick={() => handleOpenCreate("QUIZ")}><img src={getImageUrl('quizIcon.png')} />QUIZ</button>
-                            </ul>
-                        )}
-                        <Modal isOpen={openCreate}>
-                            <>
-                                <div className={styles.course_modal}>
-                                    <div className={styles.head}>
-                                        <h3>{buttonType === "COURSE" ? "Create Course" : buttonType === "ASSIGNMENTS" ? "Create Assignment" : "Create Quiz"}</h3>
-                                        <button onClick={handleCloseCreate} className={styles.close}><img src={getImageUrl('close.png')} /></button>
-                                    </div>
-                                    <form className={styles.form} onSubmit={handleSubmit}>
-                                        <div className={styles.content}>
-                                            <div>
-                                                <h5>{buttonType === "COURSE" ? "Event Name" : buttonType === "ASSIGNMENTS" ? "Content title" : "Event Name"}</h5>
-                                                <input type="text" placeholder="Enter Event Name" name="name" onChange={handleInput} />
-                                            </div>
-                                            <div>
-                                                <h5>{buttonType === "COURSE" ? "Event Type" : buttonType === "ASSIGNMENTS" ? "Duration" : "Event Type"}</h5>
-                                                <select name="type" onChange={handleInput}>
-                                                    <option value="">Select Event Type</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div className={styles.duration}>
-                                            <h5>Duration</h5>
-                                            <div className={styles.contain}>
-                                                <input type="number" name="duration_number" id="" />
-                                                <select name="duration" id="">
-                                                    <option value="">Day(s)</option>
-                                                    <option value="">Week(s)</option>
-                                                    <option value="">Month(s)</option>
-                                                </select>
-                                            </div>
-                                        </div>
+        <div className={styles.whole}>
 
-                                        <button className={styles.submit}>Submit</button>
-                                    </form>
-                                </div>
-                            </>
-                        </Modal>
+            <div className={styles.breadcrumb}><a href="/admin-dashboard/courses">Courses</a> {'>'} Active</div>
+
+            <div>
+                <div className={styles.title}>
+                    <h1>Active Courses</h1>
+                    <div className={styles.buttons}>
+                        <button className={styles.buttonOne}>Sort By<img src={getImageUrl('sortIcon.png')} /></button>
+                        <button className={styles.buttonTwo} onClick={toggleDropdown} ><img src={getImageUrl('add.png')} />Create Event</button>
                     </div>
+                    {isOpen && (
+                        <ul className={styles.createDiv} ref={createRef}>
+                            <button onClick={() => handleOpenCreate("COURSE")}><img src={getImageUrl('courseIcon.png')} />COURSE</button>
+                            <button onClick={() => handleOpenCreate("ASSIGNMENTS")}><img src={getImageUrl('assignments.png')} />ASSIGNMENTS</button>
+                            <button onClick={() => handleOpenCreate("QUIZ")}><img src={getImageUrl('quizIcon.png')} />QUIZ</button>
+                        </ul>
+                    )}
+                    <Modal isOpen={openCreate}>
+                        <>
+                        <div className={styles.course_modal}>
+                            <div className={styles.head}>
+                                <h3>{buttonType === "COURSE" ? "Create Course" : buttonType === "ASSIGNMENTS" ? "Create Assignment" : "Create Quiz"}</h3>
+                                <button onClick={handleCloseCreate} className={styles.close}><img src={getImageUrl('close.png')} /></button>
+                            </div>
+
+                            <div style={{overflow: 'auto', flexDirection: 'column'}}>
+                                <div className={styles.content}>
+                                    <div>
+                                        <h5>{buttonType === "COURSE" ? "Event Name" : buttonType === "ASSIGNMENTS" ? "Content title" : "Event Name"}</h5>
+                                        <input type="text" placeholder="Enter Event Name"></input>
+                                    </div>
+                                    <div>
+                                        <h5>{buttonType === "COURSE" ? "Event Type" : buttonType === "ASSIGNMENTS" ? "Duration" : "Event Type"}</h5>
+                                        <select name="" id="" onClick={toggleDropdown2}>
+                                            <option value="">Select Event Type</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className={styles.contain}>
+                                    <div>
+                                        <h5>Start Date & Time</h5>
+                                        <input type="datetime-local" name="" id="" />
+                                    </div>
+                                    <div>
+                                        <h5>Due Date</h5>
+                                        <input type="date" name="" id="" />
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button className={styles.submit}>Submit</button>
+                        </div>
+                        </>
+                    </Modal>
+                </div>
 
                     <div className={styles.course}>
                         {courses.map((cour, index) => (

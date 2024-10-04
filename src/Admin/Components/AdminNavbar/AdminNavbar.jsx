@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./Navbar.module.css";
+import styles from "./AdminNavbar.module.css";
 import { getImageUrl } from "../../../utilis";
 
 export const AdminNavbar = () => {
@@ -44,7 +44,7 @@ export const AdminNavbar = () => {
             </div>
 
             <div className={styles.logout}>
-                <a href="">
+                <a href="/CWG">
                     <img src={getImageUrl('logoutIcon.png')} />
                     Logout
                 </a>
