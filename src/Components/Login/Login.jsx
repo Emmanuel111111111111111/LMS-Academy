@@ -24,11 +24,20 @@ export const Login = () => {
     event.preventDefault();
     try {
       const response = await axios.post(BASE_URL + '/login', { email, password });
-      console.log(response.data);
+      
+      console.log("signed in");
+      sessionStorage.setItem("id", response.data.student_id);
+      sessionStorage.setItem("first_name", response.data.first_name);
+      sessionStorage.setItem("last_name", response.data.last_name);
+      sessionStorage.setItem("email", response.data.email);
+      console.log(response.data.first_name);
+      window.location.href = "/dashboard";
+      
     } catch (err) {
       if (err.response) {
         console.error(err.response.data.message);
-        // alert(err.response.data.message);
+        if (err.response.data.message === 'No records') setErrorMesage(true);
+        else if (err.response.data.message === 'Invalid credentials') setErrorMesage(true);
       } else {
         console.error('Error', err.message);
       }
