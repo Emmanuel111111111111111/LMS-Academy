@@ -13,7 +13,7 @@ const client = new Client({
     ssl: {
         rejectUnauthorized: false,
     },
-})
+});
 
 client.connect();
 
@@ -32,7 +32,7 @@ client.connect();
 app.get("/", (req, res) => {
     console.log('Working');
     return res.json("BACKEND IS CONNECTED");
-})
+});
 
 app.get("/students", async (req, res) => {
     try {
@@ -42,7 +42,7 @@ app.get("/students", async (req, res) => {
         console.log(err);
         res.status(500).json({message: "Error fetching students"});
     }
-})
+});
 
 app.get("/courses", async (req, res) => {
     try {
@@ -52,7 +52,7 @@ app.get("/courses", async (req, res) => {
         console.log(err);
         res.status(500).json({message: "Error fetching courses"});
     }
-})
+});
 
 app.get("/enrollment", async (req, res) => {
     try {
@@ -62,7 +62,7 @@ app.get("/enrollment", async (req, res) => {
         console.log(err);
         res.status(500).json({message: "Error fetching enrollments"});
     }
-})
+});
 
 app.get("/courses/:student_id", async (req, res) => {
     const id = req.params.student_id;
@@ -74,7 +74,7 @@ app.get("/courses/:student_id", async (req, res) => {
         console.log(err);
         res.status(500).json({message: "Error fetching courses/id"});
     }
-})
+});
 
 app.get("/teachers", async (req, res) => {
     try {
@@ -84,7 +84,7 @@ app.get("/teachers", async (req, res) => {
         console.log(err);
         res.status(500).json({message: "Error fetching teachers"});
     }
-})
+});
 
 app.get("/activity-log", async (req, res) => {
     try {
@@ -94,15 +94,7 @@ app.get("/activity-log", async (req, res) => {
         console.log(err);
         res.status(500).json({message: "Error fetching activity log"});
     }
-    // const c = "SELECT * FROM activity_log"
-    // db.query(c, (err, data) => {
-    //     if (err) {
-    //         return res.json(err);
-    //     } else {
-    //         res.send(data);
-    //     }
-    // })
-})
+});
 
 
 app.post('/new-teacher', async (req, res) => {
@@ -133,87 +125,86 @@ app.post('/new-teacher', async (req, res) => {
         console.error(err);
         return res.status(500).json({message: "Error in adding new instructor or logging"});
     }
+});
+
+
+app.post('/new-course', async (req, res) => {
+    const query = "INSERT INTO course (name, duration) VALUES ($1, $2)";
+    const values = [
+        req.body.name,
+        req.body.duration
+    ]
+    try {
+        const result = await client.query(query, values);
+        console.log(result.rows[0]);
+
+        const activity = "New course, " + req.body.name + ", added.";
+        const logQuery = "INSERT INTO activity_log (activity, date) VALUES ($1, $2)";
+        const logValues = [
+            activity,
+            req.body.date
+        ];
+
+        await client.query(logQuery, logValues);
+        res.json({message: "Instructor added successfully", instructor: result.rows[0]});
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({message: "Error in adding new course or logging"});
+    }
+});
+
+
+app.post('/login', async (req, res) => {
+    const query = 'SELECT * FROM student WHERE email = $1 AND password = $2 ';
+    const values = [
+        req.body.email,
+        req.body.password
+    ]
+    try {
+        const result = await client.query(query, values);
+        return result;
+    } catch (err) {
+        console.log(err);
+        return res.json("Login failed");
+    }
+})
+
+app.post('/adminlogin', async (req, res) => {
+    const query = 'SELECT * FROM instructor WHERE email = $1 AND password = $2 ';
+    const values = [
+        req.body.email,
+        req.body.password
+    ]
+    try {
+        const result = await client.query(query, values);
+        return result;
+    } catch (err) {
+        console.log(err);
+        return res.json("Login failed");
+    }
+})
+
+app.post("/signup", async (req, res) => {
+    const query = "INSERT INTO student (first_name, last_name, email, phone_number, learning_mode, password) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *";
+    const values = [
+        req.body.first_name,
+        req.body.last_name,
+        req.body.email,
+        req.body.phone_number,
+        req.body.learning_mode,
+        req.body.password
+    ]
+    try {
+        const result = await client.query(query, values);
+        console.log(result.rows[0]);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({message: "Error in signing up"});
+    }
 })
 
 
-// app.post('/new-course', (req, res) => {
-//     const sql = "INSERT INTO course (name, duration) VALUES (?)";
-//     const values = [
-//         req.body.name,
-//         req.body.duration
-//     ]
-//     db.query(sql, [values], (err, result) => {
-//         if (err) {
-//             console.log(err);
-//             return res.json({Message: "Error in adding course"})
-//         }
-//         console.log(req.body);
-//         console.log(result);
-//         return res.json(result);
-//     });
-
-//     const sql2 = "INSERT INTO activity_log (activity, date) VALUES (?)";
-//     const activity = "New course, " + req.body.name + ", added.";
-//     const logValues = [
-//         activity,
-//         req.body.date
-//     ]
-//     db.query(sql2, [logValues], (err, result) => {
-//         if (err) {
-//             console.log(err);
-//             return res.json({Message: "Error in adding to log"})
-//         }
-//         console.log(req.body);
-//         console.log(result);
-//         // return res.json(result);
-//     });
-// })
-
-
-// app.post('/login', (req, res) => {
-//     const sql = 'SELECT * FROM student WHERE email = ? AND password = ? ';
-//     db.query(sql, [req.body.email, req.body.password], (err, data) => {
-//         if (err) return res.json("Login failed");
-//         if(data.length > 0) {
-//             return res.json(data);
-//         } else {
-//             return res.json("No records");
-//         }
-//     })
-// })
-
-// app.post('/adminlogin', (req, res) => {
-//     const sql = 'SELECT * FROM instuctors WHERE (email = ? OR phone_number = ?) AND password = ? ';
-//     db.query(sql, [req.body.email, req.body.password], (err, data) => {
-//         if (err) return res.json("Login failed");
-//         if(data.length > 0) {
-//             return res.json("Login Successfully")
-//         } else {
-//             return res.json("No records")
-//         }
-//     })
-// })
-
-// app.post("/signup", (req, res) => {
-//     const sql = "INSERT INTO users (first_name, last_name, email, phone_number, learning_mode, password) VALUES (?)";
-//     const values = [
-//         req.body.first_name,
-//         req.body.last_name,
-//         req.body.email,
-//         req.body.phone_number,
-//         req.body.learning_mode,
-//         req.body.password
-//     ]
-//     db.query(sql, [values], (err, result) => {
-//         if (err) {
-//             console.log(err);
-//             return res.json({Message: "Error in Node"})
-//         }
-//         console.log(req.body);
-//         console.log(result);
-//         return res.json(result);
-//     });
-// })
 
 app.listen(port, () => {
     console.log("Connect to backend.")

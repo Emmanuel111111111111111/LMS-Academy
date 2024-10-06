@@ -38,7 +38,7 @@ export const AdminCourse = () => {
 
     const fetchEnrollment = async () => {
         try {
-            const result = await axios("http://localhost:8081/enrollment");
+            const result = await axios(BASE_URL + "/enrollment");
             setEnrollment(result.data);
         } catch (err) {
             console.log(err);
@@ -59,7 +59,6 @@ export const AdminCourse = () => {
         date: new Date().toISOString().slice(0,19).replace('T', ' '),
     })
 
-    // console.log(new Date());
 
     const handleInput = (event) => {
         setNewCourseValues(prev => ({ ...prev, [event.target.name]: event.target.value }))
@@ -68,7 +67,7 @@ export const AdminCourse = () => {
         event.preventDefault();
         setOpenCreate(false);
         console.log(newCourseValues);
-        axios.post('http://localhost:8081/new-course', newCourseValues)
+        axios.post(BASE_URL + '/new-course', newCourseValues)
             .then(res => console.log(res))
             .catch(err => console.log(err));
     }
@@ -245,7 +244,7 @@ export const AdminCourse = () => {
                                 <button onClick={handleCloseCreate} className={styles.close}><img src={getImageUrl('close.png')} /></button>
                             </div>
 
-                            <div style={{overflow: 'auto', flexDirection: 'column'}}>
+                            <form style={{overflow: 'auto', flexDirection: 'column'}}>
                                 <div className={styles.content}>
                                     <div>
                                         <h5>{buttonType === "COURSE" ? "Event Name" : buttonType === "ASSIGNMENTS" ? "Content title" : "Event Name"}</h5>
@@ -268,7 +267,7 @@ export const AdminCourse = () => {
                                         <input type="date" name="" id="" />
                                     </div>
                                 </div>
-                            </div>
+                            </form>
                             
                             <button className={styles.submit}>Submit</button>
                         </div>
@@ -286,7 +285,7 @@ export const AdminCourse = () => {
                                     <div className={styles.infoHeader}>
                                         <div><h3>{cour.name}<span>Started</span></h3></div>
                                         <div>
-                                            <button className={styles.actionsButton} onClick={() => toggleAction(index)}><img src={getImageUrl('threeDots.png')} /></button>
+                                            <button className={styles.actionsButton} onClick={(e) => toggleAction(e, index)}><img src={getImageUrl('threeDots.png')} /></button>
                                             <div className={`${styles.actionsClosed} ${actionsOpen[index] && styles.theActions}`} ref={actionsRef}>
                                                 <h5>ACTION</h5>
                                                 <button><img src={getImageUrl('approve.png')} />SUSPEND</button>
