@@ -21,12 +21,18 @@ export const Password = () => {
     }
 
     const handleSubmit = async (event) => {
-        console.log('here')
         event.preventDefault();
         console.log(values);
         axios.post(BASE_URL + '/signup', values)
             .then(res => console.log(res))
             .catch(err => console.log(err));
+        
+        console.log("signed up");
+        sessionStorage.setItem("first_name", values.first_name);
+        sessionStorage.setItem("email", values.email);
+        console.log(values.first_name);
+
+        window.location.href = "/dashboard";
     }
 
     return (
@@ -48,33 +54,25 @@ export const Password = () => {
                     <h1>Create your password</h1>
                     <p>Lets help you get started on CWG Academy</p>
                 </div>
-                <div className={styles.forms}>
-                    <form className={styles.form} onSubmit={handleSubmit}>
-                        <div className={styles.formgroup}>
-                            <label for="name">Password</label>
-                            <div className={styles.password}>
-                                <input type={showPassword ? 'text' : 'password'} placeholder="Create your password" name="password" onChange={handleInput} />
-                                <button type="button" onClick={() => setShowPassword((showPassword) => !showPassword)}><img src={getImageUrl("visibility_off.png")} alt="view" /></button>
-                            </div>
+                <form className={styles.form} onSubmit={handleSubmit}>
+                    <div className={styles.formgroup}>
+                        <label for="name">Password</label>
+                        <div className={styles.password}>
+                            <input type={showPassword ? 'text' : 'password'} placeholder="Create your password" name="password" onChange={handleInput} />
+                            <button type="button" onClick={() => setShowPassword((showPassword) => !showPassword)}><img src={getImageUrl("visibility_off.png")} alt="view" /></button>
                         </div>
-                        <div className={styles.formgroup}>
-                            <label for="Re-type password">Retype your password</label>
-                            <div className={styles.password}>
-                                <input type={showConfirmPassword ? 'text' : 'password'} placeholder="Retype your password" name="ID" />
-                                <button type="button" onClick={() => setShowConfirmPassword((showConfirmPassword) => !showConfirmPassword)}><img src={getImageUrl("visibility_off.png")} alt="view" /></button>
-                            </div>
+                    </div>
+                    <div className={styles.formgroup}>
+                        <label for="Re-type password">Retype your password</label>
+                        <div className={styles.password}>
+                            <input type={showConfirmPassword ? 'text' : 'password'} placeholder="Retype your password" name="ID" />
+                            <button type="button" onClick={() => setShowConfirmPassword((showConfirmPassword) => !showConfirmPassword)}><img src={getImageUrl("visibility_off.png")} alt="view" /></button>
                         </div>
+                    </div>
 
-                        <div className={styles.home}>
-                            {/* <a href="/dashboard"><button className={styles.butt}>Create My Account</button> </a> */}
-                            <button className={styles.butt}>Create My Account</button>
-                        </div>
-                    {/* <button className={styles.butt} onClick={()=>navigate('/dashboard')}>Create My Account</button> */}
+                    <button className={styles.butt}>Create My Account</button>
 
-                    </form>
-                    
-                    
-                </div>
+                </form>
 
             </div>
 
