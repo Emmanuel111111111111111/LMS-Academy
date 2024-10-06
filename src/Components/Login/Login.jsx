@@ -62,7 +62,7 @@ export const Login = () => {
           <p>Lets help you get started on CWG Academy</p>
         </div>
 
-          <form onSubmit={handleSubmit}>
+          <form className={styles.form} onSubmit={handleSubmit}>
 
             {errorMessage && <p style={{ color: 'red' }}>Wrong username or password. Try again</p>}
 

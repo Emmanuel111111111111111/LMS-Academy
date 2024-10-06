@@ -4,6 +4,7 @@ import { getImageUrl } from "../../../utilis";
 import styles from "./AdminLogin.module.css";
 import axios from 'axios'
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../../../../config";
 
 
 export const AdminLogin = () => {
@@ -18,13 +19,13 @@ export const AdminLogin = () => {
   function handleSubmit(event) {
     event.preventDefault();
     navigate('/admin-dashboard')
-    // axios.post('http://localhost:8081/adminlogin', {email, password})
-    //   .then(res => {
-    //     console.log(res)
-    //     if (res.data === "No records") setErrorMesage(true);
-    //     else if (res.data === "Login Successfully") navigate('/dashboard');
-    //   })
-    //   .catch(err => console.log(err));   
+    axios.post(BASE_URL + '/adminlogin', {email, password})
+      .then(res => {
+        console.log(res)
+        if (res.data === "No records") setErrorMesage(true);
+        else if (res.data === "Login Successfully") navigate('/dashboard');
+      })
+      .catch(err => console.log(err));   
   }
 
   const [showPassword, setShowPassword] = useState(false);
@@ -47,7 +48,7 @@ export const AdminLogin = () => {
           <p>Lets help you get started on CWG Academy</p>
         </div>
         <div className={styles.forms}>
-          <form onSubmit={handleSubmit}>
+          <form className={styles.form} onSubmit={handleSubmit}>
             {errorMessage && <p style={{color: 'red'}}>Wrong username or password. Try again</p>}
             <div className={styles.formgroup}>
               <label for="name">Phone Number or Email Address</label>

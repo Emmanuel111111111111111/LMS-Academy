@@ -3,6 +3,7 @@ import { getImageUrl } from "../../utilis";
 import styles from "./Password.module.css";
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { BASE_URL } from "../../../config";
 
 
 export const Password = () => {
@@ -22,7 +23,7 @@ export const Password = () => {
     const handleSubmit = async (event) => {
         console.log(values);
         event.preventDefault();
-        axios.post('http://localhost:8081/signup', values)
+        axios.post(BASE_URL + '/signup', values)
             .then(res => console.log(res))
             .catch(err => console.log(err));
     }
@@ -47,7 +48,7 @@ export const Password = () => {
                     <p>Lets help you get started on CWG Academy</p>
                 </div>
                 <div className={styles.forms}>
-                    <form onSubmit={handleSubmit}>
+                    <form className={styles.form} onSubmit={handleSubmit}>
                         <div className={styles.formgroup}>
                             <label for="name">Password</label>
                             <div className={styles.password}>

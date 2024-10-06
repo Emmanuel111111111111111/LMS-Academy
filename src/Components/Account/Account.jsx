@@ -46,7 +46,7 @@ export const Account = () => {
                     <p>Lets help you get started on CWG Academy</p>
                 </div>
                 
-                <form onSubmit={handleSubmit}>
+                <form className={styles.form} onSubmit={handleSubmit}>
                     <div className={styles.name}>
                         <div className={styles.formgroup}>
                             <label htmlFor="first_name">First Name</label>

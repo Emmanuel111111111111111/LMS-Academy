@@ -85,7 +85,7 @@
     color: #666666;
 }
 
-form {
+.form {
     width: 70%;
     padding: 40px 24px 0 24px;
     display: flex;

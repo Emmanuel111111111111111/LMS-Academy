@@ -23,7 +23,7 @@ export const Reset = () => {
           <p>Lets help you get started on CWG Academy</p>
         </div>
 
-        <form>
+        <form className={styles.form}>
           <div className={styles.formgroup}>
             <label for="name">Phone Number or Email Address</label>
             <input placeholder="Enter your phone number or email address" name="ID" />
