@@ -81,8 +81,8 @@ export const AdminCourse = () => {
         setOpenCreate(true);
     };
 
-    const handleOpenCourse = (index) => {
-        setSelected(index)
+    const handleOpenCourse = (course) => {
+        setSelected(course)
         setOpenCourseInfo(true);
     };
     const handleCloseCourseInfo = (index) => {
@@ -278,7 +278,7 @@ export const AdminCourse = () => {
                     <div className={styles.course}>
                         {courses.map((cour, index) => (
                             <>
-                                <div key={index} className={styles.courseInfo} onClick={() => handleOpenCourse(index)}>
+                                <div key={index} className={styles.courseInfo} onClick={() => handleOpenCourse(cour)}>
                                     <div className={styles.courseImage}>
                                         <img src={getImageUrl('frame7.png')} />
                                     </div>
@@ -306,134 +306,128 @@ export const AdminCourse = () => {
                                     </div>
                                 </div>
 
-                                <Modal isOpen={openCourseInfo} >
-                                    <>
-                                    <div className={styles.courseInfo_modal}>
-                                        <div className={styles.head}>
-                                            <h3>{buttonType === "COURSE" ? "Course Details" : buttonType === "ASSIGNMENTS" ? "Create Assignment" : "Course Details"}</h3>
-                                            <button onClick={handleCloseCourseInfo} className={styles.close}><img src={getImageUrl('close.png')} /></button>
-                                        </div>
-                                        <p className={styles.texts}>Coursedetails</p>
-                                        <hr className={styles.line}></hr>
-
-                                        <div className={styles.Modal}>
-                                            <div className={styles.Image}>
-                                                <img src={getImageUrl("Frm.png")} alt="g" />
-                                            </div>
-                                            <div className={styles.text}>
-                                                <div className={styles.Header}>
-                                                    <div className={styles.crunb}><h3>Artificial Intelligence  <span>Started</span></h3></div>
-                                                    <button><img src={getImageUrl('threeDots.png')} alt="" /></button>
-                                                </div>
-                                                <p>Lorem ipsum dolor sit amet consectetur.Feugia t blandit turpis. lorem ipsum dolor sit
-                                                    amet consectetur. Feugia t blandit turpis...Lorem ipsum dolor sit amet consectetur. Feugia t blandit turpis.Lorem ipsum.
-                                                </p>
-                                                <div className={styles.coursesDatas}>
-                                                    <div className={styles.bead}>
-                                                        <div className={styles.pro}><img src={getImageUrl('profile.png')} alt="" />{cour.teacher}</div>
-                                                        <div className={styles.stud}><img src={getImageUrl('pic.png')} alt="" />{cour.students} Students</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                           
-                                        </div>
-                                        <table className={styles.coursetable}>
-                                                <thead>
-                                                    <th><input type="checkbox" /></th>
-                                                    <th>First Name</th>
-                                                    <th>Last Name</th>
-                                                    <th>Phone Number</th>
-                                                    <th>Email</th>
-                                                    <th>Date</th>
-                                                    <th>Action</th>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td><input type="checkbox" /></td>
-                                                        <td>Feranmi</td>
-                                                        <td>Jones</td>
-                                                        <td>+23490543322</td>
-                                                        <td>FeranmiJ@gm...</td>
-                                                        <td>Jones</td>
-                                                        <td><button  className={styles.app}>Approve</button></td>
-                                                    </tr>
-                                                </tbody>
-                                                <tbody>
-                                                    <tr>
-                                                        <td><input type="checkbox" /></td>
-                                                        <td>Feranmi</td>
-                                                        <td>Jones</td>
-                                                        <td>+23490543322</td>
-                                                        <td>FeranmiJ@gm...</td>
-                                                        <td>Jones</td>
-                                                        <td><button  className={styles.app}>Approve</button></td>
-                                                    </tr>
-                                                </tbody>
-                                                <tbody>
-                                                    <tr>
-                                                        <td><input type="checkbox" /></td>
-                                                        <td>Feranmi</td>
-                                                        <td>Jones</td>
-                                                        <td>+23490543322</td>
-                                                        <td>FeranmiJ@gm...</td>
-                                                        <td>Jones</td>
-                                                        <td><button  className={styles.app}>Approve</button></td>
-                                                    </tr>
-                                                </tbody>
-                                                <tbody>
-                                                    <tr>
-                                                        <td><input type="checkbox" /></td>
-                                                        <td>Feranmi</td>
-                                                        <td>Jones</td>
-                                                        <td>+23490543322</td>
-                                                        <td>FeranmiJ@gm...</td>
-                                                        <td>Jones</td>
-                                                        <td><button  className={styles.app}>Approve</button></td>
-                                                    </tr>
-                                                </tbody>
-                                                <tbody>
-                                                    <tr>
-                                                        <td><input type="checkbox" /></td>
-                                                        <td>Feranmi</td>
-                                                        <td>Jones</td>
-                                                        <td>+23490543322</td>
-                                                        <td>FeranmiJ@gm...</td>
-                                                        <td>Jones</td>
-                                                        <td><button  className={styles.app}>Approve</button></td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                            <div style={{w: "100%", display: "flex", alignItems: 'center'}}>
-                                                <div className={styles.showRows}>
-                                                    Show
-                                                  <select onChange={(e) => handlePageNumber(e.target.value)}>
-                                                    <option value={5}>5</option>
-                                                    <option value={10}>10</option>
-                                                    <option value={15}>15</option>
-                                                 </select>
-                                                 Row
-                                                </div>
-                                               
-                                                {/* <Pagination className={styles.pag}
-                                                       
-                                                       currentPage={currentPage}
-                                                       itemsPerPage={itemsPerPage}
-                                                       onPageChange={handlePageChange}
-                                                />        */}
-                                            </div>
-                                          
-                                                    <button className={styles.yes}>Submit</button>
-                                               
-                                    </div>
-                                    </>
-                                </Modal>
-
                             </>
 
                         ))}
                     </div>
                 </div>
             </div>
+
+            <Modal isOpen={openCourseInfo}>
+                <>
+                <div className={styles.courseInfo_modal}>
+                    <div className={styles.head}>
+                        <h3>{buttonType === "COURSE" ? "Course Details" : buttonType === "ASSIGNMENTS" ? "Create Assignment" : "Course Details"}</h3>
+                        <button onClick={handleCloseCourseInfo} className={styles.close}><img src={getImageUrl('close.png')} /></button>
+                    </div>
+                    <div style={{overflow: 'auto', display: 'flex',flexDirection: 'column'}}>
+                        <p className={styles.texts}>Course details</p>
+                        <hr className={styles.line}></hr>
+
+                        <div className={styles.Modal}>
+                            <div className={styles.Image}>
+                                <img src={getImageUrl("Frm.png")} alt="g" />
+                            </div>
+                            <div className={styles.text}>
+                                <div className={styles.Header}>
+                                    <div className={styles.crunb}><h3>{selected.name}<span>Started</span></h3></div>
+                                    <button><img src={getImageUrl('threeDots.png')} alt="" /></button>
+                                </div>
+                                <p>Lorem ipsum dolor sit amet consectetur.Feugia t blandit turpis. lorem ipsum dolor sit
+                                    amet consectetur. Feugia t blandit turpis...Lorem ipsum dolor sit amet consectetur. Feugia t blandit turpis.Lorem ipsum.
+                                </p>
+                                <div className={styles.coursesDatas}>
+                                    <div className={styles.bead}>
+                                        <div className={styles.pro}><img src={getImageUrl('profile.png')} alt="" />{selected.teacher}</div>
+                                        <div className={styles.stud}><img src={getImageUrl('pic.png')} alt="" />{selected.students} Students</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <table className={styles.coursetable}>
+                            <thead>
+                                <th><input type="checkbox" /></th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Phone Number</th>
+                                <th>Email</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="checkbox" /></td>
+                                    <td>Feranmi</td>
+                                    <td>Jones</td>
+                                    <td>+23490543322</td>
+                                    <td>FeranmiJ@gm...</td>
+                                    <td>Jones</td>
+                                    <td><button  className={styles.app}>Approve</button></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" /></td>
+                                    <td>Feranmi</td>
+                                    <td>Jones</td>
+                                    <td>+23490543322</td>
+                                    <td>FeranmiJ@gm...</td>
+                                    <td>Jones</td>
+                                    <td><button  className={styles.app}>Approve</button></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" /></td>
+                                    <td>Feranmi</td>
+                                    <td>Jones</td>
+                                    <td>+23490543322</td>
+                                    <td>FeranmiJ@gm...</td>
+                                    <td>Jones</td>
+                                    <td><button  className={styles.app}>Approve</button></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" /></td>
+                                    <td>Feranmi</td>
+                                    <td>Jones</td>
+                                    <td>+23490543322</td>
+                                    <td>FeranmiJ@gm...</td>
+                                    <td>Jones</td>
+                                    <td><button  className={styles.app}>Approve</button></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" /></td>
+                                    <td>Feranmi</td>
+                                    <td>Jones</td>
+                                    <td>+23490543322</td>
+                                    <td>FeranmiJ@gm...</td>
+                                    <td>Jones</td>
+                                    <td><button  className={styles.app}>Approve</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div style={{w: "100%", display: "flex", alignItems: 'center'}}>
+                            <div className={styles.showRows}>
+                                Show
+                                <select onChange={(e) => handlePageNumber(e.target.value)}>
+                                <option value={5}>5</option>
+                                <option value={10}>10</option>
+                                <option value={15}>15</option>
+                                </select>
+                                Row
+                            </div>
+                            
+                            {/* <Pagination className={styles.pag}
+                                    
+                                    currentPage={currentPage}
+                                    itemsPerPage={itemsPerPage}
+                                    onPageChange={handlePageChange}
+                            />        */}
+                        </div>
+                            
+                        <button className={styles.yes}>Submit</button>
+                    </div>
+                            
+                </div>
+                </>
+            </Modal>
 
 
         </>
