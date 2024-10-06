@@ -163,12 +163,16 @@ app.post('/login', async (req, res) => {
     ]
     try {
         const result = await client.query(query, values);
-        return result;
+        if (result.rows.length > 0) {
+            return res.json(result.rows);
+        } else {
+            return res.status(404).json({ message: "No records" });
+        }
     } catch (err) {
         console.log(err);
-        return res.json("Login failed");
+        return res.status(500).json({message: "Login failed"});
     }
-})
+});
 
 app.post('/adminlogin', async (req, res) => {
     const query = 'SELECT * FROM instructor WHERE email = $1 AND password = $2 ';

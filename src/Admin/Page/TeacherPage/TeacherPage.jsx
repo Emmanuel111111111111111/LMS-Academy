@@ -8,6 +8,7 @@ import Pagination from "../../../Components/Pagination/Pagination";
 import Modal from "../../Components/AdminCourse/Modal";
 import axios from 'axios';
 import { format } from 'date-fns';
+import { BASE_URL } from "../../../../config";
 
 
 export const TeachersPage = () => {
@@ -27,7 +28,7 @@ export const TeachersPage = () => {
 
     const fetchTeachers = async () => {
         try {
-            const result = await axios("http://localhost:8081/teachers");
+            const result = await axios(BASE_URL + "/teachers");
             console.log(result);
             setTeachers(result.data);
         } catch (err) {
@@ -50,7 +51,7 @@ export const TeachersPage = () => {
         event.preventDefault();
         setOpen(false);
         console.log(newTeacherValues);
-        axios.post('http://localhost:8081/new-teacher', newTeacherValues)
+        axios.post(BASE_URL + '/new-teacher', newTeacherValues)
             .then(res => console.log(res))
             .catch(err => console.log(err));
     }

@@ -3,6 +3,7 @@ import styles from './StudentPage.module.css';
 import { getImageUrl } from "../../../utilis";
 import Pagination from "../../../Components/Pagination/Pagination";
 import axios from 'axios';
+import { BASE_URL } from "../../../../config";
 
 
 export const StudentPage = () => {
@@ -20,7 +21,7 @@ export const StudentPage = () => {
 
     const fetchStudents = async () => {
         try {
-            const result = await axios("http://localhost:8081/students");
+            const result = await axios(BASE_URL + "/students");
             console.log(result);
             setStudents(result.data);
         } catch (err) {

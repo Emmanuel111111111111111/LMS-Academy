@@ -4,6 +4,7 @@ import { getImageUrl } from "../../utilis";
 import styles from "./Login.module.css";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../../../config";
 
 
 export const Login = () => {
@@ -22,7 +23,8 @@ export const Login = () => {
 
   function handleSubmit(event) {
     event.preventDefault();
-    axios.post('http://localhost:8081/login', { email, password })
+    console.log('here')
+    axios.post(BASE_URL + '/login', { email, password })
       .then(res => {
         console.log(res)
         if (res.data === "No records") setErrorMesage(true);
@@ -34,7 +36,7 @@ export const Login = () => {
           sessionStorage.setItem("email", res.data[0].email);
           console.log(res.data[0].first_name);
 
-          navigate('/dashboard');
+          // navigate('/dashboard');
         }
       })
       .catch(err => console.log(err));
@@ -84,7 +86,7 @@ export const Login = () => {
             <p>Forgot password? <a href="/Reset">Reset Password</a></p>
 
             <div className={styles.home}>
-              <button className={styles.butt} type="submit" onClick={()=>navigate('/dashboard')}>Log In</button>
+              <button className={styles.butt}>Log In</button>
               <p>Don't Have An Account? <a href="/Account">Create An Account</a></p>
             </div>
 

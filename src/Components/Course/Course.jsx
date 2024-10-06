@@ -3,6 +3,7 @@ import { getImageUrl } from "../../utilis";
 import styles from "./Course.module.css";
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import { BASE_URL } from "../../../config";
 
 export const Course = () => {
 
@@ -24,7 +25,7 @@ export const Course = () => {
 
     const fetchStudentCourses = async () => {
         try {
-            const result = await axios(`http://localhost:8081/courses/${studentId}`);
+            const result = await axios(BASE_URL + `/courses/${studentId}`);
             console.log(result);
             setCourses(result.data);
         } catch (err) {

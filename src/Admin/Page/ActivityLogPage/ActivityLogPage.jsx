@@ -4,6 +4,7 @@ import { getImageUrl } from "../../../utilis";
 import Pagination from "../../../Components/Pagination/Pagination"; 
 import axios from 'axios';
 import { format } from 'date-fns';
+import { BASE_URL } from "../../../../config";
 
 
 export const ActivityLogPage = () => {
@@ -22,7 +23,7 @@ export const ActivityLogPage = () => {
 
     const fetchActivityLog = async () => {
         try {
-            const result = await axios("http://localhost:8081/activity-log");
+            const result = await axios(BASE_URL + "/activity-log");
             console.log(result);
             setActivities(result.data);
         } catch (err) {
