@@ -172,7 +172,7 @@ app.post('/login', async (req, res) => {
         const student = result.rows[0];
         // const isPasswordValid = await bcrypt.compare(req.body.password, student.password);
 
-        if (!req.body.password === student.password) {
+        if (req.body.password !== student.password) {
             return res.status(401).json({message: "Invalid credentials"});
         }
         return res.json(student);
