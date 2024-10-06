@@ -1,3 +1,4 @@
+// import bcrypt from 'bcrypt';
 require("dotenv").config();
 const express = require('express');
 const { Client } = require('pg');
@@ -156,7 +157,39 @@ app.post('/new-course', async (req, res) => {
 
 
 app.post('/login', async (req, res) => {
-    const query = 'SELECT * FROM student WHERE email = $1 AND password = $2 ';
+    const query = 'SELECT * FROM student WHERE email = $1';
+    const values = [req.body.email];
+    // const values = [
+    //     req.body.email,
+    //     req.body.password
+    // ]
+    try {
+        const result = await client.query(query, values);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: "No records" });
+        }
+
+        const student = result.rows[0];
+        // const isPasswordValid = await bcrypt.compare(req.body.password, student.password);
+
+        if (!req.body.password === student.password) {
+            return res.status(401).json({message: "Invalid credentials"});
+        }
+        return res.json(student);
+
+        // if (result.rows.length > 0) {
+        //     return res.json(result.rows);
+        // } else {
+        //     return res.status(404).json({ message: "No records" });
+        // }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({message: "Login failed"});
+    }
+});
+
+app.post('/adminlogin', async (req, res) => {
+    const query = 'SELECT * FROM instructor WHERE email = $1 AND password = $2 ';
     const values = [
         req.body.email,
         req.body.password
@@ -173,21 +206,6 @@ app.post('/login', async (req, res) => {
         return res.status(500).json({message: "Login failed"});
     }
 });
-
-app.post('/adminlogin', async (req, res) => {
-    const query = 'SELECT * FROM instructor WHERE email = $1 AND password = $2 ';
-    const values = [
-        req.body.email,
-        req.body.password
-    ]
-    try {
-        const result = await client.query(query, values);
-        return result;
-    } catch (err) {
-        console.log(err);
-        return res.json("Login failed");
-    }
-})
 
 app.post("/signup", async (req, res) => {
     const query = "INSERT INTO student (first_name, last_name, email, phone_number, learning_mode, password) VALUES ($1, $2, $3, $4, $5, $6)";
