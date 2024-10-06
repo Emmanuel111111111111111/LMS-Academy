@@ -190,18 +190,21 @@ app.post('/adminlogin', async (req, res) => {
 })
 
 app.post("/signup", async (req, res) => {
-    const query = "INSERT INTO student (first_name, last_name, email, phone_number, learning_mode, password) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *";
+    const query = "INSERT INTO student (first_name, last_name, email, phone_number, learning_mode, password) VALUES ($1, $2, $3, $4, $5, $6)";
     const values = [
         req.body.first_name,
         req.body.last_name,
         req.body.email,
         req.body.phone_number,
         req.body.learning_mode,
-        req.body.password
+        req.body.password,
+        // await bcrypt.hash(req.body.password, 10)
     ]
     try {
         const result = await client.query(query, values);
-        console.log(result.rows[0]);
+        console.log(req.body);
+        console.log(result);
+        return res.status(201).json({ message: "User created successfully", result });
     } catch (err) {
         console.error(err);
         return res.status(500).json({message: "Error in signing up"});

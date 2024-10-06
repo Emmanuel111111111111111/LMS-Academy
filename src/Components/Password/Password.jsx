@@ -14,15 +14,16 @@ export const Password = () => {
     const navigate = useNavigate();
 
     const [ values, setValues ] = useState(location.state);
-    console.log(values);
+    // console.log(values);
 
     const handleInput = (event) => {
         setValues(prev => ({ ...prev, [event.target.name]: event.target.value }))
     }
 
     const handleSubmit = async (event) => {
-        console.log(values);
+        console.log('here')
         event.preventDefault();
+        console.log(values);
         axios.post(BASE_URL + '/signup', values)
             .then(res => console.log(res))
             .catch(err => console.log(err));
@@ -52,25 +53,27 @@ export const Password = () => {
                         <div className={styles.formgroup}>
                             <label for="name">Password</label>
                             <div className={styles.password}>
-                                <input type={showPassword ? 'text' : 'password'} placeholder="Create your password" name="ID" onChange={handleInput} />
+                                <input type={showPassword ? 'text' : 'password'} placeholder="Create your password" name="password" onChange={handleInput} />
                                 <button type="button" onClick={() => setShowPassword((showPassword) => !showPassword)}><img src={getImageUrl("visibility_off.png")} alt="view" /></button>
                             </div>
                         </div>
                         <div className={styles.formgroup}>
                             <label for="Re-type password">Retype your password</label>
                             <div className={styles.password}>
-                                <input type={showPassword ? 'text' : 'password'} placeholder="Retype your password" name="ID" />
+                                <input type={showConfirmPassword ? 'text' : 'password'} placeholder="Retype your password" name="ID" />
                                 <button type="button" onClick={() => setShowConfirmPassword((showConfirmPassword) => !showConfirmPassword)}><img src={getImageUrl("visibility_off.png")} alt="view" /></button>
                             </div>
                         </div>
 
+                        <div className={styles.home}>
+                            {/* <a href="/dashboard"><button className={styles.butt}>Create My Account</button> </a> */}
+                            <button className={styles.butt}>Create My Account</button>
+                        </div>
                     {/* <button className={styles.butt} onClick={()=>navigate('/dashboard')}>Create My Account</button> */}
 
                     </form>
                     
-                    <div className={styles.home}>
-                        <a href="/dashboard"><button className={styles.butt}>Create My Account</button> </a>
-                    </div>
+                    
                 </div>
 
             </div>

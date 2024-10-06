@@ -74,14 +74,14 @@ export const Account = () => {
                         </select>
                     </div>
 
-                        <div className={styles.check}>
-                            <input type="checkbox" name="agree" required />
-                            <p>I agree to CWG'S <span>Terms of Use</span> and consent to CWG's <span>Privacy policy</span></p>
-                        </div>
-                        <div className={styles.check}>
-                            <input type="checkbox" name="subscribe" />
-                            <p>Receive marketing emails and communications about our products.</p>
-                        </div>
+                    <div className={styles.check}>
+                        <input type="checkbox" name="agree" required />
+                        <p>I agree to CWG'S <span>Terms of Use</span> and consent to CWG's <span>Privacy policy</span></p>
+                    </div>
+                    <div className={styles.check}>
+                        <input type="checkbox" name="subscribe" />
+                        <p>Receive marketing emails and communications about our products.</p>
+                    </div>
 
                     <div className={styles.home}>
                         <button className={styles.butt}>Next</button>

@@ -23,7 +23,6 @@ export const Login = () => {
 
   function handleSubmit(event) {
     event.preventDefault();
-    console.log('here')
     axios.post(BASE_URL + '/login', { email, password })
       .then(res => {
         console.log(res)
@@ -36,7 +35,7 @@ export const Login = () => {
           sessionStorage.setItem("email", res.data[0].email);
           console.log(res.data[0].first_name);
 
-          // navigate('/dashboard');
+          window.location.href = "/dashboard";
         }
       })
       .catch(err => console.log(err));
