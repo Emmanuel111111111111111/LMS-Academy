@@ -19,7 +19,7 @@ const client = new Client({
 
 client.connect();
 
-// app.use(cors());
+app.use(cors());
 // app.use(express.json());
 
 // const db = mysql.createConnection({
