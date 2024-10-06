@@ -489,13 +489,12 @@
     gap:30px
 }
 
-.Header img{
+.Header img {
     width: 21.23px;
     height: 21.23px;
-    
 }
 
-.Header button{
+.Header button {
     border: 1px solid #A1B2D1;
     outline: none;
     background-color: transparent;

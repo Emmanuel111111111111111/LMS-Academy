@@ -6,6 +6,7 @@ import axios from 'axios';
 import Modal from "./Modal";
 import Pagination from "../../../Components/Pagination/Pagination";
 import { useAccordionItemState } from "@chakra-ui/react";
+import { BASE_URL } from "../../../../config";
 
 export const AdminCourse = () => {
 
@@ -28,7 +29,7 @@ export const AdminCourse = () => {
 
     const fetchCourses = async () => {
         try {
-            const result = await axios("http://localhost:8081/courses");
+            const result = await axios(DB_LINK + "/courses");
             setCourses(result.data);
         } catch (err) {
             console.log(err);

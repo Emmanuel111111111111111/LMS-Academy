@@ -1,45 +1,23 @@
 require("dotenv").config();
 const express = require('express');
+const { Client } = require('pg');
 // const mysql = require('mysql');
 // const cors = require('cors');
 
-const { Sequelize, DataTypes } = require("sequelize");
+// const { Sequelize, DataTypes } = require("sequelize");
 
 const app = express();
 const port = process.env.PORT || 8081;
 app.use(express.json());
 
-const sequelize = new Sequelize(
-    process.env.DB_URL, {
-    dialect: 'sqlite',
-    // storage: "./database.sqlite",
-    logging: false,
-    dialectOptions: {
-        ssl: {
-            require: true,
-            rejectUnauthorized: false,
-        }
-    }
-});
-
-sequelize.sync().then(() => {
-    console.log("Database connected");
-}).catch((err) => {
-    console.log(err);
-});
-
-const post = sequelize.define("post", {
-    title: {
-        type: DataTypes.STRING,
-        allowNull: false,
+const client = new Client({
+    connectionString: process.env.DB_URL,
+    ssl: {
+        rejectUnauthorized: false,
     },
-    content: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    }
 })
 
-// const app = express();
+client.connect();
 
 // app.use(cors());
 // app.use(express.json());
@@ -56,107 +34,105 @@ app.get("/", (req, res) => {
     return res.json("BACKEND CONNECTED");
 })
 
-// app.get("/students", async (req, res) => {
-//     try {
-//         const allStudents = await post.
-//     }
-//     const u = "SELECT * FROM student"
-//     db.query(u, (err, data) => {
-//         if (err) return res.json(err)
-//             res.send(data)
-//     })
-// })
+app.get("/students", async (req, res) => {
+    try {
+        const result = await client.query("SELECT * FROM student");
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching students"});
+    }
+})
 
-// app.get("/courses", (req, res) => {
-//     const c = "SELECT * FROM course"
-//     db.query(c, (err, data) => {
-//         if (err) {
-//             return res.json(err);
-//         } else {
-//             res.send(data);
-//         }
-//     })
-// })
+app.get("/courses", async (req, res) => {
+    try {
+        const result = await client.query("SELECT * FROM course");
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching courses"});
+    }
+})
 
-// app.get("/enrollment", (req, res) => {
-//     const c = "SELECT * FROM enrollment"
-//     db.query(c, (err, data) => {
-//         if (err) {
-//             return res.json(err);
-//         } else {
-//             res.send(data);
-//         }
-//     })
-// })
+app.get("/enrollment", async (req, res) => {
+    try {
+        const result = await client.query("SELECT * FROM enrollment");
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching enrollments"});
+    }
+})
 
-// app.get("/courses/:student_id", (req, res) => {
-//     const id = req.params.student_id;
-//     const c = "SELECT * FROM course INNER JOIN enrollment ON course.course_id = enrollment.course_id WHERE enrollment.student_id = ?"
-//     db.query(c, id, (err, data) => {
-//         if (err) return res.json(err);
-//         else {
-//             res.send(data);
-//         }
-//     })
-// })
+app.get("/courses/:student_id", async (req, res) => {
+    const id = req.params.student_id;
+    const query = "SELECT * FROM course INNER JOIN enrollment ON course.course_id = enrollment.course_id WHERE enrollment.student_id = ?"
+    try {
+        const result = await client.query(query, [id]);
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching courses/id"});
+    }
+})
 
-// app.get("/teachers", (req, res) => {
-//     const c = "SELECT * FROM instructor"
-//     db.query(c, (err, data) => {
-//         if (err) {
-//             return res.json(err);
-//         } else {
-//             res.send(data);
-//         }
-//     })
-// })
+app.get("/teachers", async (req, res) => {
+    try {
+        const result = await client.query("SELECT * FROM instructor");
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching teachers"});
+    }
+})
 
-// app.get("/activity-log", (req, res) => {
-//     const c = "SELECT * FROM activity_log"
-//     db.query(c, (err, data) => {
-//         if (err) {
-//             return res.json(err);
-//         } else {
-//             res.send(data);
-//         }
-//     })
-// })
+app.get("/activity-log", async (req, res) => {
+    try {
+        const result = await client.query("SELECT * FROM activity_log");
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching activity log"});
+    }
+    // const c = "SELECT * FROM activity_log"
+    // db.query(c, (err, data) => {
+    //     if (err) {
+    //         return res.json(err);
+    //     } else {
+    //         res.send(data);
+    //     }
+    // })
+})
 
 
 app.post('/new-teacher', async (req, res) => {
-    const sql = "INSERT INTO instructor (first_name, date_added, email, phone_number) VALUES (?)";
+    const query = "INSERT INTO instructor (first_name, date_added, email, phone_number) VALUES ($1, $2, $3, $4) RETURNING *";
     const values = [
         req.body.name,
         req.body.date,
         req.body.email,
         req.body.phone_number
-    ]
-    db.query(sql, [values], (err, result) => {
-        if (err) {
-            console.log(err);
-            return res.json({Message: "Error in adding instructor"})
-        }
-        console.log(req.body);
-        console.log(result);
-        return res.json(result);
-    });
+    ];
+    try {
+        const result = await client.query(query, values);
+        console.log(result.rows[0]);
 
-    const sql2 = "INSERT INTO activity_log (activity, date) VALUES (?)";
-    const activity = req.body.course === "" ? "New instructor, " + req.body.name + ", added."
-                                            : "New instructor, " + req.body.name + ", added to " + req.body.course + ".";
-    const logValues = [
-        activity,
-        req.body.date
-    ]
-    db.query(sql2, [logValues], (err, result) => {
-        if (err) {
-            console.log(err);
-            return res.json({Message: "Error in adding to log"})
-        }
-        console.log(req.body);
-        console.log(result);
-        // return res.json(result);
-    });
+        const activity = req.body.course === ""
+            ? 'New instructor, ${req.body.name}, added.'
+            : 'New instructor, ${req.body.name}, added to ${req.body.course}.';
+
+        const logQuery = "INSERT INTO activity_log (activity, date) VALUES ($1, $2)";
+        const logValues = [
+            activity,
+            req.body.date
+        ];
+
+        await client.query(logQuery, logValues);
+        res.json({message: "Instructor added successfully", instructor: result.rows[0]});
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({message: "Error in adding new instructor or logging"});
+    }
 })
 
 
