@@ -1,15 +1,12 @@
 require("dotenv").config();
 const express = require('express');
 const { Client } = require('pg');
-// const mysql = require('mysql');
 const cors = require('cors');
-
-// const { Sequelize, DataTypes } = require("sequelize");
 
 const app = express();
 const port = process.env.PORT || 8081;
-app.use(cors());
 app.use(express.json());
+app.use(cors());
 
 const client = new Client({
     connectionString: process.env.DB_URL,
@@ -20,7 +17,9 @@ const client = new Client({
 
 client.connect();
 
-// app.use(express.json());
+
+// const mysql = require('mysql');
+// const { Sequelize, DataTypes } = require("sequelize");
 
 // const db = mysql.createConnection({
 //     host: 'localhost',
