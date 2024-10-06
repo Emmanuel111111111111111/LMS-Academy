@@ -31,6 +31,7 @@ client.connect();
 
 app.get("/", (req, res) => {
     return res.json("BACKEND CONNECTED");
+    console.log('Working')
 })
 
 app.get("/students", async (req, res) => {
