@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require('express');
 const { Client } = require('pg');
 // const mysql = require('mysql');
-// const cors = require('cors');
+const cors = require('cors');
 
 // const { Sequelize, DataTypes } = require("sequelize");
 

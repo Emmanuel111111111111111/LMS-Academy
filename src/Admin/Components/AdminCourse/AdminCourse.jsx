@@ -29,7 +29,7 @@ export const AdminCourse = () => {
 
     const fetchCourses = async () => {
         try {
-            const result = await axios(DB_LINK + "/courses");
+            const result = await axios(BASE_URL + "/courses");
             setCourses(result.data);
         } catch (err) {
             console.log(err);
