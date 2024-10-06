@@ -2,13 +2,13 @@ require("dotenv").config();
 const express = require('express');
 const { Client } = require('pg');
 // const mysql = require('mysql');
-// const cors = require('cors');
+const cors = require('cors');
 
 // const { Sequelize, DataTypes } = require("sequelize");
 
 const app = express();
 const port = process.env.PORT || 8081;
-// app.use(cors());
+app.use(cors());
 app.use(express.json());
 
 const client = new Client({
