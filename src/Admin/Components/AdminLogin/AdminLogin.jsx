@@ -19,7 +19,7 @@ export const AdminLogin = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post(BASE_URL + '/login', { email, password });
+      const response = await axios.post(BASE_URL + '/adminlogin', { email, password });
       
       console.log("signed in");
       sessionStorage.setItem("id", response.data.student_id);
