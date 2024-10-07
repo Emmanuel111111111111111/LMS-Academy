@@ -21,7 +21,7 @@ export const AdminNavbar = () => {
                     <img src={getImageUrl("calendarIcon.png")} />
                     Schedule
                 </a>
-                <a href="/admin-dashboard/courses/active" className={currentPath.includes("/admin-dashboard/courses") ? styles.active : ""}>
+                <a href="/admin-dashboard/courses" className={currentPath.includes("/admin-dashboard/courses") ? styles.active : ""}>
                     <img src={getImageUrl("coursesIcon.png")} />
                     Courses
                 </a>

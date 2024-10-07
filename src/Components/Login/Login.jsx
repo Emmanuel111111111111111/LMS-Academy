@@ -19,7 +19,7 @@ export const Login = () => {
     // sessionStorage.clear();
   }, [])
 
-  // function handleSubmit(event) {
+  
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -42,21 +42,6 @@ export const Login = () => {
         console.error('Error', err.message);
       }
     }
-      // .then(res => {
-      //   console.log(res);
-      //   if (res.data === "No records") setErrorMesage(true);
-      //   else if (res.data.length === 1) {
-      //     console.log("signed in");
-      //     sessionStorage.setItem("id", res.data[0].student_id);
-      //     sessionStorage.setItem("first_name", res.data[0].first_name);
-      //     sessionStorage.setItem("last_name", res.data[0].last_name);
-      //     sessionStorage.setItem("email", res.data[0].email);
-      //     console.log(res.data[0].first_name);
-
-      //     window.location.href = "/dashboard";
-      //   }
-      // })
-      // .catch(err => console.log(err));
   }
 
   const [showPassword, setShowPassword] = useState(false);

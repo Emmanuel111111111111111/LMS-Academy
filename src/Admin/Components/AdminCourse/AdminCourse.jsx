@@ -5,7 +5,6 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Modal from "./Modal";
 import Pagination from "../../../Components/Pagination/Pagination";
-import { useAccordionItemState } from "@chakra-ui/react";
 import { BASE_URL } from "../../../../config";
 
 export const AdminCourse = () => {
@@ -18,7 +17,7 @@ export const AdminCourse = () => {
     const [openCourseInfo, setOpenCourseInfo] = useState(false);
     const [buttonType, setButtonType] = useState("");
     const [actionsOpen, setActionsOpen] = useState({});
-    const [selected, setSelected] = useState(null);
+    const [selected, setSelected] = useState({});
     const actionsRef = useRef(null);
     const createRef = useRef(null);
 
