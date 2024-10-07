@@ -27,7 +27,7 @@ export const AdminLogin = () => {
       sessionStorage.setItem("last_name", response.data.last_name);
       sessionStorage.setItem("email", response.data.email);
       console.log(response.data.first_name);
-      window.location.href = "/dashboard";
+      window.location.href = "/admin-dashboard";
       
     } catch (err) {
       if (err.response) {
