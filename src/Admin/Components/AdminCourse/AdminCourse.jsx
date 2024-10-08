@@ -314,7 +314,7 @@ export const AdminCourse = () => {
 
             <Modal isOpen={openCourseInfo}>
                 <>
-                <div className={styles.courseInfo_modal}>
+                <div className={`${styles.courseInfo_modal} ${styles.courseInfo}`}>
                     <div className={styles.head}>
                         <h3>{buttonType === "COURSE" ? "Course Details" : buttonType === "ASSIGNMENTS" ? "Create Assignment" : "Course Details"}</h3>
                         <button onClick={handleCloseCourseInfo} className={styles.close}><img src={getImageUrl('close.png')} /></button>
