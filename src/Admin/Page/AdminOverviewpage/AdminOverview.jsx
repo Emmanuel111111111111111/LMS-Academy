@@ -151,7 +151,7 @@ export const AdminOverview = () => {
     function convertDuration(interval) {
         if (interval === null) return '0 days'
         else {
-            console.log(interval)
+            // console.log(interval)
             const result = {
                 hours: 0,
                 days: 0,
@@ -235,14 +235,10 @@ export const AdminOverview = () => {
                                             {convertDuration(course.duration).hours === 0 ? '' : convertDuration(course.duration).hours + ' hours '}
                                         </div>
                                         <div><img src={getImageUrl('frame5.png')} alt="" />54 Students</div>
+                                    </div>
 
-                                    </div>
-                                    <div className={styles.withLoader}>
-                                        <div className={styles.coursesLoader}>
-                                            <progress className={styles.progress} id="progress" max={course.totalLessons} value={course.currentLesson} />
-                                        </div>
-                                        
-                                    </div>
+                                    <progress className={styles.progress} id="progress" max={course.totalLessons} value={course.currentLesson} />
+
                                 </div>
                             </div>
                         ))
@@ -266,7 +262,7 @@ export const AdminOverview = () => {
                     </thead>
                     <tbody>
                         {currentEvents.map((event, index) => (
-                            <tr>
+                            <tr key={index}>
                                 <td><input type="checkbox" /></td>
                                 <td> <div className={styles.bread}>You created a new teacher fo...</div></td>
                                 <td><div className={styles.dueTime}>July 1, 2024 12:38:00 PM</div></td>

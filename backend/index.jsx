@@ -30,7 +30,7 @@ client.connect();
 
 
 app.get("/", (req, res) => {
-    console.log('Working');
+    // console.log('Working');
     return res.json("BACKEND IS CONNECTED");
 });
 
