@@ -18,7 +18,6 @@ const client = new Client({
 
 client.connect();
 
-
 // const mysql = require('mysql');
 // const { Sequelize, DataTypes } = require("sequelize");
 
@@ -110,17 +109,19 @@ app.post('/new-teacher', async (req, res) => {
         const result = await client.query(query, values);
         console.log(result.rows[0]);
 
-        const activity = req.body.course === ""
-            ? 'New instructor, ${req.body.name}, added.'
-            : 'New instructor, ${req.body.name}, added to ${req.body.course}.';
+        const activity = req.body.course_name === ""
+            ? 'New instructor, ' + req.body.name + ' added.'
+            : 'New instructor, ' + req.body.name + ' added to ' + req.body.course_name + '.';
 
-        const logQuery = "INSERT INTO activity_log (activity, date) VALUES ($1, $2)";
+        const logQuery = "INSERT INTO activity_log (activity, date) VALUES ($1, $2) RETURNING *";
         const logValues = [
             activity,
             req.body.date
         ];
 
-        await client.query(logQuery, logValues);
+
+        const logResult = await client.query(logQuery, logValues);
+        console.log(logResult.rows[0])
         res.json({message: "Instructor added successfully", instructor: result.rows[0]});
     } catch (err) {
         console.error(err);
@@ -130,15 +131,17 @@ app.post('/new-teacher', async (req, res) => {
 
 
 app.post('/new-course', async (req, res) => {
-    const query = "INSERT INTO course (name, duration) VALUES ($1, $2)";
+    const duration = req.body.duration_number + ' ' + req.body.duration_unit;
+    const query = "INSERT INTO course (name, duration, type, date_added) VALUES ($1, $2, $3, $4)";
     const values = [
         req.body.name,
-        req.body.duration
+        duration,
+        req.body.type,
+        req.body.date
     ]
     try {
         const result = await client.query(query, values);
-        console.log(result.rows[0]);
-
+        // console.log(result);
         const activity = "New course, " + req.body.name + ", added.";
         const logQuery = "INSERT INTO activity_log (activity, date) VALUES ($1, $2)";
         const logValues = [

@@ -15,7 +15,6 @@ import { CalendarPage } from './Page/CalendarPage/Calendar';
 import { Certificate } from './Components/Certificate/Certificate'
 import { AdminDashboardLayout } from './Admin/Page/AdminDashboardLayout';
 import { AdminLoginPage } from './Admin/Page/AdminLoginPage/AdminLoginPage';
-import { AdminCourse } from './Admin/Components/AdminCourse/AdminCourse';
 import { SchedulePage } from './Admin/Page/SchedulePage/SchedulePage';
 import { TeachersPage } from './Admin/Page/TeacherPage/TeacherPage';
 import { StudentPage } from './Admin/Page/StudentPage/StudentPage';
@@ -27,6 +26,7 @@ import { CompletedCourses } from './Admin/Page/CompletedCourses/CompletedCourses
 import { AllCourses } from './Admin/Page/AllCourses/AllCourses';
 import { CompletedCourse } from './Page/CompletedCourses/CompletedCourses';
 import { Detail } from './Admin/Components/Detail/Detail';
+import { ActiveCourses } from './Admin/Page/ActiveCourses/ActiveCourses';
 
 function App() { 
 
@@ -58,7 +58,7 @@ function App() {
         { path: 'overview', element: <AdminOverview /> },
         { path: 'schedule', element: <SchedulePage /> },
         { path: 'courses', element: <AllCourses /> },
-        { path: 'courses/active', element: <AdminCourse /> },
+        { path: 'courses/active', element: <ActiveCourses /> },
         { path: 'courses/upcoming', element: <UpcomingCourses /> },
         { path: 'courses/completed', element: <CompletedCourses /> },
         { path: 'tasks', element: <BlankPage /> },

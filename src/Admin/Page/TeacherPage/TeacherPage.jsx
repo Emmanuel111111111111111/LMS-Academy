@@ -5,10 +5,10 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from './TeacherPage.module.css';
 import { getImageUrl } from "../../../utilis";
 import Pagination from "../../../Components/Pagination/Pagination";
-import Modal from "../../Components/AdminCourse/Modal";
+import Modal from "../ActiveCourses/Modal";
 import axios from 'axios';
 import { format } from 'date-fns';
-import { BASE_URL } from "../../../../config";
+import { BASE_URL, TEST_URL } from "../../../../config";
 
 
 export const TeachersPage = () => {
@@ -16,21 +16,40 @@ export const TeachersPage = () => {
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ itemsPerPage, setItemsPerPage ] = useState(5);
     const [ actionsOpen, setActionsOpen ] = useState({});
-    const scroll = useRef(null);
-    const actionsRef = useRef(null);
     const [ open, setOpen ] = useState(false);
     const [ isOpen, setIsOpen ] = useState(false);
     const [ teachers, setTeachers ] = useState([]);
-    
+    const [ courses, setCourses ] = useState([]);
+    const [ isLoading, setIsLoading ] = useState(false);
+    const [ errorMessage, setErrorMessage ] = useState(false);
+    const scroll = useRef(null);
+    const actionsRef = useRef(null);
+
+
     useEffect(() => {
         fetchTeachers();
+        fetchCourses();
     }, []);
 
     const fetchTeachers = async () => {
+        setIsLoading(true);
         try {
             const result = await axios(BASE_URL + "/teachers");
-            console.log(result);
-            setTeachers(result.data);
+            setTeachers(result.data.sort((a,b) => new Date(b.date_added) - new Date(a.date_added)));
+            setIsLoading(false);
+        } catch (err) {
+            console.log(err);
+            setIsLoading(false);
+            setErrorMessage(true);
+        }
+    }
+
+    const fetchCourses = async () => {
+        setIsLoading(true);
+        try {
+            const result = await axios(BASE_URL + "/courses");
+            setCourses(result.data);
+            setIsLoading(false);
         } catch (err) {
             console.log(err);
         }
@@ -38,10 +57,11 @@ export const TeachersPage = () => {
 
     const [ newTeacherValues, setNewTeacherValues ] = useState({
         name: '',
-        course: '',
-        date: '',
-        email: '',
-        phone_number: '',
+        course_id: null,
+        course_name: null,
+        date: new Date().toISOString().slice(0,19).replace('T', ' '),
+        email: null,
+        phone_number: null,
     })
 
     const handleInput = (event) => {
@@ -54,103 +74,10 @@ export const TeachersPage = () => {
         axios.post(BASE_URL + '/new-teacher', newTeacherValues)
             .then(res => console.log(res))
             .catch(err => console.log(err));
+        fetchTeachers();
+        
     }
 
-
-
-    // const teachers = [
-    //     {
-    //         name: 'John Raymond',
-    //         course: 'Machine Learning',
-    //         date: 'July 1, 2024',
-    //         email: 'johndow2024@gmail.com',
-    //         phone_number: '09041638647'
-    //     },
-    //     {
-    //         name: 'John Raymond',
-    //         course: 'Machine Learning',
-    //         date: 'July 1, 2024',
-    //         email: 'johndow2024@gmail.com',
-    //         phone_number: '09041638647'
-    //     },
-    //     {
-    //         name: 'John Raymond',
-    //         course: 'Machine Learning',
-    //         date: 'July 1, 2024',
-    //         email: 'johndow2024@gmail.com',
-    //         phone_number: '09041638647'
-    //     },
-    //     {
-    //         name: 'John Raymond',
-    //         course: 'Machine Learning',
-    //         date: 'July 1, 2024',
-    //         email: 'johndow2024@gmail.com',
-    //         phone_number: '09041638647'
-    //     },
-    //     {
-    //         name: 'John Raymond',
-    //         course: 'Machine Learning',
-    //         date: 'July 1, 2024',
-    //         email: 'johndow2024@gmail.com',
-    //         phone_number: '09041638647'
-    //     },
-    //     {
-    //         name: 'John Raymond',
-    //         course: 'Machine Learning',
-    //         date: 'July 1, 2024',
-    //         email: 'johndow2024@gmail.com',
-    //         phone_number: '09041638647'
-    //     },
-    //     {
-    //         name: 'John Raymond',
-    //         course: 'Machine Learning',
-    //         date: 'July 1, 2024',
-    //         email: 'johndow2024@gmail.com',
-    //         phone_number: '09041638647'
-    //     },
-    //     {
-    //         name: 'John Raymond',
-    //         course: 'Machine Learning',
-    //         date: 'July 1, 2024',
-    //         email: 'johndow2024@gmail.com',
-    //         phone_number: '09041638647'
-    //     },
-    //     {
-    //         name: 'John Raymond',
-    //         course: 'Machine Learning',
-    //         date: 'July 1, 2024',
-    //         email: 'johndow2024@gmail.com',
-    //         phone_number: '09041638647'
-    //     },
-    //     {
-    //         name: 'John Raymond',
-    //         course: 'Machine Learning',
-    //         date: 'July 1, 2024',
-    //         email: 'johndow2024@gmail.com',
-    //         phone_number: '09041638647'
-    //     },
-    //     {
-    //         name: 'John Raymond',
-    //         course: 'Machine Learning',
-    //         date: 'July 1, 2024',
-    //         email: 'johndow2024@gmail.com',
-    //         phone_number: '09041638647'
-    //     },
-    //     {
-    //         name: 'John Raymond',
-    //         course: 'Machine Learning',
-    //         date: 'July 1, 2024',
-    //         email: 'johndow2024@gmail.com',
-    //         phone_number: '09041638647'
-    //     },
-    //     {
-    //         name: 'John Raymond',
-    //         course: 'Machine Learning',
-    //         date: 'July 1, 2024',
-    //         email: 'johndow2024@gmail.com',
-    //         phone_number: '09041638647'
-    //     }
-    // ]
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -185,9 +112,6 @@ export const TeachersPage = () => {
     const handleOpen = () => {
         setOpen(true);
     };
-    const toggleDropdown = () => {
-        setIsOpen(!isOpen);
-    };
     useEffect(() => {
         document.addEventListener('click', handleClickOutside, true);
         return () => {
@@ -219,92 +143,90 @@ export const TeachersPage = () => {
                             <button onClick={handleClose} className={styles.close}><img src={getImageUrl('close.png')} alt="" /></button>
                         </div>
 
-                        <form onSubmit={handleSubmit}>
-                            <div className={styles.content}>
-                                <div>
-                                    <h5>Instructor's Name</h5>
-                                    <input type="text" placeholder="Enter Event Name" name="name" onChange={handleInput}></input>
-                                </div>
-                                <div>
-                                    <h5>Course</h5>
-                                    <select id="" name="course" onChange={handleInput}>
-                                        <option value="">Select Course</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <h5>Date Added</h5>
-                                    <input type="date" name="date" id="" onChange={handleInput} />
-                                </div>
-
-                            </div>
-                            <div className={styles.contain}>
-                                <div>
-                                    <h5>Email Address</h5>
-                                    <input type="email" placeholder="Enter Email Address" name="email" onChange={handleInput}></input>
-                                </div>
-                                <div>
-                                    <h5>Phone Number</h5>
-                                    <input type="tel" placeholder="Enter Phone Number" name="phone_number" onChange={handleInput}></input>
-                                </div>
-                            </div>
+                        <form className={styles.theForm} onSubmit={handleSubmit}>
+                            <h5>Instructor's Name</h5>
+                            <input type="text" placeholder="Enter Instructor Name" name="name" onChange={handleInput}></input>
+                            
+                            <h5>Course</h5>
+                            <select id="" name="course_name" onChange={handleInput}>
+                                <option value="">Select Course</option>
+                                {courses.map((cour, i) => (
+                                    <option key={i} value={cour.name}>{cour.name}</option>
+                                ))}
+                            </select>
+                            
+                            <h5>Email Address</h5>
+                            <input type="email" placeholder="Enter Email Address" name="email" onChange={handleInput}></input>
+                            
+                            <h5>Phone Number</h5>
+                            <input type="tel" placeholder="Enter Phone Number" name="phone_number" onChange={handleInput}></input>
+                            
                             <button className={styles.submit}>Submit</button>
                         </form>
                     </div>
                     </>
                 </Modal>
 
-                <table className={styles.teacherTable}>
-                    <thead>
-                        <th><input type="checkbox" /></th>
-                        <th>Name</th>
-                        <th>Course</th>
-                        <th>Date Added</th>
-                        <th>Email</th>
-                        <th>Phone Number</th>
-                        <th>Action</th>
-                    </thead>
-                    <tbody>
-                        {currentTeachers.map((teacher, index) => (
-                            <tr>
-                                <td><input type="checkbox" /></td>
-                                <td>{teacher.first_name} {teacher.last_name}</td>
-                                <td>{teacher.course}</td>
-                                <td>{format(new Date (teacher.date_added), 'MMMM dd, yyyy')}</td>
-                                <td>{teacher.email}</td>
-                                <td>{teacher.phone_number}</td>
-                                <td>
-                                    <div>
-                                        <button className={styles.actionsButton} onClick={() => toggleAction(index)}><img src={getImageUrl('threeDots.png')} /></button>
-                                        <div className={`${styles.actionsClosed} ${actionsOpen[index] && styles.theActions}`} ref={actionsRef}>
-                                            <h5>ACTION</h5>
-                                            <button><img src={getImageUrl('approve.png')} />SUSPEND</button>
-                                            <button><img src={getImageUrl('delete.png')} />DECLINE</button>
+                {isLoading ? <h5 className={styles.loading}>Loading...</h5> :
+                
+                    <>
+                    <table className={styles.teacherTable}>
+                        <thead>
+                            <th><input type="checkbox" /></th>
+                            <th>Name</th>
+                            <th>Course</th>
+                            <th>Date Added</th>
+                            <th>Email</th>
+                            <th>Phone Number</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            {currentTeachers.map((teacher, index) => (
+                                <tr>
+                                    <td><input type="checkbox" /></td>
+                                    <td>{teacher.first_name} {teacher.last_name}</td>
+                                    <td>{teacher.course}</td>
+                                    <td>{format(new Date (teacher.date_added), 'MMMM dd, yyyy')}</td>
+                                    <td>{teacher.email}</td>
+                                    <td>{teacher.phone_number}</td>
+                                    <td>
+                                        <div>
+                                            <button className={styles.actionsButton} onClick={() => toggleAction(index)}><img src={getImageUrl('threeDots.png')} /></button>
+                                            <div className={`${styles.actionsClosed} ${actionsOpen[index] && styles.theActions}`} ref={actionsRef}>
+                                                <h5>ACTION</h5>
+                                                <button><img src={getImageUrl('approve.png')} />SUSPEND</button>
+                                                <button><img src={getImageUrl('delete.png')} />DECLINE</button>
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
 
-                <div style={{ w: '100%', display: "flex", alignItems: 'center' }}>
-                    <div className={styles.showRows}>
-                        Show
-                        <select onChange={(e) => handlePageNumber(e.target.value)} >
-                            <option value={5}>5</option>
-                            <option value={10}>10</option>
-                            <option value={15}>15</option>
-                        </select>
-                        Rows
+                    <div style={{ w: '100%', display: "flex", alignItems: 'center' }}>
+                        <div className={styles.showRows}>
+                            Show
+                            <select onChange={(e) => handlePageNumber(e.target.value)} >
+                                <option value={5}>5</option>
+                                <option value={10}>10</option>
+                                <option value={15}>15</option>
+                            </select>
+                            Rows
+                        </div>
+                        <Pagination className={styles.pag}
+                            currentData={teachers}
+                            currentPage={currentPage}
+                            itemsPerPage={itemsPerPage}
+                            onPageChange={handlePageChange}
+                        />
+
                     </div>
-                    <Pagination className={styles.pag}
-                        currentData={teachers}
-                        currentPage={currentPage}
-                        itemsPerPage={itemsPerPage}
-                        onPageChange={handlePageChange}
-                    />
 
-                </div>
+                    </>
+                }
+
+                
             </div>
         </>
     )

@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { getImageUrl } from "../../../utilis";
-import styles from "./AdminCourse.module.css";
+import styles from "./ActiveCourses.module.css";
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Modal from "./Modal";
 import Pagination from "../../../Components/Pagination/Pagination";
-import { BASE_URL } from "../../../../config";
+import { BASE_URL, TEST_URL } from "../../../../config";
 
-export const AdminCourse = () => {
+export const ActiveCourses = () => {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [ courses, setCourses ] = useState([]);
@@ -54,10 +54,10 @@ export const AdminCourse = () => {
     const [ newCourseValues, setNewCourseValues ] = useState({
         name: '',
         type: '',
-        duration: '',
+        duration_number: '',
+        duration_unit: '',
         date: new Date().toISOString().slice(0,19).replace('T', ' '),
     })
-
 
     const handleInput = (event) => {
         setNewCourseValues(prev => ({ ...prev, [event.target.name]: event.target.value }))
@@ -92,10 +92,6 @@ export const AdminCourse = () => {
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
     };
-    const toggleDropdown2 = () => {
-
-    };
-    
     const toggleAction = (event, index) => {
         event.stopPropagation();
         setActionsOpen(prevState => ({
@@ -118,101 +114,6 @@ export const AdminCourse = () => {
             document.removeEventListener('click', handleClickOutside, true);
         };
     }, []);
-    // console.log("Hi")
-
-    // const courses = [
-    //     {
-    //         title: 'Course Title 1',
-    //         description: 'A short lesson description...',
-    //         teacher: 'Arafat Murad',
-    //         currentLesson: 7,
-    //         totalLessons: 12,
-    //         currentAssignment: 6,
-    //         duration: '10 weeks',
-    //         students: 72,
-    //         location: 'Physical'
-    //     },
-    //     {
-    //         title: 'Course Title 2',
-    //         description: 'A short lesson description...',
-    //         teacher: 'Arafat Murad',
-    //         currentLesson: 16,
-    //         totalLessons: 30,
-    //         currentAssignment: 7,
-    //         duration: '10 weeks',
-    //         students: 72,
-    //         location: 'Physical'
-    //     },
-    //     {
-    //         title: 'Course Title 3',
-    //         description: 'A short lesson description...',
-    //         teacher: 'Arafat Murad',
-    //         currentLesson: 7,
-    //         totalLessons: 12,
-    //         currentAssignment: 5,
-    //         duration: '10 weeks',
-    //         students: 72,
-    //         location: 'Physical'
-    //     },
-    //     {
-    //         title: 'Course Title 4',
-    //         description: 'A short lesson description...',
-    //         teacher: 'Arafat Murad',
-    //         currentLesson: 7,
-    //         totalLessons: 12,
-    //         currentAssignment: 5,
-    //         duration: '10 weeks',
-    //         students: 72,
-    //         location: 'Physical'
-    //     },
-    //     {
-    //         title: 'Course Title 5',
-    //         description: 'A short lesson description...',
-    //         teacher: 'Arafat Murad',
-    //         currentLesson: 7,
-    //         totalLessons: 12,
-    //         currentAssignment: 5,
-    //         duration: '10 weeks',
-    //         students: 72,
-    //         location: 'Physical'
-    //     },
-    //     {
-    //         title: 'Course Title 6',
-    //         description: 'A short lesson description...',
-    //         teacher: 'Arafat Murad',
-    //         currentLesson: 7,
-    //         totalLessons: 12,
-    //         currentAssignment: 5,
-    //         duration: '10 weeks',
-    //         students: 72,
-    //         location: 'Physical'
-    //     },
-    //     // {
-    //     //     title: 'Course Title 7',
-    //     //     description: 'A short lesson description...',
-    //     //     teacher: 'Arafat Murad',
-    //     //     currentLesson: 7,
-    //     //     totalLessons: 12,
-    //     //     currentAssignment: 5,
-    //     //     duration: '10 weeks',
-    //     //     students: 72,
-    //     //     location: 'Physical'
-    //     // },
-    //     // {
-    //     //     title: 'Course Title 8',
-    //     //     description: 'A short lesson description...',
-    //     //     teacher: 'Arafat Murad',
-    //     //     currentLesson: 7,
-    //     //     totalLessons: 12,
-    //     //     currentAssignment: 5,
-    //     //     duration: '10 weeks',
-    //     //     students: 72,
-    //     //     location: 'Physical'
-    //     // }
-        
-    // ]
-    
-    
 
 
     return (
@@ -230,45 +131,49 @@ export const AdminCourse = () => {
                     </div>
                     {isOpen && (
                         <ul className={styles.createDiv} ref={createRef}>
-                            <button onClick={() => handleOpenCreate("COURSE")}><img src={getImageUrl('courseIcon.png')} />COURSE</button>
-                            <button onClick={() => handleOpenCreate("ASSIGNMENTS")}><img src={getImageUrl('assignments.png')} />ASSIGNMENTS</button>
-                            <button onClick={() => handleOpenCreate("QUIZ")}><img src={getImageUrl('quizIcon.png')} />QUIZ</button>
+                            <button onClick={() => handleOpenCreate("course")}><img src={getImageUrl('courseIcon.png')} />COURSE</button>
+                            <button onClick={() => handleOpenCreate("assignment")}><img src={getImageUrl('assignments.png')} />ASSIGNMENTS</button>
+                            <button onClick={() => handleOpenCreate("quiz")}><img src={getImageUrl('quizIcon.png')} />QUIZ</button>
                         </ul>
                     )}
                     <Modal isOpen={openCreate}>
                         <>
                         <div className={styles.course_modal}>
                             <div className={styles.head}>
-                                <h3>{buttonType === "COURSE" ? "Create Course" : buttonType === "ASSIGNMENTS" ? "Create Assignment" : "Create Quiz"}</h3>
+                                <h3>{buttonType === "course" ? "Create Course" : buttonType === "assignment" ? "Create Assignment" : "Create Quiz"}</h3>
                                 <button onClick={handleCloseCreate} className={styles.close}><img src={getImageUrl('close.png')} /></button>
                             </div>
 
-                            <form style={{overflow: 'auto', flexDirection: 'column'}}>
-                                <div className={styles.content}>
-                                    <div>
-                                        <h5>{buttonType === "COURSE" ? "Event Name" : buttonType === "ASSIGNMENTS" ? "Content title" : "Event Name"}</h5>
-                                        <input type="text" placeholder="Enter Event Name"></input>
-                                    </div>
-                                    <div>
-                                        <h5>{buttonType === "COURSE" ? "Event Type" : buttonType === "ASSIGNMENTS" ? "Duration" : "Event Type"}</h5>
-                                        <select name="" id="" onClick={toggleDropdown2}>
-                                            <option value="">Select Event Type</option>
-                                        </select>
-                                    </div>
+                            <form className={styles.theForm} onSubmit={buttonType === 'course' ? handleSubmit : ''}>
+                                <div>
+                                    <h5>{buttonType === "course" ? "Course Name" : buttonType === "assignment" ? "Content title" : "Event Name"}</h5>
+                                    <input type="text" name="name" placeholder="Enter Event Name" onChange={handleInput}/>
                                 </div>
-                                <div className={styles.contain}>
-                                    <div>
-                                        <h5>Start Date & Time</h5>
-                                        <input type="datetime-local" name="" id="" />
-                                    </div>
-                                    <div>
-                                        <h5>Due Date</h5>
-                                        <input type="date" name="" id="" />
-                                    </div>
+                                {buttonType === 'course' && <div>
+                                    {/* <h5>{buttonType === "course" ? "Event Type" : buttonType === "assignment" ? "Duration" : "Event Type"}</h5> */}
+                                    <h5>Course Type</h5>
+                                    <select name="type" onChange={handleInput}>
+                                        <option>Select Course Type</option>
+                                        <option value="online">Online</option>
+                                        <option value="physical">Physical</option>
+                                    </select>
+                                </div>}
+
+                                <h5>Duration</h5>
+                                <div className={styles.duration}>
+                                    <input type="number" name="duration_number" onChange={handleInput} />
+
+                                    <select name="duration_unit" onChange={handleInput}>
+                                        <option value="day">Days</option>
+                                        <option value="week">Weeks</option>
+                                        <option value="month">Months</option>
+                                    </select>
                                 </div>
+    
+                                <button className={styles.submit}>Submit</button>
+
                             </form>
                             
-                            <button className={styles.submit}>Submit</button>
                         </div>
                         </>
                     </Modal>
@@ -314,7 +219,7 @@ export const AdminCourse = () => {
 
             <Modal isOpen={openCourseInfo}>
                 <>
-                <div className={`${styles.courseInfo_modal} ${styles.courseInfo}`}>
+                <div className={styles.courseInfo_modal}>
                     <div className={styles.head}>
                         <h3>{buttonType === "COURSE" ? "Course Details" : buttonType === "ASSIGNMENTS" ? "Create Assignment" : "Course Details"}</h3>
                         <button onClick={handleCloseCourseInfo} className={styles.close}><img src={getImageUrl('close.png')} /></button>
@@ -431,6 +336,4 @@ export const AdminCourse = () => {
 
         </>
     )
-
-
 }

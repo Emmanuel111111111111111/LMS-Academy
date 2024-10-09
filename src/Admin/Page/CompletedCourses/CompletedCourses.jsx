@@ -3,7 +3,7 @@ import { getImageUrl } from "../../../utilis";
 import styles from "./CompletedCourses.module.css";
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
-import Modal from "../../Components/AdminCourse/Modal";
+import Modal from "../ActiveCourses/Modal";
 
 export const CompletedCourses = () => {
 

@@ -1,46 +1,67 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from './AdminOverview.module.css';
 import { getImageUrl } from "../../../utilis";
 import Pagination from "../../../Components/Pagination/Pagination";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
+import { BASE_URL, TEST_URL } from "../../../../config";
+
 
 export const AdminOverview = () => {
 
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ itemsPerPage, setItemsPerPage ] = useState(5);
+    const [ teachers, setTeachers ] = useState([]);
+    const [ courses, setCourses ] = useState([]);
+    const [ students, setStudents ] = useState([]);
+    const [ isTeachLoading, setIsTeachLoading ] = useState(false);
+    const [ isCourseLoading, setIsCourseLoading ] = useState(false);
+    const [ isStudLoading, setIsStudLoading ] = useState(false);
     const navigate = useNavigate();
     const scroll = useRef(null);
 
+    useEffect(() => {
+        fetchTeachers();
+        fetchCourses();
+        fetchStudents();
+    }, []);
 
-    const courses = [
-        {
-            title: 'Course Title 1',
-            description: 'A short lesson description...',
-            teacher: 'Arafat Murad',
-            currentLesson: 7,
-            totalLessons: 12,
-            currentAssignment: 6,
-            time: '7h 25m'
-        },
-        {
-            title: 'Course Title 2',
-            description: 'A short lesson description...',
-            teacher: 'Arafat Murad',
-            currentLesson: 16,
-            totalLessons: 30,
-            currentAssignment: 7,
-            time: '7h 25m'
-        },
-        {
-            title: 'Course Title 3',
-            description: 'A short lesson description...',
-            teacher: 'Arafat Murad',
-            currentLesson: 7,
-            totalLessons: 12,
-            currentAssignment: 5,
-            time: '7h 25m'
+    const fetchTeachers = async () => {
+        setIsTeachLoading(true);
+        try {
+            const result = await axios(BASE_URL + "/teachers");
+            setTeachers(result.data);
+            // console.log(result.data);
+            setIsTeachLoading(false);
+        } catch (err) {
+            console.log(err);
+            // isTeachLoading(false);
         }
-    ]
+    }
+
+    const fetchCourses = async () => {
+        setIsCourseLoading(true);
+        try {
+            const result = await axios(BASE_URL + "/courses");
+            setCourses(result.data);
+            console.log(result.data);
+            setIsCourseLoading(false);
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    const fetchStudents = async () => {
+        setIsStudLoading(true);
+        try {
+            const result = await axios(BASE_URL + "/students");
+            setStudents(result.data);
+            setIsStudLoading(false);
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
 
     const events = [
         {
@@ -126,21 +147,30 @@ export const AdminOverview = () => {
         // window.scrollTo({ top: 50});
     };
 
+
+    function convertDuration(interval) {
+        if (interval === null) return '0 days'
+        else {
+            console.log(interval)
+            const result = {
+                hours: 0,
+                days: 0,
+                months: 0,
+            };
+
+            result.months = interval.months || 0;
+            result.weeks = interval.weeks || 0;
+            result.days = interval.days || 0;
+        
+            return result;
+        }
+    }
+    
+
     return (
         <>
         <div className={styles.whole}>
             <a>Home</a>
-
-            {/* <div className={styles.welcomeBanner}>
-                <div className={styles.left}>
-                    <img src={getImageUrl('avatar.png')} />
-                    <div className={styles.text}>
-                        <h3>Welcome Back</h3>
-                        <h2>Toluwani</h2>
-                    </div>
-                </div>
-                <button>Edit Profile</button>
-            </div> */}
 
             <div className={styles.overview}>
                 <h5>Overview</h5>
@@ -162,7 +192,7 @@ export const AdminOverview = () => {
                             <div className={styles.blueBox}><img src={getImageUrl('frame9.png')} /></div>
                         </div>
                         <div className={styles.loader}>
-                            124
+                            {isStudLoading ? '...' : students.length}
                         </div>
                     </div>
 
@@ -172,7 +202,7 @@ export const AdminOverview = () => {
                             <div className={styles.blueBox}><img src={getImageUrl('frame8.png')} /></div>
                         </div>
                         <div className={styles.loader}>
-                            52
+                            {isTeachLoading ? '...' : teachers.length}
                          </div>
                     </div>
                 </div>
@@ -185,34 +215,38 @@ export const AdminOverview = () => {
                    
                 </div>
                 <div className={styles.flow}>
-                {courses.slice(0,3).map((course, index) => (
-                    <div className={styles.course} key={index}>
-                        <div className={styles.courseImage}>
-                            <img src={getImageUrl('frame7.png')} />
-                        </div>
-                        <div className={styles.courseInfo}>
-                            <div className={styles.infoHeader}>
-                                <h3>Advertisement - <span>Online</span></h3>
-                                
-                            </div>
-                            <p>Lorem ipsum dolor sit amet consectetur. Feugia t blandit turpis.</p>
-                            <div className={styles.courseData}>
-                                <div><img src={getImageUrl('timer.png')} alt="" />1 hr 25 Mins</div>
-                                <div><img src={getImageUrl('frame5.png')} alt="" />54 Students</div>
-
-                            </div>
-                            <div className={styles.withLoader}>
-                                <div className={styles.coursesLoader}>
-                                    <progress className={styles.progress} id="progress" max={course.totalLessons} value={course.currentLesson} />
+                    {isCourseLoading ? <h5>Loading...</h5> : 
+                        courses.sort((a,b) => new Date(b.date_added) - new Date(a.date_added)).slice(0,3).map((course, index) => (
+                            <div className={styles.course} key={index}>
+                                <div className={styles.courseImage}>
+                                    <img src={getImageUrl('frame7.png')} />
                                 </div>
-                                
-                            </div>
-                            </div>
+                                <div className={styles.courseInfo}>
+                                    <div className={styles.infoHeader}>
+                                        <h3>{course.name} - <span>{course.type}</span></h3>
+                                        
+                                    </div>
+                                    <p>Lorem ipsum dolor sit amet consectetur. Feugia t blandit turpis.</p>
+                                    <div className={styles.courseData}>
+                                        <div>
+                                            <img src={getImageUrl('timer.png')} alt="" />
+                                            {convertDuration(course.duration).months === 0 ? '' : convertDuration(course.duration).months + ' months '}
+                                            {convertDuration(course.duration).days === 0 ? '' : convertDuration(course.duration).days + ' days '}
+                                            {convertDuration(course.duration).hours === 0 ? '' : convertDuration(course.duration).hours + ' hours '}
+                                        </div>
+                                        <div><img src={getImageUrl('frame5.png')} alt="" />54 Students</div>
 
-                    
-                        </div>
-                    
-                ))}
+                                    </div>
+                                    <div className={styles.withLoader}>
+                                        <div className={styles.coursesLoader}>
+                                            <progress className={styles.progress} id="progress" max={course.totalLessons} value={course.currentLesson} />
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    }
                 </div>
             </div>
 
