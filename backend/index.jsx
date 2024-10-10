@@ -43,6 +43,15 @@ app.get("/students", async (req, res) => {
         res.status(500).json({message: "Error fetching students"});
     }
 });
+app.get("/students-len", async (req, res) => {
+    try {
+        const result = await client.query("SELECT COUNT(*) FROM student");
+        res.send(result.rows[0].count);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching students length"});
+    }
+});
 
 app.get("/courses", async (req, res) => {
     try {
@@ -83,6 +92,15 @@ app.get("/teachers", async (req, res) => {
     } catch(err) {
         console.log(err);
         res.status(500).json({message: "Error fetching teachers"});
+    }
+});
+app.get("/students-len", async (req, res) => {
+    try {
+        const result = await client.query("SELECT COUNT(*) FROM instructor");
+        res.send(result.rows[0].count);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching teachers length"});
     }
 });
 

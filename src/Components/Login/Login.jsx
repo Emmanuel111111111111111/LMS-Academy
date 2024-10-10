@@ -9,10 +9,10 @@ import { BASE_URL } from "../../../config";
 
 export const Login = () => {
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [response, setResponse] = useState('');
-  const [errorMessage, setErrorMesage] = useState(false);
+  const [ email, setEmail ] = useState('');
+  const [ password, setPassword ] = useState('');
+  const [ errorMessage, setErrorMesage ] = useState(false);
+  const [ isLoading, setIsLoading ] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,9 +22,11 @@ export const Login = () => {
   
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setIsLoading(true);
     try {
       const response = await axios.post(BASE_URL + '/login', { email, password });
       
+      setIsLoading(false);
       console.log("signed in");
       sessionStorage.setItem("id", response.data.student_id);
       sessionStorage.setItem("first_name", response.data.first_name);
@@ -34,6 +36,7 @@ export const Login = () => {
       window.location.href = "/dashboard";
       
     } catch (err) {
+      setIsLoading(false);
       if (err.response) {
         console.error(err.response.data.message);
         if (err.response.data.message === 'No records') setErrorMesage(true);
@@ -88,7 +91,7 @@ export const Login = () => {
             <p>Forgot password? <a href="/Reset">Reset Password</a></p>
 
             <div className={styles.home}>
-              <button className={styles.butt}>Log In</button>
+              <button className={styles.butt}>{isLoading ? '...' : 'Log In'}</button>
               <p>Don't Have An Account? <a href="/Account">Create An Account</a></p>
             </div>
 

@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from "react";
-
 import { getImageUrl } from "../../../utilis";
 import styles from "./AdminLogin.module.css";
 import axios from 'axios';
-import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../../../../config";
 
 
 export const AdminLogin = () => {
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [response, setResponse] = useState('');
-  const [errorMessage, setErrorMesage] = useState(false);
-  const navigate = useNavigate();
+  const [ email, setEmail ] = useState('');
+  const [ password, setPassword ] = useState('');
+  const [ errorMessage, setErrorMesage ] = useState(false);
+  const [ isLoading, setIsLoading ] = useState(false);
 
   useEffect(() => {
     // sessionStorage.clear();
@@ -22,18 +19,20 @@ export const AdminLogin = () => {
   
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setIsLoading(true);
     try {
-      const response = await axios.post(BASE_URL + '/admin-login', { email, password });
+      const response = await axios.post(BASE_URL + '/adminlogin', { email, password });
       
+      setIsLoading(false);
       console.log("signed in");
       sessionStorage.setItem("id", response.data.student_id);
       sessionStorage.setItem("first_name", response.data.first_name);
       sessionStorage.setItem("last_name", response.data.last_name);
       sessionStorage.setItem("email", response.data.email);
       console.log(response.data.first_name);
-      window.location.href = "/dashboard";
-      
+      window.location.href = "/admin-dashboard";
     } catch (err) {
+      setIsLoading(false);
       if (err.response) {
         console.error(err.response.data.message);
         if (err.response.data.message === 'No records') setErrorMesage(true);
@@ -87,7 +86,7 @@ export const AdminLogin = () => {
 
             <p>Forgot password? <a href="/Reset">Reset Password</a></p>
 
-            <button className={styles.butt}>Log In</button>
+            <button className={styles.butt}>{isLoading ? '...' : 'Log In'}</button>
 
           </form>
 

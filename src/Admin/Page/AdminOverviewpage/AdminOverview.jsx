@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from './AdminOverview.module.css';
 import { getImageUrl } from "../../../utilis";
 import Pagination from "../../../Components/Pagination/Pagination";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { BASE_URL, TEST_URL } from "../../../../config";
 
@@ -11,31 +11,33 @@ export const AdminOverview = () => {
 
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ itemsPerPage, setItemsPerPage ] = useState(5);
-    const [ teachers, setTeachers ] = useState([]);
+    // const [ teachers, setTeachers ] = useState([]);
     const [ courses, setCourses ] = useState([]);
-    const [ students, setStudents ] = useState([]);
+    const [ activities, setActivities ] = useState([]);
+    // const [ students, setStudents ] = useState([]);
+    const [ studentsLen, setStudentsLen ] = useState(0);
+    const [ teachersLen, setTeachersLen ] = useState(0);
     const [ isTeachLoading, setIsTeachLoading ] = useState(false);
     const [ isCourseLoading, setIsCourseLoading ] = useState(false);
     const [ isStudLoading, setIsStudLoading ] = useState(false);
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const scroll = useRef(null);
 
     useEffect(() => {
-        fetchTeachers();
+        fetchTeachersLength();
+        fetchStudentsLength();
         fetchCourses();
-        fetchStudents();
+        fetchActivityLog();
     }, []);
 
-    const fetchTeachers = async () => {
+    const fetchTeachersLength = async () => {
         setIsTeachLoading(true);
         try {
-            const result = await axios(BASE_URL + "/teachers");
-            setTeachers(result.data);
-            // console.log(result.data);
+            const result = await axios(BASE_URL + "/teachers-len");
+            setTeachersLen(result.data);
             setIsTeachLoading(false);
         } catch (err) {
             console.log(err);
-            // isTeachLoading(false);
         }
     }
 
@@ -43,20 +45,31 @@ export const AdminOverview = () => {
         setIsCourseLoading(true);
         try {
             const result = await axios(BASE_URL + "/courses");
-            setCourses(result.data);
-            console.log(result.data);
+            setCourses(result.data.sort((a,b) => new Date(b.date_added) - new Date(a.date_added)).slice(0,3));
+            console.log(result.data.sort((a,b) => new Date(b.date_added) - new Date(a.date_added)).slice(0,3));
+            // console.log(result.data);
             setIsCourseLoading(false);
         } catch (err) {
             console.log(err);
         }
     }
 
-    const fetchStudents = async () => {
+    const fetchStudentsLength = async () => {
         setIsStudLoading(true);
         try {
-            const result = await axios(BASE_URL + "/students");
-            setStudents(result.data);
+            const result = await axios(BASE_URL + "/students-len");
+            setStudentsLen(result.data);
             setIsStudLoading(false);
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    const fetchActivityLog = async () => {
+        try {
+            const result = await axios(BASE_URL + "/activity-log");
+            console.log(result);
+            setActivities(result.data);
         } catch (err) {
             console.log(err);
         }
@@ -151,12 +164,7 @@ export const AdminOverview = () => {
     function convertDuration(interval) {
         if (interval === null) return '0 days'
         else {
-            // console.log(interval)
-            const result = {
-                hours: 0,
-                days: 0,
-                months: 0,
-            };
+            const result = { hours: 0, days: 0, months: 0 };
 
             result.months = interval.months || 0;
             result.weeks = interval.weeks || 0;
@@ -192,7 +200,7 @@ export const AdminOverview = () => {
                             <div className={styles.blueBox}><img src={getImageUrl('frame9.png')} /></div>
                         </div>
                         <div className={styles.loader}>
-                            {isStudLoading ? '...' : students.length}
+                            {isStudLoading ? '...' : studentsLen}
                         </div>
                     </div>
 
@@ -202,7 +210,7 @@ export const AdminOverview = () => {
                             <div className={styles.blueBox}><img src={getImageUrl('frame8.png')} /></div>
                         </div>
                         <div className={styles.loader}>
-                            {isTeachLoading ? '...' : teachers.length}
+                            {isTeachLoading ? '...' : teachersLen}
                          </div>
                     </div>
                 </div>
