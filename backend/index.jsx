@@ -94,7 +94,7 @@ app.get("/teachers", async (req, res) => {
         res.status(500).json({message: "Error fetching teachers"});
     }
 });
-app.get("/students-len", async (req, res) => {
+app.get("/teachers-len", async (req, res) => {
     try {
         const result = await client.query("SELECT COUNT(*) FROM instructor");
         res.send(result.rows[0].count);
