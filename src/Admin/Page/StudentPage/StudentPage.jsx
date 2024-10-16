@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from './StudentPage.module.css';
 import { getImageUrl } from "../../../utilis";
 import Pagination from "../../../Components/Pagination/Pagination";
+import { format } from 'date-fns';
 import axios from 'axios';
 import { BASE_URL } from "../../../../config";
 
@@ -29,114 +30,6 @@ export const StudentPage = () => {
         }
     }
 
-
-
-    // const students = [
-    //     {
-    //         name: 'John Raymond',
-    //         course: 'Machine Learning',
-    //         date: 'July 1, 2024',
-    //         phone_number: '09041638647',
-    //         email: 'johndow2024@gmail.com',
-    //         status: 'Active'
-    //     },
-    //     {
-    //         name: 'John Raymond',
-    //         course: 'Machine Learning',
-    //         date: 'July 1, 2024',
-    //         phone_number: '09041638647',
-    //         email: 'johndow2024@gmail.com',
-    //         status: 'Inactive'
-    //     },
-    //     {
-    //         name: 'John Raymond',
-    //         course: 'Machine Learning',
-    //         date: 'July 1, 2024',
-    //         phone_number: '09041638647',
-    //         email: 'johndow2024@gmail.com',
-    //         status: 'Inactive'
-    //     },
-    //     {
-    //         name: 'John Raymond',
-    //         course: 'Machine Learning',
-    //         date: 'July 1, 2024',
-    //         phone_number: '09041638647',
-    //         email: 'johndow2024@gmail.com',
-    //         status: 'Inactive'
-    //     },
-    //     {
-    //         name: 'John Raymond',
-    //         course: 'Machine Learning',
-    //         date: 'July 1, 2024',
-    //         phone_number: '09041638647',
-    //         email: 'johndow2024@gmail.com',
-    //         status: 'Active'
-    //     },
-    //     {
-    //         name: 'John Raymond',
-    //         course: 'Machine Learning',
-    //         date: 'July 1, 2024',
-    //         phone_number: '09041638647',
-    //         email: 'johndow2024@gmail.com',
-    //         status: 'Inactive'
-    //     },
-    //     {
-    //         name: 'John Raymond',
-    //         course: 'Machine Learning',
-    //         date: 'July 1, 2024',
-    //         phone_number: '09041638647',
-    //         email: 'johndow2024@gmail.com',
-    //         status: 'Active'
-    //     },
-    //     {
-    //         name: 'John Raymond',
-    //         course: 'Machine Learning',
-    //         date: 'July 1, 2024',
-    //         phone_number: '09041638647',
-    //         email: 'johndow2024@gmail.com',
-    //         status: 'Inactive'
-    //     },
-    //     {
-    //         name: 'John Raymond',
-    //         course: 'Machine Learning',
-    //         date: 'July 1, 2024',
-    //         phone_number: '09041638647',
-    //         email: 'johndow2024@gmail.com',
-    //         status: 'Inactive'
-    //     },
-    //     {
-    //         name: 'John Raymond',
-    //         course: 'Machine Learning',
-    //         date: 'July 1, 2024',
-    //         phone_number: '09041638647',
-    //         email: 'johndow2024@gmail.com',
-    //         status: 'Active'
-    //     },
-    //     {
-    //         name: 'John Raymond',
-    //         course: 'Machine Learning',
-    //         date: 'July 1, 2024',
-    //         phone_number: '09041638647',
-    //         email: 'johndow2024@gmail.com',
-    //         status: 'Active'
-    //     },
-    //     {
-    //         name: 'John Raymond',
-    //         course: 'Machine Learning',
-    //         date: 'July 1, 2024',
-    //         phone_number: '09041638647',
-    //         email: 'johndow2024@gmail.com',
-    //         status: 'Inactive'
-    //     },
-    //     {
-    //         name: 'John Raymond',
-    //         course: 'Machine Learning',
-    //         date: 'July 1, 2024',
-    //         phone_number: '09041638647',
-    //         email: 'johndow2024@gmail.com',
-    //         status: 'Active'
-    //     }
-    // ]
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -200,7 +93,7 @@ export const StudentPage = () => {
                             <td><input type="checkbox" /></td>
                             <td>{student.first_name} {student.last_name}</td>
                             <td>{student.course}</td>
-                            <td>{student.date}</td>
+                            <td>{format(new Date (student.date_added), 'MMMM dd, yyyy')}</td>
                             <td>{student.email}</td>
                             <td>{student.phone_number}</td>
                             <td>

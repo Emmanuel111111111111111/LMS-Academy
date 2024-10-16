@@ -18,19 +18,8 @@ const client = new Client({
 
 client.connect();
 
-// const mysql = require('mysql');
-// const { Sequelize, DataTypes } = require("sequelize");
-
-// const db = mysql.createConnection({
-//     host: 'localhost',
-//     user: 'root',
-//     password: 'Ebube012',
-//     database: 'academy'
-// })
-
 
 app.get("/", (req, res) => {
-    // console.log('Working');
     return res.json("BACKEND IS CONNECTED");
 });
 
@@ -73,17 +62,186 @@ app.get("/enrollment", async (req, res) => {
     }
 });
 
+app.get("/instructorcourses", async (req, res) => {
+    try {
+        const result = await client.query("SELECT * FROM instructorcourses");
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching instructor-courses"});
+    }
+});
+
+app.get('/courses-instructor-studentscount-lessons', async (req, res) => {
+    try {
+        const query = `
+            SELECT c.*, 
+                i.instructor_id AS instructor_id,
+                i.first_name AS instructor_first_name,
+                i.last_name AS instructor_last_name,
+                COUNT(s.student_id) AS student_count,
+                l.lesson_id AS lesson_id,
+                l.title AS lesson_title,
+                l.file_data AS lesson_data
+            FROM course c
+            LEFT JOIN instructorCourses ic ON c.course_id = ic.course_id
+            LEFT JOIN instructor i ON ic.instructor_id = i.instructor_id
+            LEFT JOIN enrollment e ON c.course_id = e.course_id
+            LEFT JOIN student s ON e.student_id = s.student_id
+            LEFT JOIN lesson l ON c.course_id = l.course_id
+            GROUP BY c.course_id, i.instructor_id, l.lesson_id
+            ORDER BY c.course_id, i.instructor_id;
+        `;
+
+        const result = await client.query(query);
+        const courses = result.rows;
+
+        const formattedCourses = {};
+        courses.forEach(row => {
+            if (!formattedCourses[row.course_id]) {
+                formattedCourses[row.course_id] = {
+                    ...row,
+                    instructors: [],
+                    lessons: [],
+                    student_count: parseInt(row.student_count) || 0
+                };
+                delete formattedCourses[row.course_id].instructor_id;
+                delete formattedCourses[row.course_id].instructor_first_name;
+                delete formattedCourses[row.course_id].instructor_last_name;
+                delete formattedCourses[row.course_id].lesson_data;
+                delete formattedCourses[row.course_id].lesson_id;
+                delete formattedCourses[row.course_id].lesson_title;
+            }
+            if (row.instructor_id) {
+                formattedCourses[row.course_id].instructors.push({
+                    id: row.instructor_id,
+                    name: row.instructor_first_name + ' ' + (row.instructor_last_name || '')
+                });
+            }
+            if (row.lesson_id) {
+                formattedCourses[row.course_id].lessons.push({
+                    id: row.lesson_id,
+                    title: row.lesson_title,
+                    file_data: row.lesson_data,
+                });
+            }
+        });
+
+        res.json(Object.values(formattedCourses));
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+app.get('/courses-instructor-students', async (req, res) => {
+    try {
+        const query = `
+            SELECT c.*, 
+                   i.instructor_id AS instructor_id,
+                   i.first_name AS instructor_first_name,
+                   i.last_name AS instructor_last_name,
+                   i.profile_img AS instructor_pfp,
+                   s.student_id AS student_id,
+                   s.first_name AS student_first_name,
+                   s.last_name AS student_last_name,
+                   s.profile_img AS student_pfp
+            FROM course c
+            LEFT JOIN instructorCourses ic ON c.course_id = ic.course_id
+            LEFT JOIN instructor i ON ic.instructor_id = i.instructor_id
+            LEFT JOIN enrollment e ON c.course_id = e.course_id
+            LEFT JOIN student s ON e.student_id = s.student_id
+            ORDER BY c.course_id, i.instructor_id, s.student_id;
+        `;
+
+        const result = await client.query(query);
+        const courses = result.rows;
+
+        const formattedCourses = {};
+        courses.forEach(row => {
+            if (!formattedCourses[row.course_id]) {
+                formattedCourses[row.course_id] = {
+                    ...row,
+                    instructors: [],
+                    students: []
+                };
+                delete formattedCourses[row.course_id].instructor_id;
+                delete formattedCourses[row.course_id].instructor_first_name;
+                delete formattedCourses[row.course_id].instructor_last_name;
+                delete formattedCourses[row.course_id].instructor_pfp;
+                delete formattedCourses[row.course_id].student_id;
+                delete formattedCourses[row.course_id].student_first_name;
+                delete formattedCourses[row.course_id].student_last_name;
+                delete formattedCourses[row.course_id].student_pfp;
+            }
+
+            if (row.instructor_id) {
+                formattedCourses[row.course_id].instructors.push({
+                    id: row.instructor_id,
+                    first_name: row.instructor_first_name,
+                    last_name: row.instructor_last_name,
+                    name: row.instructor_first_name + ' ' + (row.instructor_last_name || ''),
+                    pfp: row.instructor_pfp
+                });
+            }
+            if (row.student_id) {
+                formattedCourses[row.course_id].students.push({
+                    id: row.student_id,
+                    first_name: row.student_first_name,
+                    last_name: row.student_last_name,
+                    name: row.student_first_name + ' ' + (row.student_last_name || ''),
+                    pfp: row.student_pfp
+                });
+            }
+        });
+
+        res.json(Object.values(formattedCourses));
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
 app.get("/courses/:student_id", async (req, res) => {
     const id = req.params.student_id;
-    const query = "SELECT * FROM course INNER JOIN enrollment ON course.course_id = enrollment.course_id WHERE enrollment.student_id = ?"
+    const query = "SELECT * FROM course INNER JOIN enrollment ON course.course_id = enrollment.course_id WHERE enrollment.student_id = ($1)"
     try {
         const result = await client.query(query, [id]);
         res.send(result.rows);
     } catch(err) {
         console.log(err);
-        res.status(500).json({message: "Error fetching courses/id"});
+        res.status(500).json({message: "Error fetching courses/studentId"});
     }
 });
+
+app.get("/courses/detail/:course_id", async (req, res) => {
+    const id = req.params.course_id;
+    const query = "SELECT * FROM course WHERE course_id = ($1)"
+    try {
+        const result = await client.query(query, [id]);
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching courses/details/id"});
+    }
+});
+
+app.put('/courses/detail/:course_id', async (req, res) => {
+    const id = req.params.course_id;
+    const { name, description } = req.body;
+
+    try {
+        const query = "UPDATE course SET name = $1, description = $2 WHERE course_id = $3";
+        await client.query(query, [name, description, id]);
+
+        res.status(200).json({ message: 'Course updated successfully' });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message:'Error updating course' });
+    }
+});
+
 
 app.get("/teachers", async (req, res) => {
     try {
@@ -113,6 +271,38 @@ app.get("/activity-log", async (req, res) => {
         res.status(500).json({message: "Error fetching activity log"});
     }
 });
+
+app.get("/lessons", async (req, res) => {
+    try {
+        const result = await client.query("SELECT * FROM lesson");
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching lessons"});
+    }
+});
+app.post('/new-lesson', async (req, res) => {
+    
+    const { newLessonTitle, course_id } = req.body;
+
+    if (!newLessonTitle || !course_id) {
+        console.log('No id or title')
+        return res.status(400).json({ message: 'Title and course ID are required' });
+    }
+
+    try {
+        const insertQuery = `INSERT INTO lesson (title, course_id) VALUES ($1, $2) RETURNING *;`;
+        const values = [newLessonTitle, course_id];
+        const result = await client.query(insertQuery, values);
+
+        res.status(201).json(result.rows[0]);
+        
+    } catch (err) {
+        console.error('Error saving lesson:', err);
+        res.status(500).json({ message: 'Error saving lesson' });
+    }
+});
+  
 
 
 app.post('/new-teacher', async (req, res) => {
@@ -149,11 +339,10 @@ app.post('/new-teacher', async (req, res) => {
 
 
 app.post('/new-course', async (req, res) => {
-    const duration = req.body.duration_number + ' ' + req.body.duration_unit;
     const query = "INSERT INTO course (name, duration, type, date_added) VALUES ($1, $2, $3, $4)";
     const values = [
         req.body.name,
-        duration,
+        req.body.duration,
         req.body.type,
         req.body.date
     ]
@@ -179,19 +368,17 @@ app.post('/new-course', async (req, res) => {
 
 app.post('/login', async (req, res) => {
     const query = 'SELECT * FROM student WHERE email = $1';
-    const values = [req.body.email];
     try {
-        const result = await client.query(query, values);
-        if (result.rows.length === 0) {
-            return res.status(404).json({ message: "No records" });
-        }
+        const result = await client.query(query, [req.body.email]);
+        if (result.rows.length === 0) return res.status(404).json({ message: "No records" });
 
         const student = result.rows[0];
         // const isPasswordValid = await bcrypt.compare(req.body.password, student.password);
+        if (req.body.password != student.password) return res.status(401).json({message: "Invalid credentials"});
 
-        if (req.body.password != student.password) {
-            return res.status(401).json({message: "Invalid credentials"});
-        }
+        const loginQuery = "UPDATE student SET last_logged = $1 WHERE student_id = $2";
+        await client.query(loginQuery, [new Date(), student.student_id]);
+
         return res.json(student);
     } catch (err) {
         console.log(err);
@@ -204,16 +391,15 @@ app.post('/adminlogin', async (req, res) => {
     const values = [req.body.email];
     try {
         const result = await client.query(query, values);
-        if (result.rows.length === 0) {
-            return res.status(404).json({ message: "No records" });
-        }
+        if (result.rows.length === 0) return res.status(404).json({ message: "No records" });
 
         const instructor = result.rows[0];
         // const isPasswordValid = await bcrypt.compare(req.body.password, instructor.password);
+        if (req.body.password != instructor.password) return res.status(401).json({message: "Invalid credentials"});
 
-        if (req.body.password != instructor.password) {
-            return res.status(401).json({message: "Invalid credentials"});
-        }
+        const loginQuery = "UPDATE student SET last_logged = $1 WHERE student_id = $2";
+        await client.query(loginQuery, [new Date(), student.student_id]);
+
         return res.json(instructor);
     } catch (err) {
         console.log(err);
@@ -222,7 +408,7 @@ app.post('/adminlogin', async (req, res) => {
 });
 
 app.post("/signup", async (req, res) => {
-    const query = "INSERT INTO student (first_name, last_name, email, phone_number, learning_mode, password) VALUES ($1, $2, $3, $4, $5, $6)";
+    const query = "INSERT INTO student (first_name, last_name, email, phone_number, learning_mode, password, last_logged) VALUES ($1, $2, $3, $4, $5, $6, $7)";
     const values = [
         req.body.first_name,
         req.body.last_name,
@@ -230,6 +416,7 @@ app.post("/signup", async (req, res) => {
         req.body.phone_number,
         req.body.learning_mode,
         req.body.password,
+        new Date(),
         // await bcrypt.hash(req.body.password, 10)
     ]
     try {

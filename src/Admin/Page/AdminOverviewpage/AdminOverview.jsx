@@ -3,6 +3,7 @@ import styles from './AdminOverview.module.css';
 import { getImageUrl } from "../../../utilis";
 import Pagination from "../../../Components/Pagination/Pagination";
 // import { useNavigate } from "react-router-dom";
+import { format } from 'date-fns';
 import axios from 'axios';
 import { BASE_URL, TEST_URL } from "../../../../config";
 
@@ -11,12 +12,11 @@ export const AdminOverview = () => {
 
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ itemsPerPage, setItemsPerPage ] = useState(5);
-    // const [ teachers, setTeachers ] = useState([]);
-    const [ courses, setCourses ] = useState([]);
-    const [ activities, setActivities ] = useState([]);
-    // const [ students, setStudents ] = useState([]);
     const [ studentsLen, setStudentsLen ] = useState(0);
     const [ teachersLen, setTeachersLen ] = useState(0);
+    const [ courses, setCourses ] = useState([]);
+    const [ activities, setActivities ] = useState([]);
+
     const [ isTeachLoading, setIsTeachLoading ] = useState(false);
     const [ isCourseLoading, setIsCourseLoading ] = useState(false);
     const [ isStudLoading, setIsStudLoading ] = useState(false);
@@ -26,7 +26,7 @@ export const AdminOverview = () => {
     useEffect(() => {
         fetchTeachersLength();
         fetchStudentsLength();
-        fetchCourses();
+        fetchThreeCoursesTeachersStudents();
         fetchActivityLog();
     }, []);
 
@@ -36,19 +36,6 @@ export const AdminOverview = () => {
             const result = await axios(BASE_URL + "/teachers-len");
             setTeachersLen(result.data);
             setIsTeachLoading(false);
-        } catch (err) {
-            console.log(err);
-        }
-    }
-
-    const fetchCourses = async () => {
-        setIsCourseLoading(true);
-        try {
-            const result = await axios(BASE_URL + "/courses");
-            setCourses(result.data.sort((a,b) => new Date(b.date_added) - new Date(a.date_added)).slice(0,3));
-            console.log(result.data.sort((a,b) => new Date(b.date_added) - new Date(a.date_added)).slice(0,3));
-            // console.log(result.data);
-            setIsCourseLoading(false);
         } catch (err) {
             console.log(err);
         }
@@ -65,89 +52,31 @@ export const AdminOverview = () => {
         }
     }
 
+    const fetchThreeCoursesTeachersStudents = async () => {
+        setIsCourseLoading(true);
+        try {
+            const result = await axios(BASE_URL + "/courses-instructor-studentscount");
+            setCourses(result.data.sort((a,b) => new Date(b.date_added) - new Date(a.date_added)).slice(0,3));
+            // console.log(result.data.sort((a,b) => new Date(b.date_added) - new Date(a.date_added)).slice(0,3));
+            setIsCourseLoading(false);
+        } catch (err) {
+            console.log(err);
+        }
+    }    
+
     const fetchActivityLog = async () => {
         try {
             const result = await axios(BASE_URL + "/activity-log");
-            console.log(result);
-            setActivities(result.data);
+            setActivities(result.data.sort((a,b) => new Date(b.date) - new Date(a.date)));
         } catch (err) {
             console.log(err);
         }
     }
 
 
-    const events = [
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'July 1, 2024'
-        },
-        {
-            courseName: 'Oracle',
-            eventType: 'CLASS',
-            dueTime: '12:38:00 PM',
-            dueDate: 'July 25, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 1, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 22, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'CLASS',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 29, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 1, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'July 1, 2024'
-        },
-        {
-            courseName: 'Oracle',
-            eventType: 'CLASS',
-            dueTime: '12:38:00 PM',
-            dueDate: 'July 25, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 1, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 22, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'CLASS',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 29, 2024'
-        }
-    ]
-
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentEvents = events.slice(indexOfFirstItem, indexOfLastItem);
+    const currentActivities = activities.slice(indexOfFirstItem, indexOfLastItem);
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
@@ -157,15 +86,14 @@ export const AdminOverview = () => {
         setItemsPerPage(itemNumber);
         setCurrentPage(1);
         scroll.current.scrollIntoView();
-        // window.scrollTo({ top: 50});
     };
 
 
     function convertDuration(interval) {
-        if (interval === null) return '0 days'
-        else {
-            const result = { hours: 0, days: 0, months: 0 };
+        const result = { hours: 0, days: 0, months: 0 };
 
+        if (interval === null) return result
+        else {
             result.months = interval.months || 0;
             result.weeks = interval.weeks || 0;
             result.days = interval.days || 0;
@@ -182,12 +110,13 @@ export const AdminOverview = () => {
 
             <div className={styles.overview}>
                 <h5>Overview</h5>
+
                 <div className={styles.overviews}>
                     
                     <div className={styles.eachOverview}>
                         <div className={styles.overviewText}>
                             Total <br /> Lessons
-                            <div className={styles.blueBox}><img src={getImageUrl('frame10.png')} /></div>
+                            <div className={styles.whiteBox}><img src={getImageUrl('lessons.png')} /></div>
                         </div>
                         <div className={styles.loader}>
                             100
@@ -197,7 +126,7 @@ export const AdminOverview = () => {
                     <div className={styles.eachOverview}>
                         <div className={styles.overviewText}>
                             Total <br /> Students
-                            <div className={styles.blueBox}><img src={getImageUrl('frame9.png')} /></div>
+                            <div className={styles.whiteBox}><img src={getImageUrl('studentOverview.png')} /></div>
                         </div>
                         <div className={styles.loader}>
                             {isStudLoading ? '...' : studentsLen}
@@ -207,7 +136,7 @@ export const AdminOverview = () => {
                     <div className={styles.eachOverview}>
                         <div className={styles.overviewText}>
                             Total <br />Teachers
-                            <div className={styles.blueBox}><img src={getImageUrl('frame8.png')} /></div>
+                            <div className={styles.whiteBox}><img src={getImageUrl('teachersIcon.png')} /></div>
                         </div>
                         <div className={styles.loader}>
                             {isTeachLoading ? '...' : teachersLen}
@@ -220,7 +149,7 @@ export const AdminOverview = () => {
             <div className={styles.courses}>
                 <div className={styles.coursesHeader}>
                     Active Courses
-                   
+                    <a href="/admin-dashboard/courses/active"><button>View All<img src={getImageUrl('greyRightAngle.png')} /></button></a>
                 </div>
                 <div className={styles.flow}>
                     {isCourseLoading ? <h5>Loading...</h5> : 
@@ -230,23 +159,29 @@ export const AdminOverview = () => {
                                     <img src={getImageUrl('frame7.png')} />
                                 </div>
                                 <div className={styles.courseInfo}>
-                                    <div className={styles.infoHeader}>
-                                        <h3>{course.name} - <span>{course.type}</span></h3>
+                                    
+                                    <h3>{course.name} - <span>{course.type}</span></h3>
                                         
-                                    </div>
                                     <p>Lorem ipsum dolor sit amet consectetur. Feugia t blandit turpis.</p>
-                                    <div className={styles.courseData}>
-                                        <div>
-                                            <img src={getImageUrl('timer.png')} alt="" />
-                                            {convertDuration(course.duration).months === 0 ? '' : convertDuration(course.duration).months + ' months '}
-                                            {convertDuration(course.duration).days === 0 ? '' : convertDuration(course.duration).days + ' days '}
-                                            {convertDuration(course.duration).hours === 0 ? '' : convertDuration(course.duration).hours + ' hours '}
+
+                                    <div style={{marginTop: 'auto', justifySelf: 'end'}}>
+                                        <div className={styles.courseData}>
+                                            <div>
+                                                <img src={getImageUrl('timer.png')} alt="" />
+                                                {course.duration === null ? 'N/A' : 
+                                                    <>
+                                                    {convertDuration(course.duration).months === 0 ? '' : convertDuration(course.duration).months + ' months '}
+                                                    {convertDuration(course.duration).days === 0 ? '' : convertDuration(course.duration).days + ' days '}
+                                                    {convertDuration(course.duration).hours === 0 ? '' : convertDuration(course.duration).hours + ' hours '}
+                                                    </>
+                                                }
+                                            </div>
+    
+                                            <div><img src={getImageUrl('frame5.png')} />{course.student_count} {course.student_count === 1 ? 'Student' : 'Students'}</div>
                                         </div>
-                                        <div><img src={getImageUrl('frame5.png')} alt="" />54 Students</div>
+
+                                        <progress className={styles.progress} id="progress" max={course.totalLessons} value={course.currentLesson} />
                                     </div>
-
-                                    <progress className={styles.progress} id="progress" max={course.totalLessons} value={course.currentLesson} />
-
                                 </div>
                             </div>
                         ))
@@ -257,25 +192,25 @@ export const AdminOverview = () => {
             <div className={styles.events}>
                 <div className={styles.eventsHeader}>
                     Recent Activities
-                    <button>View All<img src={getImageUrl('greyRightAngle.png')} alt="" /></button>
+                    <a href="/admin-dashboard/activitylog"><button>View All<img src={getImageUrl('greyRightAngle.png')} /></button></a>
                 </div>
                 
                 <table className={styles.eventsTable} ref={scroll}>
                     <thead>
-                        <th><input type="checkbox" /></th>
-                        <th>Activities</th>
-                        <th>Time and Date</th>
+                        <th className={styles.checkbox}><input type="checkbox" /></th>
+                        <th className={styles.activities}>Activities</th>
+                        <th>Date and Time</th>
                         <th>Due Date</th>
-                        <th>Action</th>
+                        <th className={styles.action}>Action</th>
                     </thead>
                     <tbody>
-                        {currentEvents.map((event, index) => (
+                        {currentActivities.map((act, index) => (
                             <tr key={index}>
                                 <td><input type="checkbox" /></td>
-                                <td> <div className={styles.bread}>You created a new teacher fo...</div></td>
-                                <td><div className={styles.dueTime}>July 1, 2024 12:38:00 PM</div></td>
-                                <td><div className={styles.crumb}>{event.dueDate}</div></td>
-                                <td><button><img src={getImageUrl('View.png')} /></button></td>
+                                <td className={styles.bread}>{act.activity}</td>
+                                <td>{format(new Date (act.date), 'MMMM dd, yyyy hh:mm a')}</td>
+                                <td>{act.dueDate}</td>
+                                <td><button className={styles.viewAll}>View All</button></td>
                             </tr>
                         ))}
                     </tbody>
@@ -292,7 +227,7 @@ export const AdminOverview = () => {
                         Rows
                     </div>
                     <Pagination className={styles.pag}
-                        currentData={events}
+                        currentData={activities}
                         currentPage={currentPage}
                         itemsPerPage={itemsPerPage}
                         onPageChange={handlePageChange}

@@ -4,7 +4,7 @@ import { getImageUrl } from "../../utilis";
 import styles from "./Login.module.css";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
-import { BASE_URL } from "../../../config";
+import { BASE_URL, TEST_URL } from "../../../config";
 
 
 export const Login = () => {
@@ -25,6 +25,7 @@ export const Login = () => {
     setIsLoading(true);
     try {
       const response = await axios.post(BASE_URL + '/login', { email, password });
+      console.log(response.data);
       
       setIsLoading(false);
       console.log("signed in");
@@ -32,7 +33,7 @@ export const Login = () => {
       sessionStorage.setItem("first_name", response.data.first_name);
       sessionStorage.setItem("last_name", response.data.last_name);
       sessionStorage.setItem("email", response.data.email);
-      console.log(response.data.first_name);
+      // console.log(response.data.first_name);
       window.location.href = "/dashboard";
       
     } catch (err) {
@@ -74,12 +75,12 @@ export const Login = () => {
             {errorMessage && <p style={{ color: 'red' }}>Wrong username or password. Try again</p>}
 
             <div className={styles.formgroup}>
-              <label for="name">Phone Number or Email Address</label>
+              <label htmlFor="email">Phone Number or Email Address</label>
               <input placeholder="Enter your phone number or email address" name="email" onChange={e => setEmail(e.target.value)} />
             </div>
 
             <div className={styles.formgroup}>
-              <label for="Password">Password</label>
+              <label htmlFor="password">Password</label>
               <div className={styles.password}>
 
                 <input type={showPassword ? 'text' : 'password'} placeholder="Enter your password" name="password" onChange={e => setPassword(e.target.value)} />

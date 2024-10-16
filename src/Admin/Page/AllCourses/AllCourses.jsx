@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { getImageUrl } from "../../../utilis";
 import styles from "./AllCourses.module.css";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Modal from "../ActiveCourses/Modal";
 import Pagination from "../../../Components/Pagination/Pagination";
@@ -9,30 +9,30 @@ import { BASE_URL, TEST_URL } from "../../../../config";
 
 export const AllCourses = () => {
 
-    const [currentPage, setCurrentPage] = useState(1);
     const [ courses, setCourses ] = useState([]);
-    const [ enrollment, setEnrollment ] = useState([]);
-    const [isOpen, setIsOpen] = useState(false);
-    const [openCreate, setOpenCreate] = useState(false);
-    const [openCourseInfo, setOpenCourseInfo] = useState(false);
-    const [buttonType, setButtonType] = useState("");
-    const [actionsOpen, setActionsOpen] = useState({});
-    const [selected, setSelected] = useState({});
+    const [ isOpen, setIsOpen ] = useState(false);
+    const [ openCreate, setOpenCreate ] = useState(false);
+    const [ openCourseInfo, setOpenCourseInfo ] = useState(false);
+    const [ openSuccess, setOpenSuccess ] = useState(false);
+    const [ eventType, setEventType ] = useState("");
+    const [ buttonType, setButtonType ] = useState("");
+    const [ actionsOpen, setActionsOpen ] = useState({});
+    const [ selected, setSelected ] = useState({});
     const [ isLoading, setIsLoading ] = useState(false);
     const [ errorMessage, setErrorMessage ] = useState(false);
     const actionsRef = useRef(null);
     const createRef = useRef(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        fetchCourses();
-        fetchEnrollment();
+        fetchCoursesTeachersStudents();
     }, []);
 
-    const fetchCourses = async () => {
+    const fetchCoursesTeachersStudents = async () => {
         setIsLoading(true);
         try {
-            const result = await axios(BASE_URL + "/courses");
-            setCourses(result.data);
+            const result = await axios(BASE_URL + "/courses-instructor-studentscount-lessons");
+            setCourses(result.data.sort((a,b)=> new Date(b.date_added) - new Date(a.date_added)));
             setIsLoading(false);
         } catch (err) {
             console.log(err);
@@ -41,43 +41,89 @@ export const AllCourses = () => {
         }
     }
 
-    const fetchEnrollment = async () => {
-        try {
-            const result = await axios(BASE_URL + "/enrollment");
-            setEnrollment(result.data);
-        } catch (err) {
-            console.log(err);
+    function convertDuration(interval) {
+        const result = { hours: 0, days: 0, months: 0 };
+
+        if (interval === null) {
+            return result;
+        }
+        else {
+            result.months = interval.months || 0;
+            result.weeks = interval.weeks || 0;
+            result.days = interval.days || 0;
+        
+            return result;
         }
     }
+    function convertToStructuredDuration(unit, number) {
+        const daysInMonth = 30;
+        const daysInWeek = 7;
+        const hoursInDay = 24;
+    
+        var totalInputDays = 0;
+        var remainingHours = 0;
 
-    function geStudentNumber(courseID) {
-        var x = 0;
-        enrollment.forEach((enroll) => (enroll.course_id === courseID && x++));
-        return x;
-    };
+        if (unit === 'day') totalInputDays = number;
+        else if (unit === 'week') totalInputDays = (number * daysInWeek);
+        else if (unit === 'hour') {
+            totalInputDays = Math.floor(number / hoursInDay);
+            remainingHours = number % hoursInDay;
+        }
+        const months = Math.floor(totalInputDays / daysInMonth);
+        const remainingDaysAfterMonths = totalInputDays % daysInMonth;
+    
+        const weeks = Math.floor(remainingDaysAfterMonths / daysInWeek);
+        const days = remainingDaysAfterMonths % daysInWeek;
+    
+        return {
+            months,
+            weeks,
+            days,
+            hours: remainingHours,
+            intervalString: `${months} months, ${weeks} weeks, ${days} days, ${remainingHours} hours`
+        };
+    }
 
 
     const [ newCourseValues, setNewCourseValues ] = useState({
         name: '',
         type: '',
         duration_number: '',
-        duration_unit: '',
+        duration_unit: 'hour',
+        duration: '',
         date: new Date().toISOString().slice(0,19).replace('T', ' '),
     })
 
+    const handleDuration = (event) => {
+        setNewCourseValues(prev => ({ ...prev, [event.target.name]: event.target.value }));
+        if (event.target.name === 'duration_unit') {
+            setNewCourseValues(prev => ({ ...prev, duration: convertToStructuredDuration(event.target.value, newCourseValues.duration_number).intervalString }));
+        } else if (event.target.name === 'duration_number') {
+            setNewCourseValues(prev => ({ ...prev, duration: convertToStructuredDuration(newCourseValues.duration_unit, event.target.value).intervalString }));
+        }
+    }
     const handleInput = (event) => {
         setNewCourseValues(prev => ({ ...prev, [event.target.name]: event.target.value }))
     }
-    const handleSubmit = async (event) => {
+    const handleSubmitCourse = async (event) => {
         event.preventDefault();
         setOpenCreate(false);
         console.log(newCourseValues);
         axios.post(BASE_URL + '/new-course', newCourseValues)
-            .then(res => console.log(res))
+            .then(res => {
+                console.log(res);
+                handleSuccess('course');
+            })
             .catch(err => console.log(err));
     }
 
 
+    const handleSuccess = (type) => {
+        setEventType(type);
+        setOpenSuccess(true);
+        setTimeout(() => setOpenSuccess(false), 3000);
+        setTimeout(() => fetchCoursesTeachersStudents(), 3000);
+    }
     const handleCloseCreate = () => {
         setOpenCreate(false);
     };
@@ -86,14 +132,21 @@ export const AllCourses = () => {
         setOpenCreate(true);
     };
 
-    const handleOpenCourse = (course) => {
-        setSelected(course)
+    const handleOpenCourse = (event, course) => {
+        setSelected(course);
         setOpenCourseInfo(true);
     };
     const handleCloseCourseInfo = (index) => {
         setSelected(0)
         setOpenCourseInfo(false);
     };
+
+    const handleEdit = (event, course) => {
+        event.stopPropagation();
+        console.log('edit button');
+        navigate('detail', {state: course.course_id });
+        window.scrollTo({ top: 0});
+    }
 
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
@@ -150,7 +203,7 @@ export const AllCourses = () => {
                                 <button onClick={handleCloseCreate} className={styles.close}><img src={getImageUrl('close.png')} /></button>
                             </div>
 
-                            <form className={styles.theForm} onSubmit={buttonType === 'course' ? handleSubmit : ''}>
+                            <form className={styles.theForm} onSubmit={buttonType === 'course' ? handleSubmitCourse : ''}>
                                 <div>
                                     <h5>{buttonType === "course" ? "Course Name" : buttonType === "assignment" ? "Content title" : "Event Name"}</h5>
                                     <input type="text" name="name" placeholder="Enter Event Name" onChange={handleInput}/>
@@ -160,16 +213,18 @@ export const AllCourses = () => {
                                     <h5>Course Type</h5>
                                     <select name="type" onChange={handleInput}>
                                         <option>Select Course Type</option>
-                                        <option value="online">Online</option>
-                                        <option value="physical">Physical</option>
+                                        <option value="Online">Online</option>
+                                        <option value="Physical">Physical</option>
+                                        <option value="Hybrid">Hybrid</option>
                                     </select>
                                 </div>}
 
                                 <h5>Duration</h5>
                                 <div className={styles.duration}>
-                                    <input type="number" name="duration_number" onChange={handleInput} />
+                                    <input type="number" name="duration_number" onChange={(e)=>handleDuration(e)} />
 
-                                    <select name="duration_unit" onChange={handleInput}>
+                                    <select name="duration_unit" onChange={(e)=>handleDuration(e)}>
+                                        <option value="hour">Hours</option>
                                         <option value="day">Days</option>
                                         <option value="week">Weeks</option>
                                         <option value="month">Months</option>
@@ -188,7 +243,7 @@ export const AllCourses = () => {
                 {isLoading ? <h5 className={styles.loading}>Loading...</h5> :
                     <div className={styles.course}>
                         {courses.map((cour, index) => (
-                            <div key={index} className={styles.courseInfo} onClick={() => handleOpenCourse(cour)}>
+                            <div key={index} className={styles.courseInfo} onClick={(e) => handleOpenCourse(e, cour)} id="outer">
                                 <div className={styles.courseImage}>
                                     <img src={getImageUrl('frame7.png')} />
                                 </div>
@@ -198,20 +253,25 @@ export const AllCourses = () => {
                                         <button className={styles.actionsButton} onClick={(e) => toggleAction(e, index)}><img src={getImageUrl('threeDots.png')} /></button>
                                         <div className={`${styles.actionsClosed} ${actionsOpen[index] && styles.theActions}`} ref={actionsRef}>
                                             <h5>ACTION</h5>
-                                            <button><img src={getImageUrl('approve.png')} />SUSPEND</button>
-                                            <button><img src={getImageUrl('delete.png')} />DECLINE</button>
+                                            <button onClick={(e)=>handleEdit(e, cour)}><img src={getImageUrl('edit.png')} />EDIT</button>
+                                            <button onClick={(e)=>handleEdit(e, index)}><img src={getImageUrl('approve.png')} />SUSPEND</button>
+                                            <button onClick={(e)=>handleEdit(e, index)}><img src={getImageUrl('delete.png')} />DECLINE</button>
                                         </div>
                                     </div>
                                 </div>
                                 <p>{cour.description}</p>
                                 <div className={styles.courseData}>
                                     <div className={styles.bread}>
-                                        <div className={styles.profile}><img src={getImageUrl('calend.png')} alt="" />Monday, 28 June -28 August 2024</div>
-                                        <div className={styles.profile}><img src={getImageUrl('timeline.png')} alt="" />A Month</div>
+                                        {cour.duration != null && <div className={styles.profile}>
+                                            <img src={getImageUrl('timer.png')} />
+                                            {convertDuration(cour.duration).months === 0 ? '' : convertDuration(cour.duration).months + ' months '}
+                                            {convertDuration(cour.duration).days === 0 ? '' : convertDuration(cour.duration).days + ' days '}
+                                            {convertDuration(cour.duration).hours === 0 ? '' : convertDuration(cour.duration).hours + ' hours '}
+                                        </div>}
                                     </div>
                                     <div className={styles.crumb}>
-                                        <div className={styles.profile}><img src={getImageUrl('profile.png')} alt="" />{cour.teacher}</div>
-                                        <div className={styles.students}><img src={getImageUrl('frame5.png')} alt="" />{geStudentNumber(cour.course_id) === 1 ? geStudentNumber(cour.course_id) + ' Student' : geStudentNumber(cour.course_id) + ' Students'}</div>
+                                        <div className={styles.profile}><img src={getImageUrl('profile.png')} alt="" />{cour.instructors.length > 0 ? cour.instructors[0].name : 'None'}</div>
+                                        <div className={styles.students}><img src={getImageUrl('frame5.png')} alt="" />{cour.student_count} {cour.student_count === 1 ? 'Student' : 'Students'}</div>
                                     </div>
                                 </div>
                             </div>
@@ -335,6 +395,12 @@ export const AllCourses = () => {
                         
             </div>
             </>
+        </Modal>
+
+        <Modal isOpen={openSuccess}>
+            <div className={styles.added}>
+                {eventType} ADDED!
+            </div>
         </Modal>
 
 

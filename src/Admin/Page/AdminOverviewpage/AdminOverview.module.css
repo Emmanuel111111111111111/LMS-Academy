@@ -3,7 +3,7 @@
     margin-top: 80px;
     width: 100%;
     padding: 16px 24px;
-    background: #F8F9FD;
+    background: #FFFFFF;
 }
 .whole a {
     font-size: 14px;
@@ -13,9 +13,10 @@
 
 
 .overview {
-    background: #FFFFFF;
+    /* background: #FFFFFF; */
     border-radius: 12px;
-    padding: 10px 12px;
+    padding: 10px 0;
+    /* padding: 10px 12px; */
     margin-top: 24px;
 }
 .overview h5 {
@@ -52,16 +53,17 @@
     line-height: 30px;
     gap: 12px;
 }
-.blueBox {
-    background: #C3D4FF;
+.whiteBox {
+    /* background: #C3D4FF; */
+    background: #FFFFFF;
     border-radius: 8px;
-    padding: 8px;
+    padding: 11px 13px;
     display: flex;
     align-items: center;
 }
-.blueBox img {
-    width: 63px;
-    height: 58px;
+.whiteBox img {
+    width: 36px;
+    height: 36px;
 }
 
 .loader {
@@ -76,9 +78,9 @@
 
 .courses {
     width: 100%;
-    background: #FFFFFF;
+    /* background: #FFFFFF; */
     border-radius: 12px;
-    padding: 20px;
+    padding: 20px 0;
     margin-top: 24px;
 }
 
@@ -108,81 +110,67 @@
     height: 20px;
 }
 
+
+.flow {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    gap: 3%;
+    padding-bottom: 20px;
+}
+
 .course {
     display: flex;
+    flex-direction: column;
+    height: 100%;
     background: #FAFAFA;
     border: 1px solid #BDD9FF;
     box-shadow: 0px 3px 4px 0px #00000017;
     border-radius: 10px;
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: column;
+    width: 100%;
+}
 
-}
-.flow{
-    display: flex;
-    justify-content: space-between;
-    gap: 29px;
-}
-.courseImage {
-    flex: 30%;
-}
 .courseImage img {
     width: 100%;
-    height: 100%;
+    height: auto;
     border-radius: 6px 0 0 6px;
 }
 
 .courseInfo {
-    flex: 70%;
-    padding: 16px 21px;
-    /* padding-left: 32px; */
-}
-.infoHeader {
+    padding: 16px;
     display: flex;
-    justify-content: space-between;
-    align-items: left;
-    color: #2c2f7e;
-    font-size: 16px;
+    flex-direction: column;
+    /* width: 100%; */
+    height: 100%;
+}
+.courseInfo h3 {
+    color: #2C2F7E;
+    font-size: 18px;
     font-weight: 600;
     line-height: 28px;
-    /* margin-left: -20px; */
 }
-.infoHeader button {
-    border: 1px solid #A1B2D1;
-    outline: none;
-    background-color: transparent;
-    padding: 4px;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
+.courseInfo h3 span {
+    background: #CCCDE8;
+    padding: 4px 6px;
+    color: #0C359E;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 500;
 }
-.infoHeader button img {
-    width: 20px;
-    height: 20px;
-}
-
 .courseInfo p {
     font-size: 14px;
     font-weight: 400;
     color: #4d4d4d;
-    /* margin-left: -20px; */
 }
 
 .courseData {
     display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: space-between;
     margin-top: 12px;
-    /* margin-left: -20px; */
 }
 .courseData img {
     width: 16px;
     height: 16px;
-}
-.courseData .profile img {
-    border-radius: 50px;
-    border: 1.22px solid #94B9FF66;
 }
 .courseData div {
     display: inline-flex;
@@ -234,10 +222,10 @@
 
 .events {
     width: 100%;
-    background: #FFFFFF;
+    /* background: #FFFFFF; */
     border-radius: 12px;
-    padding: 20px;
-    margin-top: 24px;
+    padding: 20px 0;
+    /* margin-top: 24px; */
 }
 
 .eventsHeader {
@@ -269,10 +257,10 @@
 .eventsTable {
     width: 100%;
     border-spacing: 0 8px;
+    table-layout: fixed;
 }
 .eventsTable thead {
     background: #F9F9F9;
-    border: 1px solid #E4E4E4;
     font-size: 14px;
     font-weight: 600;
     color: #2C2F7E;
@@ -289,12 +277,6 @@
     border-bottom: 1px solid #E4E4E4;
 }
 
-.bread{
-    font-weight: 600;
-    font-size: 14.9px;
-    line-height: 22.35px;
-    color: #171717;
-}
 .eventsTable th:first-child,
 .eventsTable td:first-child {
     border-top-left-radius: 6px;
@@ -310,46 +292,42 @@
     border: 1px solid #E4E4E4;
     border-left: none;
 }
-.eventsTable td img {
-    width: 16px;
-    height: 16px;
-}
 .eventsTable tr {
     background: #FFFFFF;
     font-size: 12px;
     font-weight: 500;
     color: #545454;
 }
-.eventsTable tr span {
-    font-weight: 700;
-    color: #2C2F7E;
+
+.eventsTable .checkbox {
+    width: 6%;
+    overflow: visible;
 }
-.eventsTable tr button {
-    border: 1px solid #A1B2D1;
+.eventsTable .activities {
+    width: 40%;
+}
+.eventsTable .action {
+    width: 10%;
+}
+
+.eventsTable .bread{
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 22.35px;
+    color: #171717;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.eventsTable .viewAll {
+    border: 1.5px solid #C4C4C4;
     outline: none;
-    background-color: transparent;
-    padding: 4px;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-}
-.eventsTable tr button img {
-    width: 80px;
-    height: 35px;
-}
-.dueTime {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 14.9px;
-    font-weight: 400;
-    line-height: 22.35px;
-}
-.crumb{
-    font-weight: 400;
-    font-size: 14.9px;
-    line-height: 22.35px;
-    color: #727272;
+    background-color: #F6F8FF;
+    padding: 4px 10px;
+    border-radius: 7px;
+    color: #0C359E;
+    font-size: 13px;
+    font-weight: 500;
 }
 
 

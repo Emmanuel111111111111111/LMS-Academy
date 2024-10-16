@@ -31,61 +31,6 @@ export const ActivityLogPage = () => {
         }
     }
 
-
-
-    // const activities = [
-    //     {
-    //         action: 'You created a new teacher for Machine Learning',
-    //         date_time: 'July 1, 2024 12:38:00 PM',
-    //         due_date: 'July 1, 2024'
-    //     },
-    //     {
-    //         action: 'You created a new teacher for Machine Learning',
-    //         date_time: 'July 1, 2024 12:38:00 PM',
-    //         due_date: 'July 1, 2024'
-    //     },
-    //     {
-    //         action: 'You created a new teacher for Machine Learning',
-    //         date_time: 'July 1, 2024 12:38:00 PM',
-    //         due_date: 'July 1, 2024'
-    //     },
-    //     {
-    //         action: 'You created a new teacher for Machine Learning',
-    //         date_time: 'July 1, 2024 12:38:00 PM',
-    //         due_date: 'July 1, 2024'
-    //     },
-    //     {
-    //         action: 'You created a new teacher for Machine Learning',
-    //         date_time: 'July 1, 2024 12:38:00 PM',
-    //         due_date: 'July 1, 2024'
-    //     },
-    //     {
-    //         action: 'You created a new teacher for Machine Learning',
-    //         date_time: 'July 1, 2024 12:38:00 PM',
-    //         due_date: 'July 1, 2024'
-    //     },
-    //     {
-    //         action: 'You created a new teacher for Machine Learning',
-    //         date_time: 'July 1, 2024 12:38:00 PM',
-    //         due_date: 'July 1, 2024'
-    //     },
-    //     {
-    //         action: 'You created a new teacher for Machine Learning',
-    //         date_time: 'July 1, 2024 12:38:00 PM',
-    //         due_date: 'July 1, 2024'
-    //     },
-    //     {
-    //         action: 'You created a new teacher for Machine Learning',
-    //         date_time: 'July 1, 2024 12:38:00 PM',
-    //         due_date: 'July 1, 2024'
-    //     },
-    //     {
-    //         action: 'You created a new teacher for Machine Learning',
-    //         date_time: 'July 1, 2024 12:38:00 PM',
-    //         due_date: 'July 1, 2024'
-    //     }
-    // ]
-
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentActivities = activities.slice(indexOfFirstItem, indexOfLastItem);

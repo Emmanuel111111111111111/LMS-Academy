@@ -61,12 +61,12 @@ function App() {
         { path: 'courses/active', element: <ActiveCourses /> },
         { path: 'courses/upcoming', element: <UpcomingCourses /> },
         { path: 'courses/completed', element: <CompletedCourses /> },
+        { path: 'courses/detail', element: <Detail /> },
         { path: 'tasks', element: <BlankPage /> },
         { path: 'teacher', element: <TeachersPage /> },
         { path: 'student', element: <StudentPage /> },
         { path: 'student/pending', element: <PendingStudentPage /> },
         { path: 'activitylog', element: <ActivityLogPage /> },
-        { path: 'detail', element: <Detail /> },
       ]
     },
   ])

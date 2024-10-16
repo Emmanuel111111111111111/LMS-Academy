@@ -232,7 +232,7 @@ export const Overview = () => {
                     </thead>
                     <tbody>
                         {currentEvents.map((event, index) => (
-                            <tr>
+                            <tr key={index}>
                                 <td><input type="checkbox" /></td>
                                 <td>{event.courseName} ... <span>{event.eventType}</span></td>
                                 <td><div className={styles.dueTime}><img src={getImageUrl('timer.png')} />{event.dueTime}</div></td>

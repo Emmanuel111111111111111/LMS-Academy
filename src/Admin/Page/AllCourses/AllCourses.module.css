@@ -208,6 +208,7 @@
 .courseInfo {
     display: flex;
     flex-direction: column;
+    height: 100%;
     border-radius: 10px;
     padding: 16px;
     gap:8 ;
@@ -274,7 +275,7 @@
     border-radius: 10px;
     padding: 8px;
     position: absolute;
-    z-index: 5;
+    z-index: 4;
     width: 220px;
     margin-top: 5px;
     margin-left: -150px;
@@ -285,6 +286,7 @@
     color: #4B5563;
 }
 .theActions button {
+    border-radius: 6px;
     border: none;
     outline: none;
     background: #FFFFFF;
@@ -295,6 +297,9 @@
     align-items: center;
     gap: 8px;
     padding: 12px;
+}
+.theActions button:hover {
+    background: #4b55632a;
 }
 .theActions button img {
     width: 24px;
@@ -313,8 +318,7 @@
 .courseData {
     display: flex;
     flex-direction: column;
-    margin-top: 8px;
-    height: 100%;
+    margin-top: auto;
 }
 
 .courseData img {
@@ -328,8 +332,9 @@
     gap: 4px;
 }
 .crumb {
-    margin-top: auto;
+    margin-top: 8px;
     display: flex;
+    justify-content: space-between;
     gap: 16px;
 }
 
@@ -370,63 +375,6 @@
 }
 
 
-
-
-
-.withLoader button {
-    margin-top: 24px;
-    width: 100%;
-    background: var(--500, #2C2F7E);
-    border: 5px solid #E6EAFB;
-    color: #FFFFFF;
-    padding: 12px 20px;
-    border-radius: 8px;
-    align-items: center;
-    justify-content: center;
-}
-.coursesLoader p{
-    font-weight: 500;
-    font-size: 16px;
-    line-height: 32px;
-}
-
-.progress {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    -ms-appearance: none;
-    appearance: none;
-    width: 100%;
-    height: 8px;
-    border-radius: 18px;
-    overflow: hidden;
-    align-self: center;
-    color: #2C2F7E;
-    margin-top: 6px;
-}
-
-.progress::-webkit-progress-bar {
-    background: #ABC0E5;
-}
-.progress::-webkit-progress-value {
-    background: #2C2F7E;
-    border-radius: 18px;
-}
-
-.progress::-ms-progress-bar {
-    background-color: #ABC0E5;
-}
-.progress::-ms-progress-value {
-    background: #2C2F7E;
-    border-radius: 18px;
-}
-
-.progress::-moz-progress-bar {
-    background-color: #ABC0E5;
-}
-.progress::-moz-progress-value {
-    background: #2C2F7E;
-    border-radius: 18px;
-}
 
 
 
@@ -629,4 +577,15 @@
     outline: none;
     justify-content: center;
     margin-top: 30px;
+}
+
+
+.added {
+    border-radius: 10px;
+    padding: 16px;
+    border: 1px solid #BDD9FF;
+    box-shadow: 0px 3px 5px 0px #00000017;
+    background-color: #FFFFFF;
+    width: fit-content;
+    height: fit-content;
 }

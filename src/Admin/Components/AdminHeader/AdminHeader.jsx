@@ -36,6 +36,9 @@ export const AdminHeader = () => {
                 {title: "Completed", link: "/admin-dashboard/courses/completed"},
             ];
             break;
+        case "/admin-dashboard/courses/detail":
+            PageTitle = "Courses";
+            break;        
         
         case "/admin-dashboard/tasks":
             PageTitle = "Tasks";
