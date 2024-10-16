@@ -62,8 +62,8 @@ export const Detail = () => {
 
             if (response.ok) {
                 console.log('Course updated successfully');
-                loadCourseDetails();
-                // navigate('/admin-dashboard/courses');
+                // loadCourseDetails();
+                navigate('/admin-dashboard/courses');
             } else {
                 console.error("Failed to update course");
             }
@@ -73,9 +73,9 @@ export const Detail = () => {
     };
 
     const handleCancel = () => {
-        // setCourse(location.state);
-        // navigate('/admin-dashboard/courses');
-        loadCourseDetails();
+        setCourse(location.state);
+        navigate('/admin-dashboard/courses');
+        // loadCourseDetails();
     }
 
 
