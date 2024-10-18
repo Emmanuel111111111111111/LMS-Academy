@@ -143,7 +143,6 @@ export const AllCourses = () => {
 
     const handleEdit = (event, course) => {
         event.stopPropagation();
-        console.log('edit button');
         navigate('detail', {state: course.course_id });
         window.scrollTo({ top: 0});
     }
