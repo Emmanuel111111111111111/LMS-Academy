@@ -17,7 +17,6 @@ export const TeachersPage = () => {
     const [ itemsPerPage, setItemsPerPage ] = useState(5);
     const [ actionsOpen, setActionsOpen ] = useState({});
     const [ open, setOpen ] = useState(false);
-    const [ isOpen, setIsOpen ] = useState(false);
     const [ teachers, setTeachers ] = useState([]);
     const [ courses, setCourses ] = useState([]);
     const [ isLoading, setIsLoading ] = useState(false);
@@ -34,7 +33,9 @@ export const TeachersPage = () => {
     const fetchTeachers = async () => {
         setIsLoading(true);
         try {
-            const result = await axios(BASE_URL + "/teachers");
+            const result = await axios(BASE_URL + "/teachers", {
+                timeout: 10000
+            });
             setTeachers(result.data.sort((a,b) => new Date(b.date_added) - new Date(a.date_added)));
             setIsLoading(false);
         } catch (err) {
@@ -169,61 +170,65 @@ export const TeachersPage = () => {
 
                 {isLoading ? <h5 className={styles.loading}>Loading...</h5> :
                 
-                    <>
-                    <table className={styles.teacherTable}>
-                        <thead>
-                            <th><input type="checkbox" /></th>
-                            <th>Name</th>
-                            <th>Course</th>
-                            <th>Date Added</th>
-                            <th>Email</th>
-                            <th>Phone Number</th>
-                            <th>Action</th>
-                        </thead>
-                        <tbody>
-                            {currentTeachers.map((teacher, index) => (
-                                <tr>
-                                    <td><input type="checkbox" /></td>
-                                    <td>{teacher.first_name} {teacher.last_name}</td>
-                                    <td>{teacher.course}</td>
-                                    <td>{format(new Date (teacher.date_added), 'MMMM dd, yyyy')}</td>
-                                    <td>{teacher.email}</td>
-                                    <td>{teacher.phone_number}</td>
-                                    <td>
-                                        <div>
-                                            <button className={styles.actionsButton} onClick={() => toggleAction(index)}><img src={getImageUrl('threeDots.png')} /></button>
-                                            <div className={`${styles.actionsClosed} ${actionsOpen[index] && styles.theActions}`} ref={actionsRef}>
-                                                <h5>ACTION</h5>
-                                                <button><img src={getImageUrl('approve.png')} />SUSPEND</button>
-                                                <button><img src={getImageUrl('delete.png')} />DECLINE</button>
+                    currentTeachers.length === 0 ?
+                        
+                        <p className={styles.none}>No Teachers Found</p>
+                        :
+                        <>
+                        <table className={styles.teacherTable}>
+                            <thead>
+                                <th><input type="checkbox" /></th>
+                                <th>Name</th>
+                                <th>Course</th>
+                                <th>Date Added</th>
+                                <th>Email</th>
+                                <th>Phone Number</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody>
+                                {currentTeachers.map((teacher, index) => (
+                                    <tr>
+                                        <td><input type="checkbox" /></td>
+                                        <td>{teacher.first_name} {teacher.last_name}</td>
+                                        <td>{teacher.course}</td>
+                                        <td>{format(new Date (teacher.date_added), 'MMMM dd, yyyy')}</td>
+                                        <td>{teacher.email}</td>
+                                        <td>{teacher.phone_number}</td>
+                                        <td>
+                                            <div>
+                                                <button className={styles.actionsButton} onClick={() => toggleAction(index)}><img src={getImageUrl('threeDots.png')} /></button>
+                                                <div className={`${styles.actionsClosed} ${actionsOpen[index] && styles.theActions}`} ref={actionsRef}>
+                                                    <h5>ACTION</h5>
+                                                    <button><img src={getImageUrl('approve.png')} />SUSPEND</button>
+                                                    <button><img src={getImageUrl('delete.png')} />DECLINE</button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
 
-                    <div style={{ w: '100%', display: "flex", alignItems: 'center' }}>
-                        <div className={styles.showRows}>
-                            Show
-                            <select onChange={(e) => handlePageNumber(e.target.value)} >
-                                <option value={5}>5</option>
-                                <option value={10}>10</option>
-                                <option value={15}>15</option>
-                            </select>
-                            Rows
+                        <div style={{ w: '100%', display: "flex", alignItems: 'center' }}>
+                            <div className={styles.showRows}>
+                                Show
+                                <select onChange={(e) => handlePageNumber(e.target.value)} >
+                                    <option value={5}>5</option>
+                                    <option value={10}>10</option>
+                                    <option value={15}>15</option>
+                                </select>
+                                Rows
+                            </div>
+                            <Pagination className={styles.pag}
+                                currentData={teachers}
+                                currentPage={currentPage}
+                                itemsPerPage={itemsPerPage}
+                                onPageChange={handlePageChange}
+                            />
+
                         </div>
-                        <Pagination className={styles.pag}
-                            currentData={teachers}
-                            currentPage={currentPage}
-                            itemsPerPage={itemsPerPage}
-                            onPageChange={handlePageChange}
-                        />
 
-                    </div>
-
-                    </>
+                        </>
                 }
 
                 

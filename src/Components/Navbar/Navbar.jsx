@@ -22,7 +22,7 @@ export const Navbar = () => {
                     Courses
                 </a>
                 <a href="/dashboard/calendar" className={currentPath.includes("/dashboard/calendar") ? styles.active : ""}>
-                    <img src={getImageUrl("calendarIcon.png")} />
+                    <img src={getImageUrl("whiteCalendar.png")} />
                     Calendar
                 </a>
                 <a href="/dashboard/certificate" className={currentPath.includes("/dashboard/certificate") ? styles.active : ""}>

@@ -18,7 +18,7 @@
     margin-left: 280px;
 }
 .headerLeft h3 {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 600;
     color: #2C2F7E;
 }
@@ -55,19 +55,19 @@
 .searchBar {
     display: flex;
     border-bottom: 2px solid #C4C4C4;
-    padding: 12px 0;
+    padding: 8px 0;
     gap: 12px;
 }
 .searchBar input {
     border: none;
     outline: none;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 500;
     color: #9191B2;
 }
 .searchBar img {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
 }
 
 .buttons {
@@ -82,16 +82,16 @@
     padding: 0;
 }
 .buttons img {
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
 }
 .buttons .profile {
     border-radius: 50px;
     border: 2px solid #072974E5;
     display: flex;
     align-items: center;
-    height: 36px;
-    width: 36px;
+    height: 32px;
+    width: 32px;
 }
 .buttons .profile img {
     border-radius: 50px;

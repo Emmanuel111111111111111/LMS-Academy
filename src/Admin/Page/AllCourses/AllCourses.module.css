@@ -104,6 +104,9 @@
     border: none;
     outline: none;
 }
+.createDiv button:hover {
+    background: #4b55632a;
+}
 .createDiv img {
     width: 24px;
     height: 24px;
@@ -184,11 +187,20 @@
     font-weight: 400;
     color: #2C2F7E;
 }
+.none {
+    width: 100%;
+    margin-top: 24px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 400;
+    color: #2C2F7E;
+}
+
 
 .course {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(3, auto);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 24px;
     margin-top: 24px;
 }

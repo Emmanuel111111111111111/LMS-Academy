@@ -160,6 +160,9 @@
     gap: 8px;
     padding: 12px;
 }
+.theActions button:hover {
+    background: #4b55632a;
+}
 .theActions button img {
     width: 24px;
     height: 24px;
@@ -255,11 +258,22 @@
     color: #9CA3AF;
 }
 
+
+
 .loading {
     width: 100%;
     margin-top: 24px;
     text-align: center;
     font-size: 20px;
     font-weight: 400;
+    color: #2C2F7E;
+}
+
+.none {
+    width: 100%;
+    margin-top: 24px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 600;
     color: #2C2F7E;
 }

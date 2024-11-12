@@ -20,6 +20,7 @@ export const AdminOverview = () => {
     const [ isTeachLoading, setIsTeachLoading ] = useState(false);
     const [ isCourseLoading, setIsCourseLoading ] = useState(false);
     const [ isStudLoading, setIsStudLoading ] = useState(false);
+    const [ isActivityLoading, setIsActivityLoading ] = useState(false);
     // const navigate = useNavigate();
     const scroll = useRef(null);
 
@@ -33,42 +34,55 @@ export const AdminOverview = () => {
     const fetchTeachersLength = async () => {
         setIsTeachLoading(true);
         try {
-            const result = await axios(BASE_URL + "/teachers-len");
+            const result = await axios(BASE_URL + "/teachers-len", {
+                timeout: 10000
+            });
             setTeachersLen(result.data);
             setIsTeachLoading(false);
         } catch (err) {
             console.log(err);
+            setIsTeachLoading(false);
         }
     }
 
     const fetchStudentsLength = async () => {
         setIsStudLoading(true);
         try {
-            const result = await axios(BASE_URL + "/students-len");
+            const result = await axios(BASE_URL + "/students-len", {
+                timeout: 10000
+            });
             setStudentsLen(result.data);
             setIsStudLoading(false);
         } catch (err) {
             console.log(err);
+            setIsStudLoading(false)
         }
     }
 
     const fetchThreeCoursesTeachersStudents = async () => {
         setIsCourseLoading(true);
         try {
-            const result = await axios(BASE_URL + "/courses-instructor-studentscount");
+            const result = await axios(BASE_URL + "/courses-instructor-studentscount", {
+                timeout: 10000
+            });
             setCourses(result.data.sort((a,b) => new Date(b.date_added) - new Date(a.date_added)).slice(0,3));
-            // console.log(result.data.sort((a,b) => new Date(b.date_added) - new Date(a.date_added)).slice(0,3));
             setIsCourseLoading(false);
         } catch (err) {
+            setIsCourseLoading(false);
             console.log(err);
         }
     }    
 
     const fetchActivityLog = async () => {
+        setIsActivityLoading(true);
         try {
-            const result = await axios(BASE_URL + "/activity-log");
+            const result = await axios(BASE_URL + "/activity-log", {
+                timeout: 10000
+            });
             setActivities(result.data.sort((a,b) => new Date(b.date) - new Date(a.date)));
+            setIsActivityLoading(false);
         } catch (err) {
+            setIsActivityLoading(false);
             console.log(err);
         }
     }
@@ -116,17 +130,17 @@ export const AdminOverview = () => {
                     <div className={styles.eachOverview}>
                         <div className={styles.overviewText}>
                             Total <br /> Lessons
-                            <div className={styles.whiteBox}><img src={getImageUrl('lessons.png')} /></div>
+                            <div className={styles.whiteBox}><img src={getImageUrl('assignment.png')} /></div>
                         </div>
                         <div className={styles.loader}>
-                            100
+                            {isStudLoading ? '...' : '0'}
                         </div>
                     </div>
 
                     <div className={styles.eachOverview}>
                         <div className={styles.overviewText}>
                             Total <br /> Students
-                            <div className={styles.whiteBox}><img src={getImageUrl('studentOverview.png')} /></div>
+                            <div className={styles.whiteBox}><img src={getImageUrl('forStudents.png')} /></div>
                         </div>
                         <div className={styles.loader}>
                             {isStudLoading ? '...' : studentsLen}
@@ -151,42 +165,49 @@ export const AdminOverview = () => {
                     Active Courses
                     <a href="/admin-dashboard/courses/active"><button>View All<img src={getImageUrl('greyRightAngle.png')} /></button></a>
                 </div>
-                <div className={styles.flow}>
-                    {isCourseLoading ? <h5>Loading...</h5> : 
-                        courses.sort((a,b) => new Date(b.date_added) - new Date(a.date_added)).slice(0,3).map((course, index) => (
-                            <div className={styles.course} key={index}>
-                                <div className={styles.courseImage}>
-                                    <img src={getImageUrl('frame7.png')} />
-                                </div>
-                                <div className={styles.courseInfo}>
-                                    
-                                    <h3>{course.name} - <span>{course.type}</span></h3>
+
+                {isCourseLoading ? <h5 className={styles.loading}>Loading...</h5> : 
+                    
+                    courses.length === 0 ?
+                    
+                        <p className={styles.none}>No Courses Found</p>
+                        :
+                        <div className={styles.flow}>
+                    
+                            {courses.sort((a,b) => new Date(b.date_added) - new Date(a.date_added)).slice(0,3).map((course, index) => (
+                                <div className={styles.course} key={index}>
+                                    <div className={styles.courseImage}>
+                                        <img src={getImageUrl('frame7.png')} />
+                                    </div>
+                                    <div className={styles.courseInfo}>
                                         
-                                    <p>Lorem ipsum dolor sit amet consectetur. Feugia t blandit turpis.</p>
+                                        <h3>{course.name} - <span>{course.type}</span></h3>
+                                            
+                                        <p>Lorem ipsum dolor sit amet consectetur. Feugia t blandit turpis.</p>
 
-                                    <div style={{marginTop: 'auto', justifySelf: 'end'}}>
-                                        <div className={styles.courseData}>
-                                            <div>
-                                                <img src={getImageUrl('timer.png')} alt="" />
-                                                {course.duration === null ? 'N/A' : 
-                                                    <>
-                                                    {convertDuration(course.duration).months === 0 ? '' : convertDuration(course.duration).months + ' months '}
-                                                    {convertDuration(course.duration).days === 0 ? '' : convertDuration(course.duration).days + ' days '}
-                                                    {convertDuration(course.duration).hours === 0 ? '' : convertDuration(course.duration).hours + ' hours '}
-                                                    </>
-                                                }
+                                        <div style={{marginTop: 'auto', justifySelf: 'end'}}>
+                                            <div className={styles.courseData}>
+                                                <div>
+                                                    <img src={getImageUrl('timer.png')} alt="" />
+                                                    {course.duration === null ? 'N/A' : 
+                                                        <>
+                                                        {convertDuration(course.duration).months === 0 ? '' : convertDuration(course.duration).months + ' months '}
+                                                        {convertDuration(course.duration).days === 0 ? '' : convertDuration(course.duration).days + ' days '}
+                                                        {convertDuration(course.duration).hours === 0 ? '' : convertDuration(course.duration).hours + ' hours '}
+                                                        </>
+                                                    }
+                                                </div>
+        
+                                                <div><img src={getImageUrl('frame5.png')} />{course.student_count} {course.student_count === 1 ? 'Student' : 'Students'}</div>
                                             </div>
-    
-                                            <div><img src={getImageUrl('frame5.png')} />{course.student_count} {course.student_count === 1 ? 'Student' : 'Students'}</div>
-                                        </div>
 
-                                        <progress className={styles.progress} id="progress" max={course.totalLessons} value={course.currentLesson} />
+                                            <progress className={styles.progress} id="progress" max={course.totalLessons} value={course.currentLesson} />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))
+                            ))}
+                        </div>
                     }
-                </div>
             </div>
 
             <div className={styles.events}>
@@ -194,46 +215,55 @@ export const AdminOverview = () => {
                     Recent Activities
                     <a href="/admin-dashboard/activitylog"><button>View All<img src={getImageUrl('greyRightAngle.png')} /></button></a>
                 </div>
+
+                {isActivityLoading ? <h5 className={styles.loading}>Loading...</h5> :
                 
-                <table className={styles.eventsTable} ref={scroll}>
-                    <thead>
-                        <th className={styles.checkbox}><input type="checkbox" /></th>
-                        <th className={styles.activities}>Activities</th>
-                        <th>Date and Time</th>
-                        <th>Due Date</th>
-                        <th className={styles.action}>Action</th>
-                    </thead>
-                    <tbody>
-                        {currentActivities.map((act, index) => (
-                            <tr key={index}>
-                                <td><input type="checkbox" /></td>
-                                <td className={styles.bread}>{act.activity}</td>
-                                <td>{format(new Date (act.date), 'MMMM dd, yyyy hh:mm a')}</td>
-                                <td>{act.dueDate}</td>
-                                <td><button className={styles.viewAll}>View All</button></td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                    currentActivities.length === 0 ?
+                        
+                        <p className={styles.none}>No Activities Found</p>
+                        :
+                        <>
+                        <table className={styles.eventsTable} ref={scroll}>
+                            <thead>
+                                <th className={styles.checkbox}><input type="checkbox" /></th>
+                                <th className={styles.activities}>Activities</th>
+                                <th>Date and Time</th>
+                                <th>Due Date</th>
+                                <th className={styles.action}>Action</th>
+                            </thead>
+                            <tbody>
+                                {currentActivities.map((act, index) => (
+                                    <tr key={index}>
+                                        <td><input type="checkbox" /></td>
+                                        <td className={styles.bread}>{act.activity}</td>
+                                        <td>{format(new Date (act.date), 'MMMM dd, yyyy hh:mm a')}</td>
+                                        <td>{act.dueDate}</td>
+                                        <td><button className={styles.viewAll}>View All</button></td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
 
-                <div style={{ w:'100%', display:"flex", alignItems:'center' }}>
-                    <div className={styles.showRows}>
-                        Show
-                        <select onChange={(e) => handlePageNumber(e.target.value)} >
-                            <option value={5}>5</option>
-                            <option value={10}>10</option>
-                            <option value={15}>15</option>
-                        </select>
-                        Rows
-                    </div>
-                    <Pagination className={styles.pag}
-                        currentData={activities}
-                        currentPage={currentPage}
-                        itemsPerPage={itemsPerPage}
-                        onPageChange={handlePageChange}
-                    />
+                        <div style={{ w:'100%', display:"flex", alignItems:'center' }}>
+                            <div className={styles.showRows}>
+                                Show
+                                <select onChange={(e) => handlePageNumber(e.target.value)} >
+                                    <option value={5}>5</option>
+                                    <option value={10}>10</option>
+                                    <option value={15}>15</option>
+                                </select>
+                                Rows
+                            </div>
+                            <Pagination className={styles.pag}
+                                currentData={activities}
+                                currentPage={currentPage}
+                                itemsPerPage={itemsPerPage}
+                                onPageChange={handlePageChange}
+                            />
 
-                </div>
+                        </div>
+                        </>
+                }
                 
                 
             </div>

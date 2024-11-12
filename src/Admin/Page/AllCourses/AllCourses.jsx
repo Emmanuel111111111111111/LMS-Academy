@@ -31,7 +31,9 @@ export const AllCourses = () => {
     const fetchCoursesTeachersStudents = async () => {
         setIsLoading(true);
         try {
-            const result = await axios(BASE_URL + "/courses-instructor-studentscount-lessons");
+            const result = await axios(BASE_URL + "/courses-instructor-studentscount-lessons", {
+                timeout: 10000
+            });
             setCourses(result.data.sort((a,b)=> new Date(b.date_added) - new Date(a.date_added)));
             setIsLoading(false);
         } catch (err) {
@@ -143,8 +145,7 @@ export const AllCourses = () => {
 
     const handleEdit = (event, course) => {
         event.stopPropagation();
-        console.log('edit button');
-        navigate('detail', {state: course.course_id });
+        navigate(`detail/${course.course_id}`, {state: course.course_id });
         window.scrollTo({ top: 0});
     }
 
@@ -186,7 +187,7 @@ export const AllCourses = () => {
                     <h1>All Courses</h1>
                     <div className={styles.buttons}>
                         <button className={styles.buttonOne}>Sort By<img src={getImageUrl('sortIcon.png')} /></button>
-                        <button className={styles.buttonTwo} onClick={toggleDropdown} ><img src={getImageUrl('add.png')} />Create Event</button>
+                        <button className={styles.buttonTwo} onClick={toggleDropdown} ><img src={getImageUrl('whitePlus.png')} />Create Event</button>
                     </div>
                     {isOpen && (
                         <ul className={styles.createDiv} ref={createRef}>
@@ -241,7 +242,13 @@ export const AllCourses = () => {
                 </div>
 
                 {isLoading ? <h5 className={styles.loading}>Loading...</h5> :
+
+                    courses.length === 0 ?
+                                        
+                    <p className={styles.none}>No Courses Found</p>
+                    :
                     <div className={styles.course}>
+                        
                         {courses.map((cour, index) => (
                             <div key={index} className={styles.courseInfo} onClick={(e) => handleOpenCourse(e, cour)} id="outer">
                                 <div className={styles.courseImage}>
@@ -270,7 +277,7 @@ export const AllCourses = () => {
                                         </div>}
                                     </div>
                                     <div className={styles.crumb}>
-                                        <div className={styles.profile}><img src={getImageUrl('profile.png')} alt="" />{cour.instructors.length > 0 ? cour.instructors[0].name : 'None'}</div>
+                                        <div className={styles.profile}><img src={getImageUrl('profile.svg')} alt="" />{cour.instructors.length > 0 ? cour.instructors[0].name : 'None'}</div>
                                         <div className={styles.students}><img src={getImageUrl('frame5.png')} alt="" />{cour.student_count} {cour.student_count === 1 ? 'Student' : 'Students'}</div>
                                     </div>
                                 </div>
@@ -306,7 +313,7 @@ export const AllCourses = () => {
                             </p>
                             <div className={styles.coursesDatas}>
                                 <div className={styles.bead}>
-                                    <div className={styles.pro}><img src={getImageUrl('profile.png')} alt="" />{selected.teacher}</div>
+                                    <div className={styles.pro}><img src={getImageUrl('profile.svg')} alt="" />{selected.teacher}</div>
                                     <div className={styles.stud}><img src={getImageUrl('pic.png')} alt="" />{selected.students} Students</div>
                                 </div>
                             </div>

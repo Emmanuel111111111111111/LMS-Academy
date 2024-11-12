@@ -1,0 +1,282 @@
+.whole {
+    margin-left: 280px;
+    margin-top: 80px;
+    width: 100%;
+    min-height: 100vh;
+    height: 100%;
+    padding: 16px 24px;
+    background: #FFFFFF;
+}
+
+
+.breadcrumb {
+    font-size: 14px;
+    font-weight: 500;
+    color: #2C2F7E;
+}
+.breadcrumb a {
+    font-size: 14px;
+    font-weight: 500;
+    color: #728DB9;
+    text-decoration: none;
+}
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+
+.loading {
+    width: 100%;
+    margin-top: 24px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 400;
+    color: #2C2F7E;
+}
+
+
+.split {
+    width: 100%;
+    display: flex;
+    gap: 38px;
+    margin-top: 48px;
+}
+.larger {
+    flex: 65%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+.smaller {
+    flex: 35%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+
+.courseTitle {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+}
+.courseTitle h3 {
+    font-size: 26px;
+    font-weight: 600;
+    color: #2C2F7E;
+}
+.courseTitle button {
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #CCCDE8;
+    padding: 10px;
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #2C2F7E;
+}
+.courseTitle button img {
+    width: 18px;
+    height: 18px;
+}
+
+.titleInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 6px 0;
+}
+.titleInfo .teach,
+.titleInfo .stud {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #374151;
+}
+
+.titleInfo .teach img {
+    border: 1.5px solid #94B9FF66;
+}
+.titleInfo .stud {
+    margin-left: 14px;
+}
+.titleInfo .stud img {
+    border: 1.2px solid #c4c0c08e;
+    margin-left: -12px;
+}
+
+.titleInfo img {
+    width: 28px;
+    height: 28px;
+    border-radius: 50px;
+}
+
+.loc {
+    background: #E9EFFF;
+    padding: 6px 12px;
+    color: #0C359E;
+    font-size: 12px;
+    font-weight: 500;
+    width: fit-content;
+    border-radius: 6px;
+}
+
+
+.courseImg {
+    height: 500px;
+    width: 100%;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-size: 100% 100%;
+    background-image: url();
+}
+.courseImg button {
+    border-radius: 10px;
+    padding: 16px 20px;
+    color: #FFFFFF;
+    background-color: #2C2F7E;
+    border: 5px solid #e6eafb37;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+
+.tabs {
+    display: flex;
+    gap: 12px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #E2E8F0;
+}
+.tabs button {
+    border: 1px solid #E2E8F0;
+    background: transparent;
+    border-radius: 8px;
+    padding: 8px 20px;
+}
+
+.theDetails {
+    width: 90%;
+}
+.theDetails h3 {
+    color: #0F172A;
+    font-size: 20px;
+    font-weight: 600;
+    margin-top: 20px;
+}
+.theDetails p,
+.theDetails li {
+    color: #5B697D;
+    font-size: 16px;
+    font-weight: 300;
+    margin-top: 4px;
+}
+.theDetails ul {
+    margin-left: 16px;
+}
+
+.theDetails h4 {
+    margin-top: 12px;
+    font-size: 16px;
+    color: #2C2F7E;
+    font-weight: 600;
+}
+.theDetails h5 {
+    font-weight: 400;
+    font-size: 12px;
+    color: #334155;
+}
+
+.flex {
+    display: flex;
+    align-items: center;
+    margin: 12px 0;
+    gap: 12px;
+}
+.teachPic {
+    border-radius: 500px;
+    border: 1.8px solid #94B9FF66;
+}
+
+.theDetails .details {
+    padding-bottom: 20px;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.teacherInfo {
+    display: flex;
+    align-items: center;
+    color: #0F172A;
+    font-size: 12px;
+    font-weight: 400;
+    gap: 6px;
+}
+
+
+.completion {
+    border: 1px solid #E2E8F0;
+    background: #F8FAFC;
+    padding: 18px 0;
+    border-radius: 16px;
+}
+.completion h3 {
+    padding: 0 14px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #0F172A;
+}
+
+.accordion {
+    padding: 14px 16px;
+    border-bottom: 1px solid #E2E8F0;
+}
+.accordion .accHeader {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #0F172A;
+    cursor: pointer;
+}
+
+.week {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 16px;
+    color: #0F172A;
+}
+.week:hover {
+    background: #2C2F7E;
+    color: #FFFFFF;
+}
+.week:hover .len {
+    color: #FFFFFF;
+}
+.week .title {
+    display: flex;
+    align-items: start;
+    gap: 6px;
+    flex: 80%;
+}
+.title h5 {
+    font-weight: 400;
+    font-size: 14px;
+}
+.title h4 {
+    font-weight: 500;
+    font-size: 14px;
+    width: 70%;
+}
+
+.week .len {
+    display: flex;
+    gap: 4px;
+    font-size: 14px;
+    color: #64748B;
+}

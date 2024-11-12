@@ -133,7 +133,7 @@ export const Overview = () => {
 
             <div className={styles.welcomeBanner}>
                 <div className={styles.left}>
-                    <img src={getImageUrl('avatar.png')} />
+                    <img src={getImageUrl('profile.svg')} />
                     <div className={styles.text}>
                         <h3>Welcome Back</h3>
                         <h2>Toluwani</h2>
@@ -160,7 +160,7 @@ export const Overview = () => {
                     <div className={styles.eachOverview}>
                         <div className={styles.overviewText}>
                             Lessons Due
-                            <div className={styles.blueBox}><img src={getImageUrl('lesson.png')} /></div>
+                            <div className={styles.blueBox}><img src={getImageUrl('instructors.png')} /></div>
                         </div>
                         <div className={styles.loader}>
                             3/12
@@ -199,8 +199,8 @@ export const Overview = () => {
                             </div>
                             <p>{course.description}</p>
                             <div className={styles.courseData}>
-                                <div className={styles.profile}><img src={getImageUrl('profile.png')} alt="" />{course.teacher}</div>
-                                <div><img src={getImageUrl('lesson.png')} alt="" />Lesson {course.currentLesson}</div>
+                                <div className={styles.profile}><img src={getImageUrl('profile.svg')} alt="" />{course.teacher}</div>
+                                <div><img src={getImageUrl('instructors.png')} alt="" />Lesson {course.currentLesson}</div>
                                 <div><img src={getImageUrl('assignment.png')} alt="" />Assignment {course.currentAssignment}</div>
                                 <div><img src={getImageUrl('timer.png')} alt="" />{course.time}</div>
                             </div>

@@ -1,0 +1,370 @@
+.whole {
+    margin-left: 280px;
+    margin-top: 80px;
+    width: 100%;
+    min-height: 100vh;
+    height: 100%;
+    padding: 16px 24px;
+    background: #F8F9FD;
+}
+
+
+.breadcrumb {
+    font-size: 14px;
+    font-weight: 500;
+    color: #2C2F7E;
+}
+.breadcrumb a {
+    font-size: 14px;
+    font-weight: 500;
+    color: #728DB9;
+    text-decoration: none;
+}
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.classTitle {
+    display: flex;
+    gap: 30px;
+    margin-top: 60px;
+}
+.classTitle h3 {
+    flex: 65%;
+    font-size: 26px;
+    font-weight: 600;
+    color: #272727;
+}
+.classTitle .buttons {
+    flex: 35%;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    gap: 12px;
+}
+.buttons .buttonOne {
+    border: 1.5px solid #2C2F7E;
+    background: transparent;
+    padding: 4px 10px;
+    width: 80px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #2C2F7E;
+}
+.buttons .buttonTwo {
+    border: 1.5px solid #2C2F7E;
+    background: #2C2F7E;
+    width: 80px;
+    padding: 4px 10px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #FFFFFF;
+}
+
+
+.loading {
+    width: 100%;
+    margin-top: 24px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 400;
+    color: #2C2F7E;
+}
+
+
+.grid {
+    width: 100%;
+    display: flex;
+    gap: 24px;
+    margin-top: 22px;
+}
+.larger {
+    flex: 65%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+.smaller {
+    flex: 35%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+
+.box {
+    background: #FFFFFF;
+    border: 2px solid #C4C4C466;
+    padding: 14px;
+    border-radius: 16px;
+}
+.box .header {
+    border-bottom: 2px solid #CBD0DC;
+    margin-bottom: 24px;
+    padding-bottom: 6px;
+}
+.box .header h5 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #292D32;
+}
+.box .header p {
+    font-size: 14px;
+    font-weight: 400;
+    color: #A9ACB4;
+}
+
+
+.detailForm {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.detailForm label {
+    margin-top: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333333;
+}
+.detailForm input,
+.detailForm textarea {
+    padding: 11px;
+    border-radius: 10px;
+    border: 1.5px solid #CBD0DC;
+    color: #5C5C5C;
+}
+.detailForm select {
+    padding: 8px;
+    border-radius: 10px;
+    border: 1.5px solid #CBD0DC;
+    color: #5C5C5C;
+}
+.detailForm p {
+    font-size: 12px;
+    font-weight: 500;
+    color: #343434;
+}
+
+.uploadBox {
+    border: 2.5px dashed #CBD0DC;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 14px;
+}
+input[type="file"] {
+    display: none;
+}
+.uploadBox div {
+    text-align: center;
+    width: 60%;
+}
+.uploadBox h5 {
+    font-size: 16px;
+    font-weight: 500;
+    color: #292D32;
+}
+.uploadBox p {
+    font-size: 14px;
+    font-weight: 500;
+    color: #A9ACB4;
+    margin-bottom: 18px;
+}
+.uploadBox .uploadButton {
+    border: 1px solid #CBD0DC;
+    border-radius: 10px;
+    padding: 8px 18px;
+    cursor: pointer;
+}
+
+
+.box .flexHeader {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+.box .flexHeader h5 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #292D32;
+}
+.flexHeader button {
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    font-weight: 500;
+    color: #2C2F7E;
+}
+
+.section {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    border: 1.5px solid #C4C4C480;
+    padding: 20px 14px;
+    border-radius: 16px;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.section .text {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #272727;
+}
+.section .text img {
+    width: 28px;
+    height: 28px;
+}
+.section button {
+    border: 1px solid #A1B2D1;
+    outline: none;
+    background-color: transparent;
+    padding: 4px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    background: transparent;
+    border-radius: 5px;
+    height: fit-content;
+}
+.section button img {
+    width: 20px;
+    height: 20px;
+}
+
+.preview {
+    background: #1B1B1B;
+    display: flex;
+    justify-content: space-between;
+    padding: 16px;
+    border-radius: 16px;
+    align-items: start;
+    gap: 6%;
+}
+.preview h5 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #FFFFFF;
+}
+.preview p {
+    font-size: 13px;
+    font-weight: 300;
+    color: #FFFFFF;
+}
+.preview button {
+    background: #FFFFFF;
+    border-radius: 7px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #2C2F7E;
+    border: none;
+    outline: none;
+}
+
+
+.photoForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+.photoForm h5 {
+    font-size: 16px;
+    font-weight: 500;
+    color: #292D32;
+}
+.photoForm p {
+    font-size: 14px;
+    font-weight: 500;
+    color: #A9ACB4;
+    margin-bottom: 18px;
+}
+.photoForm .uploadButton {
+    border: 1px solid #CBD0DC;
+    border-radius: 10px;
+    padding: 8px 18px;
+    cursor: pointer;
+}
+
+.box h5 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #292D32;
+    margin-bottom: 8px;
+}
+
+label.checkbox {
+    display: inline-flex;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #343434;
+}
+
+.box img {
+    width: 28px;
+    height: 28px;
+}
+
+
+.addContent {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 300px;
+    border-radius: 10px;
+    padding: 16px;
+    background: #FFFFFF;
+    border: 1px solid #BDD9FF;
+    box-shadow: 0px 3px 5px 0px #00000017;
+}
+.head {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 8px;
+    border-bottom: 1.5px solid #F3F4F6;
+}
+.head button {
+    border: none;
+    outline: none;
+    background: transparent;
+}
+.contentBody {
+    display: flex;
+    flex-direction: column;
+    margin-top: 12px;
+}
+.contentBody label {
+    margin-bottom: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333333;
+}
+.contentBody input {
+    padding: 11px;
+    border-radius: 10px;
+    border: 1.5px solid #CBD0DC;
+    color: #5C5C5C;
+}
+.contentBody button {
+    width: 100%;
+    background: #2C2F7E;
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 10px;
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    outline: none;
+}

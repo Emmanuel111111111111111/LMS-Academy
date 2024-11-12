@@ -120,12 +120,12 @@ export const CompletedCourse = () => {
                                 <p>{cour.description}</p>
                                 <div className={styles.courseData}>
                                     <div className={styles.bread}>
-                                        <div className={styles.profile}><img src={getImageUrl('profile.png')} alt="" />{cour.teacher}</div>
+                                        <div className={styles.profile}><img src={getImageUrl('profile.svg')} alt="" />{cour.teacher}</div>
                                         <div className={styles.students}><img src={getImageUrl('pic.png')} alt="" />{cour.students} Students</div>
                                     </div>
                                     <div className={styles.crumb}>
                                         <div className={styles.profile}><img src={getImageUrl('timer.png')} alt="" />{cour.duration}</div>
-                                        <div className={styles.profile}><img src={getImageUrl('lesson.png')} alt="" />{cour.totalLessons} Modules</div>
+                                        <div className={styles.profile}><img src={getImageUrl('instructors.png')} alt="" />{cour.totalLessons} Modules</div>
                                         <div className={styles.profile}><img src={getImageUrl('assignment.png')} alt="" />10am Wed-Fri</div>
                                     </div>
                                 </div>
@@ -138,183 +138,6 @@ export const CompletedCourse = () => {
                                 </div>
                             </div>
                         ))}
-                        
-
-                        {/* <div className={styles.courseInfo}>
-                            <div className={styles.infoHeader}>
-                                <h3>Course Title 1 <span>Physical</span></h3>
-                                <button><img src={getImageUrl('Vector.png')} alt="" /></button>
-                            </div>
-                            <p>A short lesson description...</p>
-                            <div className={styles.courseData}>
-                                <div className={styles.bread}>
-                                    <div className={styles.profile}><img src={getImageUrl('prof.png')} alt="" />Arafat Murad</div>
-                                    <div className={styles.profile}><img src={getImageUrl('Students.png')} alt="" />72 Students</div>
-                                </div>
-                                <div className={styles.crumb}>
-                                    <div className={styles.profile}><img src={getImageUrl('timer.png')} alt="" />10 Weeks</div>
-                                    <div className={styles.profile}><img src={getImageUrl('lesson.png')} alt="" />16 Modules</div>
-                                    <div className={styles.profile}><img src={getImageUrl('assignment.png')} alt="" />10am Wed-Fri</div>
-                                </div>
-                            </div>
-                            <div className={styles.withLoader}>
-                                <div className={styles.coursesLoader}>
-                                    <p>7/12 Modules</p>
-                                    <progress className={styles.progress} id="progress" max={150} value={50} />
-                                </div>
-                                <button>Continue Course</button>
-                            </div>
-                        </div>
-                        <div className={styles.courseInfo}>
-                            <div className={styles.infoHeader}>
-                                <h3>Course Title 1 <span>Physical</span></h3>
-                                <button><img src={getImageUrl('Vector.png')} alt="" /></button>
-                            </div>
-                            <p>A short lesson description...</p>
-                            <div className={styles.courseData}>
-                                <div className={styles.bread}>
-                                    <div className={styles.profile}><img src={getImageUrl('prof.png')} alt="" />Arafat Murad</div>
-                                    <div className={styles.profile}><img src={getImageUrl('Students.png')} alt="" />72 Students</div>
-                                </div>
-                                <div className={styles.crumb}>
-                                    <div className={styles.profile}><img src={getImageUrl('timer.png')} alt="" />10 Weeks</div>
-                                    <div className={styles.profile}><img src={getImageUrl('lesson.png')} alt="" />16 Modules</div>
-                                    <div className={styles.profile}><img src={getImageUrl('assignment.png')} alt="" />10am Wed-Fri</div>
-                                </div>
-                            </div>
-                            <div className={styles.withLoader}>
-                                <div className={styles.coursesLoader}>
-                                    <p>7/12 Modules</p>
-                                    <progress className={styles.progress} id="progress" max={10} value={9} />
-                                </div>
-                                <button>Continue Course</button>
-                            </div>
-                        </div>
-                        <div className={styles.courseInfo}>
-                            <div className={styles.infoHeader}>
-                                <h3>Course Title 1 <span>Physical</span></h3>
-                                <button><img src={getImageUrl('Vector.png')} alt="" /></button>
-                            </div>
-                            <p>A short lesson description...</p>
-                            <div className={styles.courseData}>
-                                <div className={styles.bread}>
-                                    <div className={styles.profile}><img src={getImageUrl('prof.png')} alt="" />Arafat Murad</div>
-                                    <div className={styles.profile}><img src={getImageUrl('Students.png')} alt="" />72 Students</div>
-                                </div>
-                                <div className={styles.crumb}>
-                                    <div className={styles.profile}><img src={getImageUrl('timer.png')} alt="" />10 Weeks</div>
-                                    <div className={styles.profile}><img src={getImageUrl('lesson.png')} alt="" />16 Modules</div>
-                                    <div className={styles.profile}><img src={getImageUrl('assignment.png')} alt="" />10am Wed-Fri</div>
-                                </div>
-                            </div>
-                            <div className={styles.withLoader}>
-                                <div className={styles.coursesLoader}>
-                                    <p>7/12 Modules</p>
-                                    <progress className={styles.progress} id="progress" max={150} value={50} />
-                                </div>
-                                <button>Continue Course</button>
-                            </div>
-                        </div>
-                        <div className={styles.courseInfo}>
-                            <div className={styles.infoHeader}>
-                                <h3>Course Title 1 <span>Physical</span></h3>
-                                <button><img src={getImageUrl('Vector.png')} alt="" /></button>
-                            </div>
-                            <p>A short lesson description...</p>
-                            <div className={styles.courseData}>
-                                <div className={styles.bread}>
-                                    <div className={styles.profile}><img src={getImageUrl('prof.png')} alt="" />Arafat Murad</div>
-                                    <div className={styles.profile}><img src={getImageUrl('Students.png')} alt="" />72 Students</div>
-                                </div>
-                                <div className={styles.crumb}>
-                                    <div className={styles.profile}><img src={getImageUrl('timer.png')} alt="" />10 Weeks</div>
-                                    <div className={styles.profile}><img src={getImageUrl('lesson.png')} alt="" />16 Modules</div>
-                                    <div className={styles.profile}><img src={getImageUrl('assignment.png')} alt="" />10am Wed-Fri</div>
-                                </div>
-                            </div>
-                            <div className={styles.withLoader}>
-                                <div className={styles.coursesLoader}>
-                                    <p>7/12 Modules</p>
-                                    <progress className={styles.progress} id="progress" max={150} value={50} />
-                                </div>
-                                <button>Continue Course</button>
-                            </div>
-                        </div>
-                        <div className={styles.courseInfo}>
-                            <div className={styles.infoHeader}>
-                                <h3>Course Title 1 <span>Physical</span></h3>
-                                <button><img src={getImageUrl('Vector.png')} alt="" /></button>
-                            </div>
-                            <p>A short lesson description...</p>
-                            <div className={styles.courseData}>
-                                <div className={styles.bread}>
-                                    <div className={styles.profile}><img src={getImageUrl('prof.png')} alt="" />Arafat Murad</div>
-                                    <div className={styles.profile}><img src={getImageUrl('Students.png')} alt="" />72 Students</div>
-                                </div>
-                                <div className={styles.crumb}>
-                                    <div className={styles.profile}><img src={getImageUrl('timer.png')} alt="" />10 Weeks</div>
-                                    <div className={styles.profile}><img src={getImageUrl('lesson.png')} alt="" />16 Modules</div>
-                                    <div className={styles.profile}><img src={getImageUrl('assignment.png')} alt="" />10am Wed-Fri</div>
-                                </div>
-                            </div>
-                            <div className={styles.withLoader}>
-                                <div className={styles.coursesLoader}>
-                                    <p>7/12 Modules</p>
-                                    <progress className={styles.progress} id="progress" max={150} value={50} />
-                                </div>
-                                <button>Continue Course</button>
-                            </div>
-                        </div>
-                        <div className={styles.courseInfo}>
-                            <div className={styles.infoHeader}>
-                                <h3>Course Title 1 <span>Physical</span></h3>
-                                <button><img src={getImageUrl('Vector.png')} alt="" /></button>
-                            </div>
-                            <p>A short lesson description...</p>
-                            <div className={styles.courseData}>
-                                <div className={styles.bread}>
-                                    <div className={styles.profile}><img src={getImageUrl('prof.png')} alt="" />Arafat Murad</div>
-                                    <div className={styles.profile}><img src={getImageUrl('Students.png')} alt="" />72 Students</div>
-                                </div>
-                                <div className={styles.crumb}>
-                                    <div className={styles.profile}><img src={getImageUrl('timer.png')} alt="" />10 Weeks</div>
-                                    <div className={styles.profile}><img src={getImageUrl('lesson.png')} alt="" />16 Modules</div>
-                                    <div className={styles.profile}><img src={getImageUrl('assignment.png')} alt="" />10am Wed-Fri</div>
-                                </div>
-                            </div>
-                            <div className={styles.withLoader}>
-                                <div className={styles.coursesLoader}>
-                                    <p>7/12 Modules</p>
-                                    <progress className={styles.progress} id="progress" max={150} value={50} />
-                                </div>
-                                <button>Continue Course</button>
-                            </div>
-                        </div>
-                        <div className={styles.courseInfo}>
-                            <div className={styles.infoHeader}>
-                                <h3>Course Title 1 <span>Physical</span></h3>
-                                <button><img src={getImageUrl('Vector.png')} alt="" /></button>
-                            </div>
-                            <p>A short lesson description...</p>
-                            <div className={styles.courseData}>
-                                <div className={styles.bread}>
-                                    <div className={styles.profile}><img src={getImageUrl('prof.png')} alt="" />Arafat Murad</div>
-                                    <div className={styles.profile}><img src={getImageUrl('Students.png')} alt="" />72 Students</div>
-                                </div>
-                                <div className={styles.crumb}>
-                                    <div className={styles.profile}><img src={getImageUrl('timer.png')} alt="" />10 Weeks</div>
-                                    <div className={styles.profile}><img src={getImageUrl('lesson.png')} alt="" />16 Modules</div>
-                                    <div className={styles.profile}><img src={getImageUrl('assignment.png')} alt="" />10am Wed-Fri</div>
-                                </div>
-                            </div>
-                            <div className={styles.withLoader}>
-                                <div className={styles.coursesLoader}>
-                                    <p>7/12 Modules</p>
-                                    <progress className={styles.progress} id="progress" max={150} value={50} />
-                                </div>
-                                <button>Continue Course</button>
-                            </div>
-                        </div> */}
                     </div>
                 </div>
             </div>

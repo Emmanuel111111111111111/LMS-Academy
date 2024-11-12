@@ -18,27 +18,35 @@ export const AdminNavbar = () => {
                     Home
                 </a>
                 <a href="/admin-dashboard/schedule" className={currentPath.includes("/admin-dashboard/schedule") ? styles.active : ""}>
-                    <img src={getImageUrl("calendarIcon.png")} />
+                    <img src={getImageUrl("scheduleIcon.png")} />
                     Schedule
                 </a>
                 <a href="/admin-dashboard/courses" className={currentPath.includes("/admin-dashboard/courses") ? styles.active : ""}>
                     <img src={getImageUrl("coursesIcon.png")} />
                     Courses
                 </a>
+                <a href="/admin-dashboard/cohort" className={currentPath.includes("/admin-dashboard/cohort") ? styles.active : ""}>
+                    <img src={getImageUrl("cohortIcon.png")} />
+                    Cohort
+                </a>
+                <a href="/admin-dashboard/classes" className={currentPath.includes("/admin-dashboard/classes") ? styles.active : ""}>
+                    <img src={getImageUrl("classIcon.png")} />
+                    Classes
+                </a>
                 <a href="/admin-dashboard/tasks" className={currentPath.includes("/admin-dashboard/tasks") ? styles.active : ""}>
-                    <img src={getImageUrl("certificateIcon.png")} />
+                    <img src={getImageUrl("taskIcon.png")} />
                     Tasks
                 </a>
                 <a href="/admin-dashboard/teacher" className={currentPath.includes("/admin-dashboard/teacher") ? styles.active : ""}>
-                    <img src={getImageUrl("coursesIcon.png")} />
+                    <img src={getImageUrl("teacherIcon.png")} />
                     Teacher
                 </a>
                 <a href="/admin-dashboard/student" className={currentPath.includes("/admin-dashboard/student") ? styles.active : ""}>
-                    <img src={getImageUrl("coursesIcon.png")} />
+                    <img src={getImageUrl("studentIcon.png")} />
                     Student
                 </a>
                 <a href="/admin-dashboard/activitylog" className={currentPath.includes("/admin-dashboard/activitylog") ? styles.active : ""}>
-                    <img src={getImageUrl("coursesIcon.png")} />
+                    <img src={getImageUrl("activityIcon.png")} />
                     Activity Log
                 </a>
             </div>

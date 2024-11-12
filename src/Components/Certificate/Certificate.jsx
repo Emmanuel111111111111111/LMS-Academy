@@ -124,12 +124,15 @@ export const Certificate = () => {
 
     return (
         <div className={styles.whole}>
-            <h5>Certificate</h5>
+
+            <div className={styles.breadcrumb}>Certificates</div>
+
             <div>
                 <div className={styles.title}>
-                    <h1>All Certificate</h1>
-                    <button><img src={getImageUrl('sort.png')} alt="" /></button>
+                    <h1>All Certificates</h1>
+                    <button>Sort By<img src={getImageUrl('sortIcon.png')} alt="" /></button>
                 </div>
+
                 <div className={styles.course}>
 
                     {certificates.map((certif, index) => (
@@ -145,12 +148,12 @@ export const Certificate = () => {
                                 <p>{certif.description}</p>
                                 <div className={styles.courseData}>
                                     <div className={styles.bread}>
-                                        <div className={styles.profile}><img src={getImageUrl('profile.png')} alt="" />{certif.teacher}</div>
+                                        <div className={styles.profile}><img src={getImageUrl('profile.svg')} alt="" />{certif.teacher}</div>
                                     </div>
                                     <div className={styles.crumb}>
-                                        <div className={styles.profile}><img src={getImageUrl('lesson.png')} alt="" />Lesson 16</div>
+                                        <div className={styles.profile}><img src={getImageUrl('instructors.png')} alt="" />Lesson 16</div>
                                         <div className={styles.profile}><img src={getImageUrl('assignment.png')} alt="" />Assignment 07</div>
-                                        <div className={styles.profile}><img src={getImageUrl('timee.png')} alt="" />7h 25m</div>
+                                        <div className={styles.profile}><img src={getImageUrl('timer.png')} alt="" />7h 25m</div>
                                     </div>
                                 </div>
                                 <div className={styles.withLoader}>
@@ -158,9 +161,12 @@ export const Certificate = () => {
                                         <p>12/12</p>
                                         <progress className={styles.progress} id="progress" max={30} value={30} />
                                     </div>
-                                    <div className={styles.butt}>
-                                        <button className={styles.bb}>View Certificate</button>
-                                        <button className={styles.gf}>Download</button>
+                                    <div className={styles.buttons}>
+                                        <button className={styles.buttonOne}>View Certificate</button>
+                                        <button className={styles.buttonTwo}>
+                                            <img src={getImageUrl('blueDownload.png')} alt="" />
+                                            Download
+                                        </button>
                                     </div>
                                 </div>
                             </div>

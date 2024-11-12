@@ -13,6 +13,7 @@ export const ActivityLogPage = () => {
     const [ itemsPerPage, setItemsPerPage ] = useState(5);
     const [ actionsOpen, setActionsOpen ] = useState({});
     const [ activities, setActivities ] = useState([]);
+    const [ isLoading, setIsLoading ] = useState(false);
 
     const scroll = useRef(null);
     const actionsRef = useRef(null);
@@ -22,12 +23,17 @@ export const ActivityLogPage = () => {
     }, []);
 
     const fetchActivityLog = async () => {
+        setIsLoading(true);
         try {
-            const result = await axios(BASE_URL + "/activity-log");
+            const result = await axios(BASE_URL + "/activity-log", {
+                timeout: 10000
+            });
             console.log(result);
             setActivities(result.data);
+            setIsLoading(false);
         } catch (err) {
             console.log(err);
+            setIsLoading(false);
         }
     }
 
@@ -80,48 +86,58 @@ export const ActivityLogPage = () => {
                     <button className={styles.buttonTwo}>Create Event<img src={getImageUrl('whitePlus.png')} /></button>
                 </div>
             </div>
+
+
+            {isLoading ? <h5 className={styles.loading}>Loading...</h5> :
             
-            <table className={styles.activitesTable}>
-                <thead>
-                    <th><input type="checkbox" /></th>
-                    <th>Activities</th>
-                    <th>Time and Date</th>
-                    <th>Due Date</th>
-                    <th>Action</th>
-                </thead>
-                <tbody>
-                    {currentActivities.map((activity, index) => (
-                        <tr>
-                            <td><input type="checkbox" /></td>
-                            <td>{activity.activity}</td>
-                            <td>{format(new Date (activity.date), 'MMMM dd, yyyy hh:mm a')}</td>
-                            <td>{activity.due_date}</td>
-                            <td>
-                                <button className={styles.actionsButton} onClick={()=>toggleAction(index)}><img src={getImageUrl('threeDots.png')} /></button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+                currentActivities.length === 0 ?
+                    
+                    <p className={styles.none}>No Activites Found</p>
+                    :
+                    <>
+                    <table className={styles.activitesTable}>
+                        <thead>
+                            <th><input type="checkbox" /></th>
+                            <th>Activities</th>
+                            <th>Time and Date</th>
+                            <th>Due Date</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            {currentActivities.map((activity, index) => (
+                                <tr>
+                                    <td><input type="checkbox" /></td>
+                                    <td>{activity.activity}</td>
+                                    <td>{format(new Date (activity.date), 'MMMM dd, yyyy hh:mm a')}</td>
+                                    <td>{activity.due_date}</td>
+                                    <td>
+                                        <button className={styles.actionsButton} onClick={()=>toggleAction(index)}><img src={getImageUrl('threeDots.png')} /></button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
 
-            <div style={{ w:'100%', display:"flex", alignItems:'center' }}>
-                <div className={styles.showRows}>
-                    Show
-                    <select onChange={(e) => handlePageNumber(e.target.value)} >
-                        <option value={5}>5</option>
-                        <option value={10}>10</option>
-                        <option value={15}>15</option>
-                    </select>
-                    Rows
-                </div>
-                <Pagination className={styles.pag}
-                    currentData={activities}
-                    currentPage={currentPage}
-                    itemsPerPage={itemsPerPage}
-                    onPageChange={handlePageChange}
-                />
+                    <div style={{ w:'100%', display:"flex", alignItems:'center' }}>
+                        <div className={styles.showRows}>
+                            Show
+                            <select onChange={(e) => handlePageNumber(e.target.value)} >
+                                <option value={5}>5</option>
+                                <option value={10}>10</option>
+                                <option value={15}>15</option>
+                            </select>
+                            Rows
+                        </div>
+                        <Pagination className={styles.pag}
+                            currentData={activities}
+                            currentPage={currentPage}
+                            itemsPerPage={itemsPerPage}
+                            onPageChange={handlePageChange}
+                        />
 
-            </div>
+                    </div>
+                    </>
+            }
         </div>
         </>
     )

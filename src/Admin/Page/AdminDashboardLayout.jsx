@@ -10,7 +10,7 @@ export const AdminDashboardLayout = () => {
         <AdminHeader />
         <div className={styles.withNav}>
             <AdminNavbar />
-            <Outlet className={styles.outlet}/>
+            <Outlet />
         </div>
         </>
     );

@@ -1,0 +1,516 @@
+.whole {
+    margin-left: 280px;
+    margin-top: 80px;
+    width: 100%;
+    min-height: 100vh;
+    height: 100%;
+    padding: 16px 24px;
+    background: #F8F9FD;
+}
+
+
+.breadcrumb {
+    font-size: 14px;
+    font-weight: 500;
+    color: #2C2F7E;
+}
+.breadcrumb a {
+    font-size: 14px;
+    font-weight: 500;
+    color: #728DB9;
+    text-decoration: none;
+}
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+
+.title {
+    margin-top: 40px;
+    display: flex;
+    justify-content: space-between;
+}
+.title h3 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #272727;
+}
+.title .buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.title .buttonOne {
+    display: inline-flex;
+    align-items: center;
+    background: #F0F0F0;
+    padding: 8px 10px;
+    gap: 4px;
+    border-radius: 7px;
+    color: #606060;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    outline: none;
+}
+.title .buttonTwo {
+    display: inline-flex;
+    align-items: center;
+    background: #2C2F7E;
+    padding: 8px 10px;
+    gap: 4px;
+    border-radius: 7px;
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    outline: none;
+}
+.title button img {
+    width: 20px;
+    height: 20px;
+}
+
+
+.loading {
+    width: 100%;
+    margin-top: 24px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 400;
+    color: #2C2F7E;
+}
+.none {
+    width: 100%;
+    margin-top: 24px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 400;
+    color: #2C2F7E;
+}
+
+
+.cohorts {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 28px;
+    margin-top: 32px;
+}
+
+
+.cohortBox{
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    padding: 16px;
+    border: 1px solid #BDD9FF;
+    box-shadow: 0px 3px 5px 0px #00000017;
+}
+
+
+.infoHeader{
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;   
+}
+
+.infoHeader h3{
+    font-weight: 500;
+    font-size: 22px;
+    color: #374151;
+}
+.infoHeader p {
+    font-size: 12px;
+    font-weight: 400;
+    color: #89939E;
+}
+.infoHeader .number {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #C3D4FF;
+    border-radius: 8px;
+    font-size: 40px;
+    font-weight: 500;
+    color: #374151;
+}
+
+
+.cohortData{
+    display: flex;
+    gap: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #89939E;
+}
+.cohortData img{
+    width: 18px;
+    height: 18px;
+}
+.cohortData div {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+
+.cohortLoader {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 8px;
+    margin-bottom: 12px;
+}
+.cohortLoader p{
+    font-weight: 500;
+    font-size: 16px;
+    color: #3064EA;
+}
+
+
+.progress {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 18px;
+    overflow: hidden;
+    align-self: center;
+    color: #2C2F7E;
+}
+.progress::-webkit-progress-bar {
+    background: #ABC0E5;
+}
+.progress::-webkit-progress-value {
+    background: #2C2F7E;
+    border-radius: 18px;
+}
+.progress::-ms-progress-bar {
+    background-color: #ABC0E5;
+}
+.progress::-ms-progress-value {
+    background: #2C2F7E;
+    border-radius: 18px;
+}
+.progress::-moz-progress-bar {
+    background-color: #ABC0E5;
+}
+.progress::-moz-progress-value {
+    background: #2C2F7E;
+    border-radius: 18px;
+}
+
+
+.progress.complete {
+    color: #10A400;
+}
+.progress.complete::-webkit-progress-value {
+    background: #10A400;
+    border-radius: 18px;
+}
+.progress.complete::-ms-progress-value {
+    background: #10A400;
+    border-radius: 18px;
+}
+.progress.complete::-moz-progress-value {
+    background: #10A400;
+    border-radius: 18px;
+}
+
+
+.viewButton {
+    padding: 6px;
+    border-radius: 7px;
+    border: none;
+    background: #CCCDE8;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: #2C2F7E;
+    font-weight: 500;
+    gap: 4px;
+}
+.viewButton img {
+    width: 20px;
+    height: 20px;
+}
+
+
+
+
+
+/* MODAL */
+
+.addCohort {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    min-width: 450px;
+    border-radius: 10px;
+    padding: 16px;
+    background: #FFFFFF;
+    border: 1px solid #BDD9FF;
+    box-shadow: 0px 3px 5px 0px #00000017;
+    max-height: 90vh;
+}
+.head {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 8px;
+    border-bottom: 1.5px solid #F3F4F6;
+}
+.head p {
+    font-size: 18px;
+    font-weight: 500;
+    color: #9799C5;
+}
+.head button {
+    border: none;
+    outline: none;
+    background: transparent;
+}
+.cohortForm {
+    display: flex;
+    flex-direction: column;
+}
+.contentBody {
+    display: flex;
+    flex-direction: column;
+    margin-top: 12px;
+    gap: 12px;
+    overflow-y: scroll;
+}
+.contentBody label {
+    margin-bottom: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #4B5563;
+}
+.contentBody input {
+    padding: 11px;
+    border-radius: 10px;
+    border: 1.5px solid #B4BCDD;
+    color: #5C5C5C;
+    outline: none;
+}
+.contentBody textarea {
+    padding: 11px;
+    border-radius: 10px;
+    border: 1.5px solid #B4BCDD;
+    color: #5C5C5C;
+    min-height: 60px;
+    outline: none;
+}
+.cohortButton {
+    width: 100%;
+    background: #2C2F7E;
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 10px;
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    outline: none;
+}
+
+.contentBody .form{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.contentBody .flex {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+
+/* DETAILS PAGE */
+
+.whiteBox {
+    border: 1px solid #E2E8F0;
+    padding: 18px;
+    background: #FFFFFF;
+    margin-top: 28px;
+    border-radius: 14px;
+    box-shadow: 0px 2px 4px 0px #00000017;
+}
+
+
+.headerBox {
+    border-bottom: 1.5px solid #CBD0DC;
+    padding-bottom: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.headerBox h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #292D32;
+}
+.headerBox p {
+    font-size: 14px;
+    font-weight: 500;
+    color: #9799C5;
+}
+
+.cohortLoader2 {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 8px;
+    width: 35%;
+}
+.cohortLoader2 p{
+    font-weight: 500;
+    font-size: 16px;
+    color: #3064EA;
+}
+
+
+
+
+.cohortTable {
+    width: 100%;
+    border-spacing: 0 8px;
+    margin-top: 12px;
+}
+.cohortTable thead {
+    background: #F9F9F9;
+    border: 1px solid #E4E4E4;
+    font-size: 14px;
+    font-weight: 600;
+    color: #2C2F7E;
+}
+.cohortTable th {
+    padding: 10px 4px;
+    text-align: left;
+    border-top: 1px solid #E4E4E4;
+    border-bottom: 1px solid #E4E4E4;
+}
+.cohortTable td {
+    padding: 6px 4px;
+    border-top: 1px solid #E4E4E4;
+    border-bottom: 1px solid #E4E4E4;
+}
+.cohortTable th:first-child,
+.cohortTable td:first-child {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+    border: 1px solid #E4E4E4;
+    border-right: none;
+    padding-left: 10px;
+}
+.cohortTable th:last-child,
+.cohortTable td:last-child {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    border: 1px solid #E4E4E4;
+    border-left: none;
+}
+.cohortTable td img {
+    width: 16px;
+    height: 16px;
+}
+.cohortTable tr {
+    background: #FFFFFF;
+    font-size: 12px;
+    font-weight: 500;
+    color: #545454;
+}
+.cohortTable .actionsButton {
+    display: flex;
+    align-items: center;
+    border: 1px solid #A1B2D1;
+    outline: none;
+    background-color: #FFFFFF;
+    padding: 4px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #0C359E;
+}
+.actionsButton img {
+    width: 24px;
+    height: 24px;
+}
+
+
+.actionsClosed {
+    display: none;
+}
+.theActions {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    box-shadow: 0px 4px 12px 0px #9CA3AF33;
+    border-radius: 10px;
+    padding: 8px;
+    position: absolute;
+    z-index: 5;
+    width: 220px;
+    margin-top: 5px;
+    margin-left: -150px;
+}
+.theActions h5 {
+    font-size: 12px;
+    font-weight: 600;
+    color: #4B5563;
+}
+.theActions button {
+    border: none;
+    outline: none;
+    background: #FFFFFF;
+    color: #4B5563;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+}
+.theActions button:hover {
+    background: #4b55632a;
+}
+.theActions button img {
+    width: 24px;
+    height: 24px;
+}
+
+
+
+
+.showRows {
+    flex: 70%;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 500;
+    color: #000000;
+}
+.showRows select {
+    border: 1px solid #BDD9FF;
+    box-shadow: 0px 3.76px 5.64px 0px #00000017;
+    border-radius: 6px;
+    padding: 4px 0 4px 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #000000;
+    outline: none;
+}
+.pag {
+    flex: 30%
+}

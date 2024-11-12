@@ -48,7 +48,7 @@
     border-left: 6px solid transparent;
 }
 .linkList a:hover {
-    background-color: #969dada4;
+    background-color: #2C3544;
 }
 .linkList a.active {
     background-color: #152A4F;
@@ -76,11 +76,13 @@
     font-weight: 500;
     padding: 12px 25px;
     text-decoration: none;
+    border-left: 6px solid transparent;
 }
 .logout img {
     width: 24px;
     height: 24px;
 }
-.logout:hover {
-    background-color: #969dada4;
+.logout a:hover {
+    background-color: #770000;
+    border-left: 6px solid #FFFFFF;
 }

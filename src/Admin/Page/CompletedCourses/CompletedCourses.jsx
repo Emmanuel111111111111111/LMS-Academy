@@ -147,7 +147,7 @@ export const CompletedCourses = () => {
                     <h1>Completed Courses</h1>
                     <div className={styles.buttons}>
                         <button className={styles.buttonOne}>Sort By<img src={getImageUrl('sortIcon.png')} /></button>
-                        <button className={styles.buttonTwo} onClick={toggleDropdown} ><img src={getImageUrl('add.png')} />Create Event</button>
+                        <button className={styles.buttonTwo} onClick={toggleDropdown} ><img src={getImageUrl('whitePlus.png')} />Create Event</button>
                     </div>
                     {isOpen && (
                         <ul className={styles.createDiv} ref={createRef}>
@@ -221,8 +221,8 @@ export const CompletedCourses = () => {
                                     <div className={styles.profile}><img src={getImageUrl('timeline.png')} alt="" />A Month</div>
                                 </div>
                                 <div className={styles.crumb}>
-                                    <div className={styles.profile}><img src={getImageUrl('profile.png')} alt="" />{cour.teacher}</div>
-                                    <div className={styles.students}><img src={getImageUrl('studentsIcon.png')} alt="" />{cour.students} Students</div>
+                                    <div className={styles.profile}><img src={getImageUrl('profile.svg')} alt="" />{cour.teacher}</div>
+                                    <div className={styles.students}><img src={getImageUrl('forStudents.png')} alt="" />{cour.students} Students</div>
                                 </div>
                             </div>
                         </div>

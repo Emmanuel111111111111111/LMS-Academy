@@ -12,35 +12,83 @@ export const Header = () => {
     let PageTitle;
     let linkList = [];
 
-    switch (currentPath) {
+    if (
+        currentPath === "/" ||
+        currentPath === "/dashboard" ||
+        currentPath === "/dashboard/overview"
+    ) {
+        PageTitle = "Home";
+    }
+    else if (
+        currentPath === "/dashboard/courses" ||
+        currentPath === "/dashboard/courses/active" ||
+        currentPath === "/dashboard/courses/completed"
+    ) {
+        PageTitle = "Courses";
+        linkList = [
+            {title: "Active", link: "/dashboard/courses/active"},
+            {title: "Completed", link: "/dashboard/courses/completed"}
+        ];
+    }
+    else if (currentPath.includes("/dashboard/courses/detail")) {
+        PageTitle = "Courses";
+    }
+    else if (currentPath === "/dashboard/calendar") {
+        PageTitle = "Calendar";
+    }
+    else if (currentPath === "/dashboard/certificate") {
+        PageTitle = "Certificates";
+    }
+    else if (currentPath === "/dashboard/settings") {
+        PageTitle = "Settings";
+    }
+    else if (
+        currentPath === "/dashboard/profile" ||
+        currentPath.includes("/dashboard/profile")
+    ) {
+        PageTitle = "Profile";
+    }
 
-        case "/":
-        case "/dashboard":
-        case "/dashboard/overview":
-            PageTitle = "Home";
-            break;
+    // switch (currentPath) {
+
+    //     case "/":
+    //     case "/dashboard":
+    //     case "/dashboard/overview":
+    //         PageTitle = "Home";
+    //         break;
         
-        case "/dashboard/courses":
-        case "/dashboard/courses/active":
-        case "/dashboard/courses/completed":
-            PageTitle = "Courses";
-            linkList = [
-                {title: "Active", link: "/dashboard/courses/active"},
-                {title: "Completed", link: "/dashboard/courses/completed"}
-            ];
-            break;
+    //     case "/dashboard/courses":
+    //     case "/dashboard/courses/active":
+    //     case "/dashboard/courses/completed":
+    //         PageTitle = "Courses";
+    //         linkList = [
+    //             {title: "Active", link: "/dashboard/courses/active"},
+    //             {title: "Completed", link: "/dashboard/courses/completed"}
+    //         ];
+    //         break;
         
-        case "/dashboard/calendar":
-            PageTitle = "Calendar";
-            break;
+    //     case "/dashboard/calendar":
+    //         PageTitle = "Calendar";
+    //         break;
         
-        case "/dashboard/certificate":
-            PageTitle = "Certificate";
-            break;
+    //     case "/dashboard/certificate":
+    //         PageTitle = "Certificates";
+    //         break;
         
-        case "/dashboard/settings":
-            PageTitle = "Settings";
-            break;
+    //     case "/dashboard/settings":
+    //         PageTitle = "Settings";
+    //         break;
+
+    //     case "/dashboard/profile":
+    //         PageTitle = "Profile";
+    //         break;
+    // }
+
+    const toProfilePage = () => {
+        window.location.href = "/dashboard/profile";
+    }
+    const toSettingsPage = () => {
+        window.location.href = "/dashboard/settings";
     }
 
     return (
@@ -65,8 +113,8 @@ export const Header = () => {
                 </div>
                 <div className={styles.buttons}>
                     <button><img src={getImageUrl('bell.png')} /></button>
-                    <button><img src={getImageUrl('settings.png')} /></button>
-                    <button className={styles.profile}><img src={getImageUrl('avatar.png')} /></button>
+                    <button onClick={toSettingsPage}><img src={getImageUrl('settings.png')} /></button>
+                    <button className={styles.profile} onClick={toProfilePage}><img src={getImageUrl('profile.svg')} /></button>
                 </div>
             </div>
         </div>
