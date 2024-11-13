@@ -236,11 +236,6 @@ export const CohortDetails = () => {
 
                 <form action={''} className={styles.contentBody}>
                     
-                    {/* <div className={styles.form}>
-                        <label htmlFor="title">Course Title</label>
-                        <input type="text" name="title" id="title" placeholder="Enter course title" />
-                    </div> */}
-                    
                     <div className={styles.form}>
                         <label htmlFor="course">Course</label>
                         <select name="course" id="course">

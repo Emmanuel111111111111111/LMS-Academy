@@ -13,10 +13,8 @@
 
 
 .overview {
-    /* background: #FFFFFF; */
     border-radius: 12px;
     padding: 10px 0;
-    /* padding: 10px 12px; */
     margin-top: 24px;
 }
 .overview h5 {
@@ -75,7 +73,6 @@
 
 .courses {
     width: 100%;
-    /* background: #FFFFFF; */
     border-radius: 12px;
     padding: 20px 0;
     margin-top: 24px;
@@ -153,7 +150,6 @@
     padding: 16px;
     display: flex;
     flex-direction: column;
-    /* width: 100%; */
     height: 100%;
 }
 .courseInfo h3 {
@@ -236,10 +232,8 @@
 
 .events {
     width: 100%;
-    /* background: #FFFFFF; */
     border-radius: 12px;
     padding: 20px 0;
-    /* margin-top: 24px; */
 }
 
 .eventsHeader {

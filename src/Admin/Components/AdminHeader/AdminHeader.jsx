@@ -12,6 +12,7 @@ export const AdminHeader = () => {
     if (
         currentPath === "/" ||
         currentPath === "/admin-dashboard" ||
+        currentPath === "/admin-dashboard/" ||
         currentPath === "/admin-dashboard/overview"
     ) {
         PageTitle = "Home";

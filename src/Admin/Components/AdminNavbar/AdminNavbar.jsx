@@ -13,7 +13,7 @@ export const AdminNavbar = () => {
             </div>
 
             <div className={styles.linkList} >
-                <a href="/admin-dashboard/overview" className={currentPath === "/admin-dashboard/overview" ? styles.active : ""}>
+                <a href="/admin-dashboard/overview" className={(currentPath === "/admin-dashboard/overview" || currentPath === "/admin-dashboard/" || currentPath === "/admin-dashboard") ? styles.active : ""}>
                     <img src={getImageUrl("homeIcon.png")} />
                     Home
                 </a>

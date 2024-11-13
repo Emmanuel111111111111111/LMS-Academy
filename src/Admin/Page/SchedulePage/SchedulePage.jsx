@@ -1,7 +1,6 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from './SchedulePage.module.css';
 import { getImageUrl } from "../../../utilis";
-import { useNavigate } from "react-router-dom";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -12,13 +11,13 @@ import { format } from 'date-fns';
 
 export const SchedulePage = () => {
 
-    const [search, setSearch] = useState("");
-    const [viewType, setViewType] = useState('timeGridWeek');
-    const navigate = useNavigate();
+    const [ search, setSearch ] = useState("");
+    const [ viewType, setViewType ] = useState('timeGridWeek');
+    const [ isOpen, setIsOpen ] = useState(false);
+    const [ open, setOpen ] = useState(false);
     const calendarRef = useRef(null);
     const calendarAPI = calendarRef?.current?.getApi();
-    const [isOpen, setIsOpen] = useState(false);
-    const [open, setOpen] = useState(false);
+    
     const handleClose = () => {
         setOpen(false);
     };
@@ -62,10 +61,9 @@ export const SchedulePage = () => {
     ]
 
 
-    const handleChangeView = (view) => {
-        calendarAPI?.changeView(view);
-        setViewType(view);
-    }
+    useEffect(() => {
+        calendarAPI?.changeView(viewType);
+    }, [viewType, calendarAPI]);
 
     const handleSearch = (e) => {
         setSearch(e.target.value);
@@ -144,10 +142,10 @@ export const SchedulePage = () => {
                         </div>
 
                         <div className={styles.buttons}>
-                            <button className={viewType === 'timeGridDay' ? styles.activeGrid : styles.grid} onClick={() => handleChangeView('timeGridDay')}>Day</button>
-                            <button className={viewType === 'timeGridWeek' ? styles.activeGrid : styles.grid} onClick={() => handleChangeView('timeGridWeek')}>Week</button>
-                            <button className={viewType === 'dayGridMonth' ? styles.activeGrid : styles.grid} onClick={() => handleChangeView('dayGridMonth')}>Month</button>
-                            <button className={viewType === 'dayGridYear' ? styles.activeGrid : styles.grid} onClick={() => handleChangeView('dayGridYear')}>Year</button>
+                            <button className={viewType === 'timeGridDay' ? styles.activeGrid : styles.grid} onClick={() => setViewType('timeGridDay')}>Day</button>
+                            <button className={viewType === 'timeGridWeek' ? styles.activeGrid : styles.grid} onClick={() => setViewType('timeGridWeek')}>Week</button>
+                            <button className={viewType === 'dayGridMonth' ? styles.activeGrid : styles.grid} onClick={() => setViewType('dayGridMonth')}>Month</button>
+                            <button className={viewType === 'dayGridYear' ? styles.activeGrid : styles.grid} onClick={() => setViewType('dayGridYear')}>Year</button>
                         </div>
 
                         <div className={styles.search}>

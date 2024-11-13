@@ -137,8 +137,3 @@
 :global(.fc-timegrid-slot) {
     height: 45px !important;
 }
-
-/* :global(.fc-scroller) {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-} */
