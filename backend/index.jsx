@@ -373,7 +373,7 @@ app.post('/login', async (req, res) => {
         if (result.rows.length === 0) return res.status(404).json({ message: "No records" });
 
         const student = result.rows[0];
-        // const isPasswordValid = await bcrypt.compare(req.body.password, student.password);
+        const isPasswordValid = await bcrypt.compare(req.body.password, student.password);
         if (req.body.password != student.password) return res.status(401).json({message: "Invalid credentials"});
 
         const loginQuery = "UPDATE student SET last_logged = $1 WHERE student_id = $2";
@@ -408,16 +408,16 @@ app.post('/adminlogin', async (req, res) => {
 });
 
 app.post("/signup", async (req, res) => {
-    const query = "INSERT INTO student (first_name, last_name, email, phone_number, learning_mode, password, last_logged) VALUES ($1, $2, $3, $4, $5, $6, $7)";
+    const query = "INSERT INTO student (first_name, last_name, email, phone_number, learning_mode, password, last_logged, date_added) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)";
     const values = [
         req.body.first_name,
         req.body.last_name,
         req.body.email,
         req.body.phone_number,
         req.body.learning_mode,
-        req.body.password,
+        await bcrypt.hash(req.body.password, 10),
         new Date(),
-        // await bcrypt.hash(req.body.password, 10)
+        new Date(),
     ]
     try {
         const result = await client.query(query, values);

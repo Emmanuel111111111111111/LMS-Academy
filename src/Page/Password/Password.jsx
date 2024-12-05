@@ -3,7 +3,7 @@ import { getImageUrl } from "../../utilis";
 import styles from "./Password.module.css";
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { BASE_URL } from "../../../config";
+import { BASE_URL, TEST_URL } from "../../../config";
 
 
 export const Password = () => {
