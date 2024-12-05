@@ -221,7 +221,7 @@ export const CourseDetail = () => {
                                     <button type="button" className={styles.actionButton} onClick={(e) => toggleAction(e, i)}>
                                         <img src={getImageUrl('threeDots.png')} />
                                     </button>
-                                    {actionsOpen[i]&& <div className={styles.theActions} ref={actionsRef}>
+                                    {actionsOpen[i] && <div className={styles.theActions} ref={actionsRef}>
                                         <h6>ACTION</h6>
                                         <button><img src={getImageUrl('edit.png')} />EDIT</button>
                                         <button><img src={getImageUrl('delete.png')} />DELETE</button>
