@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from './Overview.module.css';
 import { getImageUrl } from "../../utilis";
 import Pagination from "../../Components/Pagination/Pagination";
@@ -8,8 +8,45 @@ export const Overview = () => {
 
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ itemsPerPage, setItemsPerPage ] = useState(5);
+    const [ name, setName ] = useState("");
+    const [ id, setId ] = useState("");
+    const [ completedLess, setCompletedLess ] = useState(0);
+    const [ dueLess, setDueLess ] = useState(0);
+    const [ dueAssign, setDueAssign ] = useState(0);
+
+    const [ loadingCL, setLoadingCL ] = useState(false);
+    const [ loadingDL, setLoadingDL ] = useState(false);
+    const [ loadingDA, setLoadingDA ] = useState(false);
+
     const navigate = useNavigate();
     const scroll = useRef(null);
+
+    useEffect(() => {
+        console.log(sessionStorage);
+        setName(sessionStorage.getItem("first_name"));
+        setId(sessionStorage.getItem("id"));
+    }, []);
+
+    useEffect(() => {
+        fetchLessons()
+    })
+
+    const fetchLessons = async () => {
+        setLoadingCL(true);
+        setLoadingDL(true);
+        setLoadingDA(true);
+        try {
+            const result = await axios(TEST_URL + "/lessons/", {
+                timeout: 10000
+            });
+            // setLessonsLen(result.data);
+            // setIsLessLoading(false);
+        } catch (err) {
+            console.log(err);
+            // setIsLessLoading(false)
+        }
+    }
+
 
 
     const courses = [
@@ -135,8 +172,8 @@ export const Overview = () => {
                 <div className={styles.left}>
                     <img src={getImageUrl('profile.svg')} />
                     <div className={styles.text}>
-                        <h3>Welcome Back</h3>
-                        <h2>Toluwani</h2>
+                        <h3>Welcome Back,</h3>
+                        <h2>{name}</h2>
                     </div>
                 </div>
                 <button>Edit Profile</button>

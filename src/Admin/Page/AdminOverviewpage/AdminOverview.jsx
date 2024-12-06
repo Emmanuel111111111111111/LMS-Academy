@@ -12,6 +12,7 @@ export const AdminOverview = () => {
 
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ itemsPerPage, setItemsPerPage ] = useState(5);
+    const [ lessonsLen, setLessonsLen ] = useState(0);
     const [ studentsLen, setStudentsLen ] = useState(0);
     const [ teachersLen, setTeachersLen ] = useState(0);
     const [ courses, setCourses ] = useState([]);
@@ -20,6 +21,7 @@ export const AdminOverview = () => {
     const [ isTeachLoading, setIsTeachLoading ] = useState(false);
     const [ isCourseLoading, setIsCourseLoading ] = useState(false);
     const [ isStudLoading, setIsStudLoading ] = useState(false);
+    const [ isLessLoading, setIsLessLoading ] = useState(false);
     const [ isActivityLoading, setIsActivityLoading ] = useState(false);
     // const navigate = useNavigate();
     const scroll = useRef(null);
@@ -27,6 +29,7 @@ export const AdminOverview = () => {
     useEffect(() => {
         fetchTeachersLength();
         fetchStudentsLength();
+        fetchLessonsLength()
         fetchThreeCoursesTeachersStudents();
         fetchActivityLog();
     }, []);
@@ -44,7 +47,6 @@ export const AdminOverview = () => {
             setIsTeachLoading(false);
         }
     }
-
     const fetchStudentsLength = async () => {
         setIsStudLoading(true);
         try {
@@ -56,6 +58,19 @@ export const AdminOverview = () => {
         } catch (err) {
             console.log(err);
             setIsStudLoading(false)
+        }
+    }
+    const fetchLessonsLength = async () => {
+        setIsLessLoading(true);
+        try {
+            const result = await axios(TEST_URL + "/lessons-len", {
+                timeout: 10000
+            });
+            setLessonsLen(result.data);
+            setIsLessLoading(false);
+        } catch (err) {
+            console.log(err);
+            setIsLessLoading(false)
         }
     }
 
@@ -133,7 +148,7 @@ export const AdminOverview = () => {
                             <div className={styles.whiteBox}><img src={getImageUrl('assignment.png')} /></div>
                         </div>
                         <div className={styles.loader}>
-                            {isStudLoading ? '...' : '0'}
+                            {isLessLoading ? '...' : lessonsLen}
                         </div>
                     </div>
 

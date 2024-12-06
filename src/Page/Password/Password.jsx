@@ -23,16 +23,20 @@ export const Password = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         console.log(values);
-        axios.post(BASE_URL + '/signup', values)
+        try {
+            axios.post(TEST_URL + '/signup', values)
             .then(res => console.log(res))
-            .catch(err => console.log(err));
-        
-        console.log("signed up");
-        sessionStorage.setItem("first_name", values.first_name);
-        sessionStorage.setItem("email", values.email);
-        console.log(values.first_name);
+            
+            console.log("signed up");
+            sessionStorage.setItem("first_name", values.first_name);
+            sessionStorage.setItem("email", values.email);
+            console.log(values.first_name);
 
-        window.location.href = "/dashboard";
+            window.location.href = "/dashboard";
+
+        } catch (err) {
+            err => console.log(err);
+        }
     }
 
     return (

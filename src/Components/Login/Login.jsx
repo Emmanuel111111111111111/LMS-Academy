@@ -24,16 +24,13 @@ export const Login = () => {
     event.preventDefault();
     setIsLoading(true);
     try {
-      const response = await axios.post(BASE_URL + '/login', { email, password });
-      console.log(response.data);
-      
+      const response = await axios.post(TEST_URL + '/login', { email, password });
+
       setIsLoading(false);
-      console.log("signed in");
       sessionStorage.setItem("id", response.data.student_id);
       sessionStorage.setItem("first_name", response.data.first_name);
       sessionStorage.setItem("last_name", response.data.last_name);
       sessionStorage.setItem("email", response.data.email);
-      // console.log(response.data.first_name);
       window.location.href = "/dashboard";
       
     } catch (err) {

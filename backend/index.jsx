@@ -1,4 +1,4 @@
-// import bcrypt from 'bcrypt';
+const bcrypt = require('bcrypt');
 require("dotenv").config();
 const express = require('express');
 const { Client } = require('pg');
@@ -281,6 +281,15 @@ app.get("/lessons", async (req, res) => {
         res.status(500).json({message: "Error fetching lessons"});
     }
 });
+app.get("/lessons-len", async (req, res) => {
+    try {
+        const result = await client.query("SELECT COUNT(*) FROM lesson");
+        res.send(result.rows[0].count);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching lessons length"});
+    }
+});
 app.post('/new-lesson', async (req, res) => {
     
     const { newLessonTitle, course_id } = req.body;
@@ -302,7 +311,21 @@ app.post('/new-lesson', async (req, res) => {
         res.status(500).json({ message: 'Error saving lesson' });
     }
 });
-  
+
+app.get('/lessons/:studentID', async (req, res) => {
+    try {
+        const id = req.params.course_id;
+        const query = `
+            SELECT * FROM lesson l
+            LEFT JOIN lesson_student ls ON ls.student_id = ($1)
+        `;
+        const result = await client.query(query, [id]);
+        res.send(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error grabbing lesson_student info' });
+    }
+});
 
 
 app.post('/new-teacher', async (req, res) => {
@@ -373,8 +396,9 @@ app.post('/login', async (req, res) => {
         if (result.rows.length === 0) return res.status(404).json({ message: "No records" });
 
         const student = result.rows[0];
-        const isPasswordValid = await bcrypt.compare(req.body.password, student.password);
-        if (req.body.password != student.password) return res.status(401).json({message: "Invalid credentials"});
+        const isPasswordValid = await verifyPassword(req.body.password, student.password);
+        // if (req.body.password != student.password) return res.status(401).json({message: "Invalid credentials"});
+        if (!isPasswordValid) return res.status(401).json({message: "Invalid password"});
 
         const loginQuery = "UPDATE student SET last_logged = $1 WHERE student_id = $2";
         await client.query(loginQuery, [new Date(), student.student_id]);
@@ -408,6 +432,9 @@ app.post('/adminlogin', async (req, res) => {
 });
 
 app.post("/signup", async (req, res) => {
+
+    const hashedPassword = await hashPassword(req.body.password);
+
     const query = "INSERT INTO student (first_name, last_name, email, phone_number, learning_mode, password, last_logged, date_added) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)";
     const values = [
         req.body.first_name,
@@ -415,7 +442,7 @@ app.post("/signup", async (req, res) => {
         req.body.email,
         req.body.phone_number,
         req.body.learning_mode,
-        await bcrypt.hash(req.body.password, 10),
+        hashedPassword,
         new Date(),
         new Date(),
     ]
@@ -430,6 +457,27 @@ app.post("/signup", async (req, res) => {
     }
 })
 
+
+const hashPassword = async (plainPassword) => {
+    try {
+        const saltRounds = 12;
+        const hashedPassword = await bcrypt.hash(plainPassword, saltRounds);
+        console.log(hashedPassword)
+        return hashedPassword;
+    } catch (error) {
+        console.error("Error hashing password:", error);
+        throw error;
+    }
+};
+const verifyPassword = async (plainPassword, hashedPassword) => {
+    try {
+        const isMatch = await bcrypt.compare(plainPassword, hashedPassword);
+        return isMatch;
+    } catch (error) {
+        console.error("Error verifying password:", error);
+        throw error;
+    }
+};
 
 
 app.listen(port, () => {

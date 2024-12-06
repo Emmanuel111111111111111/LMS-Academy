@@ -6,6 +6,11 @@ export const Navbar = () => {
 
     let currentPath = window.location.pathname;
 
+    const handleLogOut = () => {
+        window.location.href = "/login";
+        sessionStorage.clear();
+    }
+
     return (
         <div className={styles.theWhole}>
             <div className={styles.logo}>
@@ -32,7 +37,7 @@ export const Navbar = () => {
             </div>
 
             <div className={styles.logout}>
-                <a href="">
+                <a onClick={handleLogOut}>
                     <img src={getImageUrl('logoutIcon.png')} />
                     Logout
                 </a>
