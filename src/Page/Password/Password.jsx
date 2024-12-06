@@ -24,7 +24,7 @@ export const Password = () => {
         event.preventDefault();
         console.log(values);
         try {
-            axios.post(TEST_URL + '/signup', values)
+            axios.post(BASE_URL + '/signup', values)
             .then(res => console.log(res))
             
             console.log("signed up");

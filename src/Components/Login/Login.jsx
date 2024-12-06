@@ -24,7 +24,7 @@ export const Login = () => {
     event.preventDefault();
     setIsLoading(true);
     try {
-      const response = await axios.post(TEST_URL + '/login', { email, password });
+      const response = await axios.post(BASE_URL + '/login', { email, password });
 
       setIsLoading(false);
       sessionStorage.setItem("id", response.data.student_id);
