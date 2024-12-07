@@ -33,12 +33,24 @@ app.get("/students", async (req, res) => {
     }
 });
 app.get("/students-len", async (req, res) => {
+    console.log("len")
     try {
         const result = await client.query("SELECT COUNT(*) FROM student");
         res.send(result.rows[0].count);
     } catch(err) {
         console.log(err);
         res.status(500).json({message: "Error fetching students length"});
+    }
+});
+app.get("/getStudentWithEmail/:email", async (req, res) => {
+    const email = req.params.email;
+    const query = "SELECT * FROM student WHERE email = ($1)"
+    try {
+        const result = await client.query(query, [email]);
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching student/email"});
     }
 });
 

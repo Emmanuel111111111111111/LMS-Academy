@@ -32,7 +32,8 @@ export const Password = () => {
             sessionStorage.setItem("email", values.email);
             console.log(values.first_name);
 
-            window.location.href = "/dashboard";
+            // window.location.href = "/dashboard";
+            window.location.href = "/login";
 
         } catch (err) {
             err => console.log(err);

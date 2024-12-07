@@ -16,7 +16,7 @@ export const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // sessionStorage.clear();
+    sessionStorage.clear();
   }, [])
 
   
