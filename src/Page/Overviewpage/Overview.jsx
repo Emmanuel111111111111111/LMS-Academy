@@ -39,7 +39,7 @@ export const Overview = () => {
         setLoadingCL(true);
         setLoadingDL(true);
         try {
-            const result = await axios(TEST_URL + `/lessons/${id}`, {
+            const result = await axios(BASE_URL + `/lessons/${id}`, {
                 timeout: 10000
             });
             console.log(result.data);
