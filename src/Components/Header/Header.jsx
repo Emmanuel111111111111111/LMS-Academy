@@ -49,41 +49,6 @@ export const Header = () => {
         PageTitle = "Profile";
     }
 
-    // switch (currentPath) {
-
-    //     case "/":
-    //     case "/dashboard":
-    //     case "/dashboard/overview":
-    //         PageTitle = "Home";
-    //         break;
-        
-    //     case "/dashboard/courses":
-    //     case "/dashboard/courses/active":
-    //     case "/dashboard/courses/completed":
-    //         PageTitle = "Courses";
-    //         linkList = [
-    //             {title: "Active", link: "/dashboard/courses/active"},
-    //             {title: "Completed", link: "/dashboard/courses/completed"}
-    //         ];
-    //         break;
-        
-    //     case "/dashboard/calendar":
-    //         PageTitle = "Calendar";
-    //         break;
-        
-    //     case "/dashboard/certificate":
-    //         PageTitle = "Certificates";
-    //         break;
-        
-    //     case "/dashboard/settings":
-    //         PageTitle = "Settings";
-    //         break;
-
-    //     case "/dashboard/profile":
-    //         PageTitle = "Profile";
-    //         break;
-    // }
-
     const toProfilePage = () => {
         window.location.href = "/dashboard/profile";
     }

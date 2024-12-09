@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from './ProfilePage.module.css';
 import { getImageUrl } from "../../utilis";
 import { useNavigate } from "react-router-dom";
@@ -7,11 +7,16 @@ import { format } from 'date-fns';
 
 export const ProfilePage = () => {
 
-    const [ search, setSearch] = useState("");
-    const [ viewType, setViewType ] = useState('timeGridWeek');
+    const [ firstName, setFirstName ] = useState("");
+    const [ lastName, setLastName ] = useState("");
+    const [ email, setEmail ] = useState("");
     const navigate = useNavigate();
-    const calendarRef = useRef(null);
-    const calendarAPI = calendarRef?.current?.getApi();
+
+    useEffect(() => {
+        setFirstName(sessionStorage.getItem("first_name"));
+        setLastName(sessionStorage.getItem("last_name"));
+        setEmail(sessionStorage.getItem("email"));
+    }, []);
 
 
 
@@ -35,19 +40,19 @@ export const ProfilePage = () => {
                     <div className={styles.formFlex}>
                         <div className={styles.formGroup}>
                             <label htmlFor="">First Name</label>
-                            <input type="text" placeholder="Toluwani" />
+                            <input type="text" value={firstName} />
                         </div>
 
                         <div className={styles.formGroup}>
                             <label htmlFor="">Last Name</label>
-                            <input type="text" placeholder="Ojo" />
+                            <input type="text" value={lastName} />
                         </div>
                     </div>
 
                     <div className={styles.formFlex}>
                         <div className={styles.formGroup}>
                             <label htmlFor="">Email</label>
-                            <input type="text" placeholder="Toluwaniojo@outlook.com" />
+                            <input type="text" value={email} />
                         </div>
 
                         <div className={styles.formGroup}>
@@ -75,7 +80,7 @@ export const ProfilePage = () => {
                     Please contact the academy admin to delete your account.
                 </div>
 
-                <button className={styles.delete}>Delete Account</button>
+                <button className={styles.delete} disabled>Delete Account</button>
 
             </div>
         </div>

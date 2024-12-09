@@ -63,7 +63,7 @@ export const AdminOverview = () => {
     const fetchLessonsLength = async () => {
         setIsLessLoading(true);
         try {
-            const result = await axios(TEST_URL + "/lessons-len", {
+            const result = await axios(BASE_URL + "/lessons-len", {
                 timeout: 10000
             });
             setLessonsLen(result.data);
@@ -77,7 +77,7 @@ export const AdminOverview = () => {
     const fetchThreeCoursesTeachersStudents = async () => {
         setIsCourseLoading(true);
         try {
-            const result = await axios(BASE_URL + "/courses-instructor-studentscount", {
+            const result = await axios(BASE_URL + "/courses-instructor-studentscount-lessons", {
                 timeout: 10000
             });
             setCourses(result.data.sort((a,b) => new Date(b.date_added) - new Date(a.date_added)).slice(0,3));

@@ -23,6 +23,8 @@ app.get("/", (req, res) => {
     return res.json("BACKEND IS CONNECTED");
 });
 
+
+
 app.get("/students", async (req, res) => {
     try {
         const result = await client.query("SELECT * FROM student");
@@ -33,7 +35,6 @@ app.get("/students", async (req, res) => {
     }
 });
 app.get("/students-len", async (req, res) => {
-    console.log("len")
     try {
         const result = await client.query("SELECT COUNT(*) FROM student");
         res.send(result.rows[0].count);
@@ -54,9 +55,63 @@ app.get("/getStudentWithEmail/:email", async (req, res) => {
     }
 });
 
+
+
+app.get("/teachers", async (req, res) => {
+    try {
+        const result = await client.query("SELECT * FROM instructor");
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching teachers"});
+    }
+});
+app.get("/teachers-len", async (req, res) => {
+    try {
+        const result = await client.query("SELECT COUNT(*) FROM instructor");
+        res.send(result.rows[0].count);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching teachers length"});
+    }
+});
+app.post('/new-teacher', async (req, res) => {
+    const query = "INSERT INTO instructor (first_name, date_added, email, phone_number) VALUES ($1, $2, $3, $4) RETURNING *";
+    const values = [
+        req.body.name,
+        req.body.date,
+        req.body.email,
+        req.body.phone_number
+    ];
+    try {
+        const result = await client.query(query, values);
+        console.log(result.rows[0]);
+
+        const activity = req.body.course_name === ""
+            ? 'New instructor, ' + req.body.name + ' added.'
+            : 'New instructor, ' + req.body.name + ' added to ' + req.body.course_name + '.';
+
+        const logQuery = "INSERT INTO activity_log (activity, date) VALUES ($1, $2) RETURNING *";
+        const logValues = [
+            activity,
+            req.body.date
+        ];
+
+
+        const logResult = await client.query(logQuery, logValues);
+        console.log(logResult.rows[0])
+        res.json({message: "Instructor added successfully", instructor: result.rows[0]});
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({message: "Error in adding new instructor or logging"});
+    }
+});
+
+
+
 app.get("/courses", async (req, res) => {
     try {
-        const result = await client.query("SELECT * FROM course");
+        const result = await client.query("SELECT * FROM course ORDER BY date_added DESC");
         res.send(result.rows);
     } catch(err) {
         console.log(err);
@@ -64,15 +119,74 @@ app.get("/courses", async (req, res) => {
     }
 });
 
-app.get("/enrollment", async (req, res) => {
+app.post('/new-course', async (req, res) => {
+    const query = "INSERT INTO course (name, duration, type, date_added) VALUES ($1, $2, $3, $4)";
+    const values = [
+        req.body.name,
+        req.body.duration,
+        req.body.type,
+        req.body.date
+    ]
     try {
-        const result = await client.query("SELECT * FROM enrollment");
+        const result = await client.query(query, values);
+        // console.log(result);
+        const activity = "New course, " + req.body.name + ", added.";
+        const logQuery = "INSERT INTO activity_log (activity, date) VALUES ($1, $2)";
+        const logValues = [
+            activity,
+            req.body.date
+        ];
+
+        await client.query(logQuery, logValues);
+        res.json({message: "Instructor added successfully", instructor: result.rows[0]});
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({message: "Error in adding new course or logging"});
+    }
+});
+
+app.get("/courses/:student_id", async (req, res) => {
+    const id = req.params.student_id;
+    const query = "SELECT * FROM course INNER JOIN enrollment ON course.course_id = enrollment.course_id WHERE enrollment.student_id = ($1)"
+    try {
+        const result = await client.query(query, [id]);
         res.send(result.rows);
     } catch(err) {
         console.log(err);
-        res.status(500).json({message: "Error fetching enrollments"});
+        res.status(500).json({message: "Error fetching courses/studentId"});
     }
 });
+
+app.get("/courses/detail/:course_id", async (req, res) => {
+    const id = req.params.course_id;
+    const query = "SELECT * FROM course WHERE course_id = ($1)"
+    try {
+        const result = await client.query(query, [id]);
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching courses/details/id"});
+    }
+});
+
+app.put('/courses/detail/:course_id', async (req, res) => {
+    const id = req.params.course_id;
+    const { name, description } = req.body;
+
+    try {
+        const query = "UPDATE course SET name = $1, description = $2 WHERE course_id = $3";
+        await client.query(query, [name, description, id]);
+
+        res.status(200).json({ message: 'Course updated successfully' });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message:'Error updating course' });
+    }
+});
+
+
+
 
 app.get("/instructorcourses", async (req, res) => {
     try {
@@ -94,7 +208,7 @@ app.get('/courses-instructor-studentscount-lessons', async (req, res) => {
                 COUNT(s.student_id) AS student_count,
                 l.lesson_id AS lesson_id,
                 l.title AS lesson_title,
-                l.file_data AS lesson_data
+                l.lesson_data AS lesson_data
             FROM course c
             LEFT JOIN instructorCourses ic ON c.course_id = ic.course_id
             LEFT JOIN instructor i ON ic.instructor_id = i.instructor_id
@@ -134,7 +248,7 @@ app.get('/courses-instructor-studentscount-lessons', async (req, res) => {
                 formattedCourses[row.course_id].lessons.push({
                     id: row.lesson_id,
                     title: row.lesson_title,
-                    file_data: row.lesson_data,
+                    lesson_data: row.lesson_data,
                 });
             }
         });
@@ -215,74 +329,7 @@ app.get('/courses-instructor-students', async (req, res) => {
 });
 
 
-app.get("/courses/:student_id", async (req, res) => {
-    const id = req.params.student_id;
-    const query = "SELECT * FROM course INNER JOIN enrollment ON course.course_id = enrollment.course_id WHERE enrollment.student_id = ($1)"
-    try {
-        const result = await client.query(query, [id]);
-        res.send(result.rows);
-    } catch(err) {
-        console.log(err);
-        res.status(500).json({message: "Error fetching courses/studentId"});
-    }
-});
 
-app.get("/courses/detail/:course_id", async (req, res) => {
-    const id = req.params.course_id;
-    const query = "SELECT * FROM course WHERE course_id = ($1)"
-    try {
-        const result = await client.query(query, [id]);
-        res.send(result.rows);
-    } catch(err) {
-        console.log(err);
-        res.status(500).json({message: "Error fetching courses/details/id"});
-    }
-});
-
-app.put('/courses/detail/:course_id', async (req, res) => {
-    const id = req.params.course_id;
-    const { name, description } = req.body;
-
-    try {
-        const query = "UPDATE course SET name = $1, description = $2 WHERE course_id = $3";
-        await client.query(query, [name, description, id]);
-
-        res.status(200).json({ message: 'Course updated successfully' });
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({ message:'Error updating course' });
-    }
-});
-
-
-app.get("/teachers", async (req, res) => {
-    try {
-        const result = await client.query("SELECT * FROM instructor");
-        res.send(result.rows);
-    } catch(err) {
-        console.log(err);
-        res.status(500).json({message: "Error fetching teachers"});
-    }
-});
-app.get("/teachers-len", async (req, res) => {
-    try {
-        const result = await client.query("SELECT COUNT(*) FROM instructor");
-        res.send(result.rows[0].count);
-    } catch(err) {
-        console.log(err);
-        res.status(500).json({message: "Error fetching teachers length"});
-    }
-});
-
-app.get("/activity-log", async (req, res) => {
-    try {
-        const result = await client.query("SELECT * FROM activity_log");
-        res.send(result.rows);
-    } catch(err) {
-        console.log(err);
-        res.status(500).json({message: "Error fetching activity log"});
-    }
-});
 
 app.get("/lessons", async (req, res) => {
     try {
@@ -327,10 +374,49 @@ app.post('/new-lesson', async (req, res) => {
 app.get('/lessons/:studentID', async (req, res) => {
     try {
         const id = req.params.course_id;
-        const query = `
-            SELECT * FROM lesson l
-            LEFT JOIN lesson_student ls ON ls.student_id = ($1)
-        `;
+        // const query = `
+        //     SELECT * FROM lesson l
+        //     LEFT JOIN lesson_student ls ON ls.student_id = ($1)
+        // `;
+        const query = "SELECT * FROM lesson_student WHERE student_id = ($1)";
+        
+        const result = await client.query(query, [id]);
+        res.send(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error grabbing lesson_student info' });
+    }
+});
+
+// app.get("/lessons", async (req, res) => {
+//     try {
+//         const result = await client.query("SELECT * FROM lesson");
+//         res.send(result.rows);
+//     } catch(err) {
+//         console.log(err);
+//         res.status(500).json({message: "Error fetching lessons"});
+//     }
+// });
+
+
+app.get("/assignments", async (req, res) => {
+    try {
+        const result = await client.query("SELECT * FROM assignment");
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching assignments"});
+    }
+});
+app.get('/assignments/:studentID', async (req, res) => {
+    try {
+        const id = req.params.course_id;
+        // const query = `
+        //     SELECT * FROM lesson l
+        //     LEFT JOIN lesson_student ls ON ls.student_id = ($1)
+        // `;
+        const query = "SELECT * FROM lesson_student WHERE student_id = ($1)";
+        
         const result = await client.query(query, [id]);
         res.send(result.rows);
     } catch (err) {
@@ -340,66 +426,27 @@ app.get('/lessons/:studentID', async (req, res) => {
 });
 
 
-app.post('/new-teacher', async (req, res) => {
-    const query = "INSERT INTO instructor (first_name, date_added, email, phone_number) VALUES ($1, $2, $3, $4) RETURNING *";
-    const values = [
-        req.body.name,
-        req.body.date,
-        req.body.email,
-        req.body.phone_number
-    ];
+
+app.get("/activity-log", async (req, res) => {
     try {
-        const result = await client.query(query, values);
-        console.log(result.rows[0]);
-
-        const activity = req.body.course_name === ""
-            ? 'New instructor, ' + req.body.name + ' added.'
-            : 'New instructor, ' + req.body.name + ' added to ' + req.body.course_name + '.';
-
-        const logQuery = "INSERT INTO activity_log (activity, date) VALUES ($1, $2) RETURNING *";
-        const logValues = [
-            activity,
-            req.body.date
-        ];
-
-
-        const logResult = await client.query(logQuery, logValues);
-        console.log(logResult.rows[0])
-        res.json({message: "Instructor added successfully", instructor: result.rows[0]});
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({message: "Error in adding new instructor or logging"});
+        const result = await client.query("SELECT * FROM activity_log ORDER BY date DESC");
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching activity log"});
     }
 });
 
 
-app.post('/new-course', async (req, res) => {
-    const query = "INSERT INTO course (name, duration, type, date_added) VALUES ($1, $2, $3, $4)";
-    const values = [
-        req.body.name,
-        req.body.duration,
-        req.body.type,
-        req.body.date
-    ]
+app.get("/enrollment", async (req, res) => {
     try {
-        const result = await client.query(query, values);
-        // console.log(result);
-        const activity = "New course, " + req.body.name + ", added.";
-        const logQuery = "INSERT INTO activity_log (activity, date) VALUES ($1, $2)";
-        const logValues = [
-            activity,
-            req.body.date
-        ];
-
-        await client.query(logQuery, logValues);
-        res.json({message: "Instructor added successfully", instructor: result.rows[0]});
-
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({message: "Error in adding new course or logging"});
+        const result = await client.query("SELECT * FROM enrollment");
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching enrollments"});
     }
 });
-
 
 app.post('/login', async (req, res) => {
     const query = 'SELECT * FROM student WHERE email = $1';

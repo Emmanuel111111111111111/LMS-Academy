@@ -3,47 +3,68 @@ import styles from './Overview.module.css';
 import { getImageUrl } from "../../utilis";
 import Pagination from "../../Components/Pagination/Pagination";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
+import { BASE_URL, TEST_URL } from "../../../config";
 
 export const Overview = () => {
 
-    const [ currentPage, setCurrentPage ] = useState(1);
-    const [ itemsPerPage, setItemsPerPage ] = useState(5);
     const [ name, setName ] = useState("");
     const [ id, setId ] = useState("");
+    const [ errorMessage, setErrorMessage ] = useState("");
+
     const [ completedLess, setCompletedLess ] = useState(0);
-    const [ dueLess, setDueLess ] = useState(0);
-    const [ dueAssign, setDueAssign ] = useState(0);
+    const [ dueLess, setDueLess ] = useState([]);
+    const [ dueAssign, setDueAssign ] = useState([]);
+    const [ coursess, setCourses ] = useState([]);
 
     const [ loadingCL, setLoadingCL ] = useState(false);
     const [ loadingDL, setLoadingDL ] = useState(false);
     const [ loadingDA, setLoadingDA ] = useState(false);
+    const [ loadingCourse, setLoadingCourse ] = useState(false);
 
+    const [ currentPage, setCurrentPage ] = useState(1);
+    const [ itemsPerPage, setItemsPerPage ] = useState(5);
     const navigate = useNavigate();
     const scroll = useRef(null);
 
     useEffect(() => {
-        console.log(sessionStorage);
+        fetchLessons();
         setName(sessionStorage.getItem("first_name"));
-        setId(sessionStorage.getItem("id"));
+        fetchCoursesTeachersStudents();
     }, []);
 
-    useEffect(() => {
-        fetchLessons()
-    })
+
 
     const fetchLessons = async () => {
         setLoadingCL(true);
         setLoadingDL(true);
-        setLoadingDA(true);
         try {
-            const result = await axios(TEST_URL + "/lessons/", {
+            const result = await axios(TEST_URL + `/lessons/${id}`, {
                 timeout: 10000
             });
-            // setLessonsLen(result.data);
-            // setIsLessLoading(false);
+            console.log(result.data);
+            setCompletedLess(result.data.filter(e => e.completed === true));
+            setLoadingCL(false);
+
+            setDueLess(result.data.filter(e => e.completed === false));
+            setLoadingDL(false);
         } catch (err) {
             console.log(err);
-            // setIsLessLoading(false)
+            setErrorMessage("Error fetching lessons. Try again later.")
+            setLoadingCL(false);
+            setLoadingDL(false);
+        }
+    }
+
+    const fetchCoursesTeachersStudents = async () => {
+        setLoadingCourse(true);
+        try {
+            const result = await axios(BASE_URL + "/courses-instructor-students");
+            setCourses(result.data.filter(e => e.students.some(student => String(student.id) === id)));
+            setLoadingCourse(false);
+        } catch (err) {
+            console.log(err);
+            setLoadingCourse(false);
         }
     }
 
@@ -163,6 +184,16 @@ export const Overview = () => {
         // window.scrollTo({ top: 50});
     };
 
+    const toProfilePage = () => {
+        window.location.href = "/dashboard/profile";
+    }
+    const toEventsPage = () => {
+        window.location.href = "/dashboard/calendar";
+    }
+    const toCoursesPage = () => {
+        window.location.href = "/dashboard/courses";
+    }
+
     return (
         <>
         <div className={styles.whole}>
@@ -176,7 +207,7 @@ export const Overview = () => {
                         <h2>{name}</h2>
                     </div>
                 </div>
-                <button>Edit Profile</button>
+                <button onClick={toProfilePage}>Edit Profile</button>
             </div>
 
             <div className={styles.overview}>
@@ -189,7 +220,7 @@ export const Overview = () => {
                             <div className={styles.blueBox}><img src={getImageUrl('completed.png')} /></div>
                         </div>
                         <div className={styles.loader}>
-                            5/8
+                            {loadingCL ? '...' : '5/8'}
                             <progress className={styles.progress} id="progress" value={5} max={8} />
                         </div>
                     </div>
@@ -200,7 +231,7 @@ export const Overview = () => {
                             <div className={styles.blueBox}><img src={getImageUrl('instructors.png')} /></div>
                         </div>
                         <div className={styles.loader}>
-                            3/12
+                            {loadingDL ? '...' : '3/12'}
                             <progress className={styles.progress} id="progress" value={3} max={12} />
                         </div>
                     </div>
@@ -211,7 +242,7 @@ export const Overview = () => {
                             <div className={styles.blueBox}><img src={getImageUrl('assignment.png')} /></div>
                         </div>
                         <div className={styles.loader}>
-                            4/6
+                            {loadingDA ? '...' : '4/6'}
                             <progress className={styles.progress} id="progress" value={4} max={6} />
                         </div>
                     </div>
@@ -222,41 +253,46 @@ export const Overview = () => {
             <div className={styles.courses}>
                 <div className={styles.coursesHeader}>
                     Active Courses
-                    <button onClick={()=>navigate('/dashboard/courses/active')}>View All <img src={getImageUrl('greyRightAngle.png')} alt="" /></button>
+                    <button onClick={toCoursesPage}>View All <img src={getImageUrl('greyRightAngle.png')} alt="" /></button>
                 </div>
-                {courses.slice(0,2).map((course, index) => (
-                    <div className={styles.course} key={index}>
-                        <div className={styles.courseImage}>
-                            <img src={getImageUrl('course_image.png')} />
-                        </div>
-                        <div className={styles.courseInfo}>
-                            <div className={styles.infoHeader}>
-                                <h3>{course.title}</h3>
-                                <button><img src={getImageUrl('threeDots.png')} alt="" /></button>
+                {courses.length < 1 ? (
+                    <h4 className={styles.loading}>NO ACTIVE COURSES</h4>
+                ) : (
+                    courses.slice(0,2).map((course, index) => (
+                        <div className={styles.course} key={index}>
+                            <div className={styles.courseImage}>
+                                <img src={getImageUrl('course_image.png')} />
                             </div>
-                            <p>{course.description}</p>
-                            <div className={styles.courseData}>
-                                <div className={styles.profile}><img src={getImageUrl('profile.svg')} alt="" />{course.teacher}</div>
-                                <div><img src={getImageUrl('instructors.png')} alt="" />Lesson {course.currentLesson}</div>
-                                <div><img src={getImageUrl('assignment.png')} alt="" />Assignment {course.currentAssignment}</div>
-                                <div><img src={getImageUrl('timer.png')} alt="" />{course.time}</div>
-                            </div>
-                            <div className={styles.withLoader}>
-                                <div className={styles.coursesLoader}>
-                                    {course.currentLesson}/{course.totalLessons} Modules
-                                    <progress className={styles.progress} id="progress" max={course.totalLessons} value={course.currentLesson} />
+                            <div className={styles.courseInfo}>
+                                <div className={styles.infoHeader}>
+                                    <h3>{course.title}</h3>
+                                    <button><img src={getImageUrl('threeDots.png')} alt="" /></button>
                                 </div>
-                                <button>Continue Course</button>
+                                <p>{course.description}</p>
+                                <div className={styles.courseData}>
+                                    <div className={styles.profile}><img src={getImageUrl('profile.svg')} alt="" />{course.teacher}</div>
+                                    <div><img src={getImageUrl('instructors.png')} alt="" />Lesson {course.currentLesson}</div>
+                                    <div><img src={getImageUrl('assignment.png')} alt="" />Assignment {course.currentAssignment}</div>
+                                    <div><img src={getImageUrl('timer.png')} alt="" />{course.time}</div>
+                                </div>
+                                <div className={styles.withLoader}>
+                                    <div className={styles.coursesLoader}>
+                                        {course.currentLesson}/{course.totalLessons} Modules
+                                        <progress className={styles.progress} id="progress" max={course.totalLessons} value={course.currentLesson} />
+                                    </div>
+                                    <button>Continue Course</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))
+                )}
+                
             </div>
 
             <div className={styles.events}>
                 <div className={styles.eventsHeader}>
                     Upcoming Events
-                    <button>View All<img src={getImageUrl('greyRightAngle.png')} alt="" /></button>
+                    <button onClick={toEventsPage}>View All<img src={getImageUrl('greyRightAngle.png')} alt="" /></button>
                 </div>
                 
                 <table className={styles.eventsTable} ref={scroll}>
