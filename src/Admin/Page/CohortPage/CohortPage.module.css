@@ -293,7 +293,8 @@
     font-weight: 500;
     color: #4B5563;
 }
-.contentBody input {
+.contentBody input,
+.contentBody select {
     padding: 11px;
     border-radius: 10px;
     border: 1.5px solid #B4BCDD;

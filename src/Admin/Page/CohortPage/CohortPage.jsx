@@ -4,42 +4,74 @@ import styles from "./CohortPage.module.css";
 import axios from 'axios';
 import { format } from "date-fns";
 import Modal from "../ActiveCourses/Modal";
+import { BASE_URL, TEST_URL } from "../../../../config";
 
 export const CohortPage = () => {
 
+    const [ cohorts, setCohorts ] = useState([]);
     const [ isOpenCohort, setIsOpenCohort ] = useState(false);
     const [ isLoading, setIsLoading ] = useState(false);
+    const [ isLoading2, setIsLoading2 ] = useState(false);
 
 
-    const cohorts = [
-        {
-            number: 1,
-            description: 'Description',
-            startDate: '2024-01-01',
-            endDate: '2024-04-30',
-            studentsNo: 124,
-            totalCourses: 8,
-            completedCourses: 5
-        },
-        {
-            number: 2,
-            description: 'Description',
-            startDate: '2024-05-01',
-            endDate: '2024-08-31',
-            studentsNo: 124,
-            totalCourses: 8,
-            completedCourses: 8
-        },
-        {
-            number: 3,
-            description: 'Description',
-            startDate: '2024-09-01',
-            endDate: '2024-12-31',
-            studentsNo: 124,
-            totalCourses: 10,
-            completedCourses: 3
-        },
-    ]
+    useEffect(() => {
+        fetchCohorts();
+    }, []);
+
+    const fetchCohorts = async () => {
+        setIsLoading(true);
+        try {
+            const result = await axios(BASE_URL + "/cohorts", {
+                timeout: 10000
+            });
+            setCohorts(result.data);
+            setIsLoading(false);
+        } catch (err) {
+            console.log(err);
+            setIsLoading(false);
+            // setErrorMessage(true);
+        }
+    }
+    
+
+    const [ newCohortValues, setNewCohortValues ] = useState({
+        name: '',
+        cohort_number: '',
+        description: '',
+        start_date: '',
+        end_date: '',
+        year: new Date().toISOString().slice(0,4),
+        date_added: new Date().toISOString().slice(0, 19).replace('T', ' '),
+    })
+
+    const handleInput = (event) => {
+        setNewCohortValues(prev => ({ ...prev, [event.target.name]: event.target.value }));
+        if (event.target.name === 'end_date') {
+            setNewCohortValues(prev => ({...prev, 'year': new Date(event.target.value).toISOString().slice(0,4)}))
+        }
+    }
+    const handleSubmitCohort = async (event) => {
+        event.preventDefault();
+        setIsLoading2(true);
+        try {
+            axios.post(BASE_URL + '/new-cohort', newCohortValues)
+            .then(res => {
+                console.log(res);
+                setIsOpenCohort(false);
+                handleSuccess();
+                fetchCohorts();
+            })
+        } catch (err) {
+            console.log(err);
+            setIsLoading2(true);
+        }
+    }
+
+    const handleSuccess = () => {
+        // setOpenSuccess(true);
+        // setTimeout(() => setOpenSuccess(false), 3000);
+        // setTimeout(() => fetchCoursesTeachersStudents(), 3000);
+    }
 
     function handleViewCohort(id) {
         window.location.href = `/admin-dashboard/cohort/${id}`;
@@ -76,15 +108,16 @@ export const CohortPage = () => {
                                 <div className={styles.cohortBox}>
                                     <div className={styles.infoHeader}>
                                         <div>
-                                            <h3>Cohort {coho.number}</h3>
+                                            {/* <h3>Cohort {coho.number}</h3> */}
+                                            <h3>{coho.cohort_name}</h3>
                                             <p>{coho.description}</p>
                                         </div>
-                                        <div className={styles.number}>{coho.number}</div>
+                                        <div className={styles.number}>{coho.cohort_number}</div>
                                     </div>
                                     <div className={styles.cohortData}>
                                         <div>
                                             <img src={getImageUrl('blueCalendar.png')} alt="" />
-                                            {format( new Date(coho.startDate), 'MMMM')} - {format( new Date(coho.endDate), 'MMMM')}
+                                            {format( new Date(coho.start_date), 'MMMM')} - {format( new Date(coho.end_date), 'MMMM')}
                                         </div>
                                         <div>
                                             <img src={getImageUrl('forStudents.png')} alt="" />
@@ -95,7 +128,7 @@ export const CohortPage = () => {
                                         <p>{coho.completedCourses}/{coho.totalCourses}</p>
                                         <progress className={`${coho.totalCourses === coho.completedCourses ? styles.complete : ''} ${styles.progress}`} id="progress" max={coho.totalCourses} value={coho.completedCourses} />
                                     </div>
-                                    <button className={styles.viewButton} onClick={()=>handleViewCohort(coho.number)}>
+                                    <button className={styles.viewButton} onClick={()=>handleViewCohort(coho.cohort_id)}>
                                         <img src={getImageUrl('view.png')} alt="" />
                                         View
                                     </button>
@@ -114,34 +147,48 @@ export const CohortPage = () => {
                     <button onClick={()=>setIsOpenCohort(false)} className={styles.close}><img src={getImageUrl('close.png')} /></button>
                 </div>
 
-                <form action={''} className={styles.contentBody}>
+                <form onSubmit={handleSubmitCohort} className={styles.contentBody}>
                     
-                    <div className={styles.form}>
-                        <label htmlFor="title">Title</label>
-                        <input type="text" name="title" id="title" placeholder="Enter cohort title" />
+                    <div className={styles.flex}>
+
+                        <div className={styles.form}>
+                            <label htmlFor="title">Title</label>
+                            <input type="text" name="name" id="name" placeholder="Enter cohort title" onInput={handleInput} required />
+                        </div>
+
+                        <div className={styles.form}>
+                            <label htmlFor="title">Cohort Number</label>
+                            <select name="cohort_number" id="cohort_number" onInput={handleInput}>
+                                <option value={null}>Select which cohort</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                        </div>
                     </div>
                     
                     <div className={styles.form}>
                         <label htmlFor="description">Description</label>
-                        <textarea name="description" id="" placeholder="Enter description"></textarea>
+                        <textarea name="description" id="" placeholder="Enter description" onInput={handleInput}></textarea>
                     </div>
                     
                     <div className={styles.flex}>
                         <div className={styles.form}>
                             <label htmlFor="title">Start Date</label>
-                            <input type="date" name="start_date" id="start_date" />
+                            <input type="date" name="start_date" id="start_date" onInput={handleInput} required />
                         </div>
 
                         <div className={styles.form}>
                             <label htmlFor="title">End Date</label>
-                            <input type="date" name="end_date" id="end_date" placeholder="Enter cohort title" />
+                            <input type="date" name="end_date" id="end_date" onInput={handleInput} required />
                         </div>
                         
                     </div>
+    
+                    <button className={styles.cohortButton}>{isLoading2 ? "..." : "Submit"}</button>
 
                 </form>
 
-                <button className={styles.cohortButton} type="button">Submit</button>
 
             </div>
         </Modal>

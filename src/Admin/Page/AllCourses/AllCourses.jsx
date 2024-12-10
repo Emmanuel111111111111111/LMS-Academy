@@ -32,7 +32,7 @@ export const AllCourses = () => {
         setIsLoading(true);
         try {
             const result = await axios(BASE_URL + "/courses-instructor-studentscount-lessons", {
-                timeout: 10000
+                timeout: 20000
             });
             setCourses(result.data.sort((a,b)=> new Date(b.date_added) - new Date(a.date_added)));
             setIsLoading(false);

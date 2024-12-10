@@ -427,6 +427,123 @@ app.get('/assignments/:studentID', async (req, res) => {
 
 
 
+app.get("/cohorts", async (req, res) => {
+    try {
+        const result = await client.query("SELECT * FROM cohort ORDER BY date_added DESC");
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching cohorts"});
+    }
+});
+app.get("/cohorts/:cohort_id", async (req, res) => {
+    const id = req.params.cohort_id;
+    const query = "SELECT * FROM cohort WHERE cohort_id = ($1)"; 
+    try {
+        const result = await client.query(query, [id]);
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching cohort"});
+    }
+});
+app.post('/new-cohort', async (req, res) => {
+    const query = "INSERT INTO cohort (cohort_name, cohort_number, description, start_date, end_date, cohort_year, date_added) VALUES ($1, $2, $3, $4, $5, $6, $7)";
+    const values = [
+        req.body.name,
+        req.body.cohort_number,
+        req.body.description,
+        req.body.start_date,
+        req.body.end_date,
+        req.body.year,
+        req.body.date_added
+    ]
+    try {
+        const result = await client.query(query, values);
+        
+        const activity = "New cohort, " + req.body.name + ", added.";
+        const logQuery = "INSERT INTO activity_log (activity, date) VALUES ($1, $2)";
+        const logValues = [
+            activity,
+            req.body.date_added
+        ];
+
+        await client.query(logQuery, logValues);
+        res.json({message: "Cohort added successfully", instructor: result.rows[0]});
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({message: "Error in adding new cohort or logging"});
+    }
+});
+
+app.get ("/cohorts-details/:cohort_id", async (req, res) => {
+    const id = req.params.cohort_id;
+    const query = `
+        SELECT 
+            cohort.cohort_id,
+            cohort.cohort_name,
+            cohort.description,
+            cohort.start_date,
+            cohort.end_date,
+            cohort.cohort_number,
+            COALESCE(
+                JSON_AGG(
+                    JSON_BUILD_OBJECT(
+                        'course_id', course.course_id,
+                        'course_name', course.name,
+                        'description', course.description,
+                        'duration', course.duration,
+                        'course_img', course.course_img,
+                        'student_count', COALESCE(student_counts.student_count, 0),
+                        'lesson_count', COALESCE(lesson_counts.lesson_count, 0)
+                    )
+                ) FILTER (WHERE course.course_id IS NOT NULL), 
+                '[]'::JSON
+            ) AS course
+        FROM 
+            cohort
+        LEFT JOIN 
+            cohort_course ON cohort.cohort_id = cohort_course.cohort_id
+        LEFT JOIN 
+            course ON cohort_course.course_id = course.course_id
+        LEFT JOIN (
+            SELECT 
+                course_id,
+                COUNT(student_id) AS student_count
+            FROM 
+                enrollment
+            GROUP BY 
+                course_id
+        ) student_counts ON course.course_id = student_counts.course_id
+        LEFT JOIN (
+            SELECT 
+                course_id,
+                COUNT(lesson_id) AS lesson_count
+            FROM 
+                lesson
+            GROUP BY 
+                course_id
+        ) lesson_counts ON course.course_id = lesson_counts.course_id
+        WHERE cohort.cohort_id = ($1)
+        GROUP BY 
+            cohort.cohort_id
+        ORDER BY 
+            cohort.cohort_id;
+        `
+
+    try {
+        const result = await client.query(query, [id]);
+        res.send(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: `Error grabbing cohort's info` });
+    }
+        
+})
+
+
+
 app.get("/activity-log", async (req, res) => {
     try {
         const result = await client.query("SELECT * FROM activity_log ORDER BY date DESC");
