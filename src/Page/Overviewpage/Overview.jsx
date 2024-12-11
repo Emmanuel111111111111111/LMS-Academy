@@ -326,7 +326,9 @@ export const Overview = () => {
                         </select>
                         Rows
                     </div>
-                    <Pagination className={styles.pag}
+                    
+                    <Pagination
+                        className={styles.pag}
                         currentData={events}
                         currentPage={currentPage}
                         itemsPerPage={itemsPerPage}

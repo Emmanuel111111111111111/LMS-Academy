@@ -154,7 +154,7 @@ export const AllCourses = () => {
         console.log(newCourseValues);
         setIsLoading2(true);
         try {
-            const response = await axios.post(TEST_URL + '/new-course', newCourseValues, {
+            const response = await axios.post(BASE_URL + '/new-course', newCourseValues, {
                 timeout: 20000,
             });
             console.log(response);
