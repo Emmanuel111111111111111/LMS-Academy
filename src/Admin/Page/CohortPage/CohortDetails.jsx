@@ -12,10 +12,14 @@ export const CohortDetails = () => {
 
     const { id } = useParams();
 
-    const [ isOpenCourse, setIsOpenCourse ] = useState(false);
-    const [ isLoading, setIsLoading ] = useState(false);
     const [ cohort, setCohort ] = useState({});
     const [ allCourses, setAllCourses ] = useState([]);
+    const [ cohortCourses, setCohortCourses ] = useState([]);
+
+    const [ isOpenCourse, setIsOpenCourse ] = useState(false);
+    const [ dateError, setDateError ] = useState(false);
+    const [ isLoading, setIsLoading ] = useState(false);
+    const [ isLoading2, setIsLoading2 ] = useState(false);
 
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ itemsPerPage, setItemsPerPage ] = useState(5);
@@ -33,11 +37,16 @@ export const CohortDetails = () => {
         setIsLoading(true);
         try {
             const result = await axios(BASE_URL + `/cohorts-details/${id}`);
-            console.log(result.data[0]);
-            setCohort(result.data[0])
-            setIsLoading(false);
+            if (result.data[0] === undefined || result.data[0] === null) {
+                window.location.href = "/admin-dashboard/cohort";
+            } else {
+                setCohort(result.data[0]);
+                setCohortCourses(result.data[0].course);
+                setIsLoading(false);
+            }
         } catch (err) {
             console.log(err);
+            window.location.pathname === "/admin-dashboard/cohort"
             setIsLoading(false);
         }
     }
@@ -51,11 +60,59 @@ export const CohortDetails = () => {
         }
     }
 
+
+
+    const [ addedCourseValues, setAddedCourseValues ] = useState({
+        cohort_id: '',
+        cohort_name: '',
+        course_id: 0,
+        course_name: 0,
+        end_date: '',
+        date_added: new Date().toISOString().slice(0, 19).replace('T', ' '),
+    })
+
+    const handleInput = (event) => {
+        setDateError(false);
+        if ((event.target.name === 'end_date' && event.target.value < cohort.start_date)
+            || (event.target.name === 'end_date' && event.target.value > cohort.end_date)) {
+            console.log('before');
+            setDateError(true);
+            return
+        }
+        else if (event.target.name === 'course_id') {
+            const nameId = event.target.value.split('-');
+            setAddedCourseValues(prev => ({ ...prev, 'course_id': nameId[0] }));
+            setAddedCourseValues(prev => ({ ...prev, 'course_name': nameId[1] }));
+        }
+        else {
+            setAddedCourseValues(prev => ({ ...prev, [event.target.name]: event.target.value }));
+        }
+        setAddedCourseValues(prev => ({ ...prev, 'cohort_id': cohort.cohort_id }));
+        setAddedCourseValues(prev => ({ ...prev, 'cohort_name': cohort.cohort_name }));
+    }
+
+    const submitNewCourse = async (event) => {
+        event.preventDefault();
+        setIsLoading2(true);
+        try {
+            const response = await axios.post(TEST_URL + '/new-cohort-course', addedCourseValues);
+            console.log(response);
+            setIsOpenCourse(false);
+            // handleSuccess();
+            fetchCohortData();
+            setIsLoading2(false);
+            console.log("added.")
+        } catch (err) {
+            console.log(err);
+            setIsLoading2(false);
+        }
+    }
+
     
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentCourses = cohort.course?.slice(indexOfFirstItem, indexOfLastItem);
+    const currentCourses = cohortCourses.slice(indexOfFirstItem, indexOfLastItem);
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
@@ -119,7 +176,7 @@ export const CohortDetails = () => {
                                 </div>
                                 <div>
                                     <img src={getImageUrl('forStudents.png')} alt="" />
-                                    {cohort.studentsNo} Students
+                                    {cohort.course.reduce((sum, item) => sum + item.student_count, 0)} Students
                                 </div>
                             </div>
                             <div className={styles.cohortLoader2}>
@@ -188,6 +245,8 @@ export const CohortDetails = () => {
             }
         </div>
 
+
+
         <Modal isOpen={isOpenCourse}>
             <div className={styles.addCohort}>
                 <div className={styles.head}>
@@ -198,34 +257,42 @@ export const CohortDetails = () => {
                     <button onClick={()=>setIsOpenCourse(false)} className={styles.close}><img src={getImageUrl('close.png')} /></button>
                 </div>
 
-                <form action={''} className={styles.contentBody}>
+                <form onSubmit={submitNewCourse} className={styles.contentBody}>
                     
                     <div className={styles.form}>
                         <label htmlFor="course">Course</label>
-                        <select name="course" id="course">
+                        <select name="course_id" id="course_id" onInput={handleInput} required>
                             <option value="">Select course</option>
                             {allCourses.map((cours, index) => (
-                                <option key={index} value={cours.course_id}>{cours.name}</option>
+                                <option key={index} value={cours.course_id + '-' + cours.name}>{cours.name}</option>
                             ))}
                         </select>
                     </div>
-                    
-                    <div className={styles.flex}>
+
+                    {/* <div className={styles.flex}>
                         <div className={styles.form}>
                             <label htmlFor="title">Start Date</label>
-                            <input type="text" name="start_date" id="start_date" value={format(new Date(cohort.start_date), 'MM/dd/yyyy')} />
+                            <input type="text" name="start_date" id="start_date" value={cohort.start_date ? format(new Date(cohort.start_date), 'MM/dd/yyyy'): ''} readOnly  />
                         </div>
 
                         <div className={styles.form}>
                             <label htmlFor="title">End Date</label>
-                            <input type="date" name="end_date" id="end_date" placeholder="Enter cohort title" />
-                        </div>
-                        
-                    </div>
+                            <input
+                                type="date"
+                                name="end_date"
+                                id="end_date"
+                                placeholder="Enter cohort title"
+                                onInput={handleInput}
+                                min={cohort.start_date}
+                                required />
+                        </div>                        
+                    </div> */}
+                    {/* <p style={{marginTop: '-12px', color: 'red'}}>{dateError && "End date must be after start date"}</p>                     */}
+
+                    <button className={styles.cohortButton} type="submit">{isLoading2 ? "..." : "Submit"}</button>
 
                 </form>
 
-                <button className={styles.cohortButton} type="button">Submit</button>
 
             </div>
         </Modal>

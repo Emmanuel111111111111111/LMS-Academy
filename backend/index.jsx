@@ -388,15 +388,6 @@ app.get('/lessons/:studentID', async (req, res) => {
     }
 });
 
-// app.get("/lessons", async (req, res) => {
-//     try {
-//         const result = await client.query("SELECT * FROM lesson");
-//         res.send(result.rows);
-//     } catch(err) {
-//         console.log(err);
-//         res.status(500).json({message: "Error fetching lessons"});
-//     }
-// });
 
 
 app.get("/assignments", async (req, res) => {
@@ -542,6 +533,30 @@ app.get ("/cohorts-details/:cohort_id", async (req, res) => {
         
 })
 
+app.post('/new-cohort-course', async (req, res) => {
+    const query = "INSERT INTO cohort_course (cohort_id, course_id) VALUES ($1, $2)";
+    const values = [
+        req.body.cohort_id,
+        req.body.course_id
+    ]
+    try {
+        const result = await client.query(query, values);
+        
+        const activity = "New course, " + req.body.course_name + " added to, " + req.body.cohort_name + ", added.";
+        const logQuery = "INSERT INTO activity_log (activity, date) VALUES ($1, $2)";
+        const logValues = [
+            activity,
+            req.body.date_added
+        ];
+
+        await client.query(logQuery, logValues);
+        res.json({message: "Course added to Cohort successfully", cohort: result.rows[0]});
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({message: "Error in adding new course to cohort or logging"});
+    }
+})
 
 
 app.get("/activity-log", async (req, res) => {
