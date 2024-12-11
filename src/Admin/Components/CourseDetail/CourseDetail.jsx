@@ -11,17 +11,18 @@ import "../../../App.css";
 
 export const CourseDetail = () => {
 
-    const location = useLocation();
-    const navigate = useNavigate();
-    // const [ courseID, setCourseID ] = useState(location.state);
-    const { courseID } = useParams();
+    const {courseId} = useParams();
     const [ course, setCourse ] = useState([]);
+    const [ charCount, setCharCount ] = useState(course?.description != null ? (255 - course.description.length) : 255);
     const [ isLoading, setIsLoading ] = useState(false);
-    const [ charCount, setCharCount ] = useState(course.description != null ? (255 - course.description.length) : 255);
+    
+    const [ actionsOpen, setActionsOpen ] = useState({});
     const [ isOpenClass, setIsOpenClass ] = useState(false);
     const [ newLessonTitle, setNewLessonTitle ] = useState('');
     const [ titleErrorMsg, setTitleErrorMsg ] = useState(false);
-    const [ actionsOpen, setActionsOpen ] = useState({});
+
+    const location = useLocation();
+    const navigate = useNavigate();
     const actionsRef = useRef(null);
 
 
@@ -33,8 +34,8 @@ export const CourseDetail = () => {
         setIsLoading(true);
         try {
             const result = await axios(BASE_URL + `/courses-instructor-studentscount-lessons`);
-            console.log(result.data.filter(e => e.course_id === courseID)[0]);
-            setCourse(result.data.filter(e => e.course_id === courseID)[0]);
+            console.log(result.data.filter(e => e.course_id === parseInt(courseId))[0]);
+            setCourse(result.data.filter(e => e.course_id === parseInt(courseId))[0]);
             setIsLoading(false);
         } catch (err) {
             console.log(err);
@@ -140,28 +141,16 @@ export const CourseDetail = () => {
     }, []);
 
 
-
-    const classes = [
-        {
-            week: 1,
-            title: 'Testerrrr'
-        },
-        {
-            week: 2,
-            title: 'Second testerrrrr'
-        }
-    ]
-
     return(
         <>        
-        {/* {isLoading ? <p className={styles.loading}>Loading...</p> : */}
+        {isLoading ? <p className={styles.loading}>Loading...</p> :
 
         <form className={styles.whole} onSubmit={handleSubmit}>
 
             <div className={styles.breadcrumb}><a href="/admin-dashboard/courses">Courses</a> {'>'} {course.name}</div>
 
             <div className={styles.courseTitle}>
-                <h3>Course Name</h3>
+                <h3>{course.name}</h3>
                 <div className={styles.buttons}>
                     <button className={styles.buttonOne} onClick={handleCancel} type="button">Cancel</button>
                     <button className={styles.buttonTwo} type="submit">Save</button>
@@ -210,8 +199,8 @@ export const CourseDetail = () => {
                             <h5>Classes</h5>
                             <button type="button" onClick={()=>setIsOpenClass(true)}>+ Add new class</button>
                         </div>
-                        {/* {course.lessons && course.lessons.map((sec, i) => ( */}
-                        {classes.sort((a,b) => a.week - b.week).map((cla, i) => (
+                        {course.lessons && course.lessons.map((cla, i) => (
+                        // {classes.sort((a,b) => a.week - b.week).map((cla, i) => (
                             <div className={styles.section} key={i}>
                                 <div className={styles.text}>
                                     <img src={getImageUrl('reorder.png')} alt="" />
@@ -303,7 +292,7 @@ export const CourseDetail = () => {
             </div>
 
         </form>
-        {/* } */}
+        }
 
         <Modal isOpen={isOpenClass}>
             <div className={styles.addContent}>

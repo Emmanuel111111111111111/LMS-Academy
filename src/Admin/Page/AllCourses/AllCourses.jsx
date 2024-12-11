@@ -19,7 +19,10 @@ export const AllCourses = () => {
     const [ actionsOpen, setActionsOpen ] = useState({});
     const [ selected, setSelected ] = useState({});
     const [ isLoading, setIsLoading ] = useState(false);
+    const [ isLoading2, setIsLoading2 ] = useState(false);
     const [ errorMessage, setErrorMessage ] = useState(false);
+    const [ currentPage, setCurrentPage ] = useState(1);
+    const [ itemsPerPage, setItemsPerPage ] = useState(5);
     const actionsRef = useRef(null);
     const createRef = useRef(null);
     const navigate = useNavigate();
@@ -53,6 +56,7 @@ export const AllCourses = () => {
             result.months = interval.months || 0;
             result.weeks = interval.weeks || 0;
             result.days = interval.days || 0;
+            result.hours = interval.hours || 0;
         
             return result;
         }
@@ -86,6 +90,44 @@ export const AllCourses = () => {
         };
     }
 
+    const students = [
+        {
+            student_first_name: 'Feranmi',
+            student_last_name: 'Jones',
+            student_phone_no: '+23490543322',
+            student_email: 'FeranmiJ@gm...',
+            date: '12/12/2024'
+        },
+        {
+            student_first_name: 'Feranmi',
+            student_last_name: 'Jones',
+            student_phone_no: '+23490543322',
+            student_email: 'FeranmiJ@gm...',
+            date: '12/12/2024'
+        },
+        {
+            student_first_name: 'Feranmi',
+            student_last_name: 'Jones',
+            student_phone_no: '+23490543322',
+            student_email: 'FeranmiJ@gm...',
+            date: '12/12/2024'
+        },
+        {
+            student_first_name: 'Feranmi',
+            student_last_name: 'Jones',
+            student_phone_no: '+23490543322',
+            student_email: 'FeranmiJ@gm...',
+            date: '12/12/2024'
+        },
+        {
+            student_first_name: 'Feranmi',
+            student_last_name: 'Jones',
+            student_phone_no: '+23490543322',
+            student_email: 'FeranmiJ@gm...',
+            date: '12/12/2024'
+        }
+    ]
+
 
     const [ newCourseValues, setNewCourseValues ] = useState({
         name: '',
@@ -109,14 +151,23 @@ export const AllCourses = () => {
     }
     const handleSubmitCourse = async (event) => {
         event.preventDefault();
-        setOpenCreate(false);
         console.log(newCourseValues);
-        axios.post(BASE_URL + '/new-course', newCourseValues)
-            .then(res => {
-                console.log(res);
-                handleSuccess('course');
-            })
-            .catch(err => console.log(err));
+        setIsLoading2(true);
+        try {
+            const response = await axios.post(TEST_URL + '/new-course', newCourseValues, {
+                timeout: 20000,
+            });
+            console.log(response);
+
+            setOpenCreate(false);
+            handleSuccess('course');
+            setIsLoading2(false);
+            console.log("added.")
+            
+        } catch (err) {
+            console.log(err);
+            setIsLoading2(false);
+        }
     }
 
 
@@ -148,6 +199,22 @@ export const AllCourses = () => {
         navigate(`detail/${course.course_id}`, {state: course.course_id });
         window.scrollTo({ top: 0});
     }
+
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentStudents = students.slice(indexOfFirstItem, indexOfLastItem);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
+    const handlePageNumber = (itemNumber) => {
+        setItemsPerPage(itemNumber);
+        setCurrentPage(1);
+        scroll.current.scrollIntoView();
+        // window.scrollTo({ top: 50});
+    };
 
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
@@ -232,7 +299,7 @@ export const AllCourses = () => {
                                     </select>
                                 </div>
     
-                                <button className={styles.submit}>Submit</button>
+                                <button className={styles.submit}>{isLoading2 ? "..." : "Submit"}</button>
 
                             </form>
                             
@@ -289,14 +356,13 @@ export const AllCourses = () => {
         </div>
 
         <Modal isOpen={openCourseInfo}>
-            <>
             <div className={styles.courseInfo_modal}>
                 <div className={styles.head}>
-                    <h3>{buttonType === "COURSE" ? "Course Details" : buttonType === "ASSIGNMENTS" ? "Create Assignment" : "Course Details"}</h3>
+                    <h3>Course Details</h3>
                     <button onClick={handleCloseCourseInfo} className={styles.close}><img src={getImageUrl('close.png')} /></button>
                 </div>
                 <div style={{overflow: 'auto', display: 'flex',flexDirection: 'column'}}>
-                    <p className={styles.texts}>Course details</p>
+                    <p className={styles.texts}>{selected.name}</p>
                     <hr className={styles.line}></hr>
 
                     <div className={styles.Modal}>
@@ -308,14 +374,12 @@ export const AllCourses = () => {
                                 <div className={styles.crunb}><h3>{selected.name}<span>Started</span></h3></div>
                                 <button><img src={getImageUrl('threeDots.png')} alt="" /></button>
                             </div>
-                            <p>Lorem ipsum dolor sit amet consectetur.Feugia t blandit turpis. lorem ipsum dolor sit
-                                amet consectetur. Feugia t blandit turpis...Lorem ipsum dolor sit amet consectetur. Feugia t blandit turpis.Lorem ipsum.
-                            </p>
+
+                            <p>{selected.description}</p>
+
                             <div className={styles.coursesDatas}>
-                                <div className={styles.bead}>
-                                    <div className={styles.pro}><img src={getImageUrl('profile.svg')} alt="" />{selected.teacher}</div>
-                                    <div className={styles.stud}><img src={getImageUrl('pic.png')} alt="" />{selected.students} Students</div>
-                                </div>
+                                <div className={styles.pro}><img src={getImageUrl('profile.svg')} alt="" />{selected.teacher}</div>
+                                <div className={styles.stud}><img src={getImageUrl('pic.png')} alt="" />{selected.students} Students</div>
                             </div>
                         </div>
                         
@@ -331,51 +395,18 @@ export const AllCourses = () => {
                             <th>Action</th>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><input type="checkbox" /></td>
-                                <td>Feranmi</td>
-                                <td>Jones</td>
-                                <td>+23490543322</td>
-                                <td>FeranmiJ@gm...</td>
-                                <td>Jones</td>
-                                <td><button  className={styles.app}>Approve</button></td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" /></td>
-                                <td>Feranmi</td>
-                                <td>Jones</td>
-                                <td>+23490543322</td>
-                                <td>FeranmiJ@gm...</td>
-                                <td>Jones</td>
-                                <td><button  className={styles.app}>Approve</button></td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" /></td>
-                                <td>Feranmi</td>
-                                <td>Jones</td>
-                                <td>+23490543322</td>
-                                <td>FeranmiJ@gm...</td>
-                                <td>Jones</td>
-                                <td><button  className={styles.app}>Approve</button></td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" /></td>
-                                <td>Feranmi</td>
-                                <td>Jones</td>
-                                <td>+23490543322</td>
-                                <td>FeranmiJ@gm...</td>
-                                <td>Jones</td>
-                                <td><button  className={styles.app}>Approve</button></td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" /></td>
-                                <td>Feranmi</td>
-                                <td>Jones</td>
-                                <td>+23490543322</td>
-                                <td>FeranmiJ@gm...</td>
-                                <td>Jones</td>
-                                <td><button  className={styles.app}>Approve</button></td>
-                            </tr>
+                            {currentStudents.map((stud, ind) => (
+                                <tr>
+                                    <td><input type="checkbox" /></td>
+                                    <td>{stud.student_first_name}</td>
+                                    <td>{stud.student_last_name}</td>
+                                    <td>{stud.student_phone_no}</td>
+                                    <td>{stud.student_email}</td>
+                                    <td>{stud.date}</td>
+                                    <td><button className={styles.app}>Approve</button></td>
+                                </tr>
+                            ))}
+                            
                         </tbody>
                     </table>
                     <div style={{w: "100%", display: "flex", alignItems: 'center'}}>
@@ -389,19 +420,19 @@ export const AllCourses = () => {
                             Row
                         </div>
                         
-                        {/* <Pagination className={styles.pag}
-                                
-                                currentPage={currentPage}
-                                itemsPerPage={itemsPerPage}
-                                onPageChange={handlePageChange}
-                        />        */}
+                        <Pagination
+                            className={styles.pag}
+                            currentData={currentStudents}
+                            currentPage={currentPage}
+                            itemsPerPage={itemsPerPage}
+                            onPageChange={handlePageChange}
+                        />       
                     </div>
                         
                     <button className={styles.yes}>Submit</button>
                 </div>
                         
             </div>
-            </>
         </Modal>
 
         <Modal isOpen={openSuccess}>

@@ -129,7 +129,6 @@ app.post('/new-course', async (req, res) => {
     ]
     try {
         const result = await client.query(query, values);
-        // console.log(result);
         const activity = "New course, " + req.body.name + ", added.";
         const logQuery = "INSERT INTO activity_log (activity, date) VALUES ($1, $2)";
         const logValues = [
