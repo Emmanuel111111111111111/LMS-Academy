@@ -468,6 +468,68 @@ app.post('/new-cohort', async (req, res) => {
     }
 });
 
+app.get ("/cohorts-details", async (req, res) => {
+    const query = `
+        SELECT 
+            cohort.cohort_id,
+            cohort.cohort_name,
+            cohort.description,
+            cohort.start_date,
+            cohort.end_date,
+            cohort.cohort_number,
+            COALESCE(
+                JSON_AGG(
+                    JSON_BUILD_OBJECT(
+                        'course_id', course.course_id,
+                        'course_name', course.name,
+                        'description', course.description,
+                        'duration', course.duration,
+                        'course_img', course.course_img,
+                        'student_count', COALESCE(student_counts.student_count, 0),
+                        'lesson_count', COALESCE(lesson_counts.lesson_count, 0)
+                    )
+                ) FILTER (WHERE course.course_id IS NOT NULL), 
+                '[]'::JSON
+            ) AS course
+        FROM 
+            cohort
+        LEFT JOIN 
+            cohort_course ON cohort.cohort_id = cohort_course.cohort_id
+        LEFT JOIN 
+            course ON cohort_course.course_id = course.course_id
+        LEFT JOIN (
+            SELECT 
+                course_id,
+                COUNT(student_id) AS student_count
+            FROM 
+                enrollment
+            GROUP BY 
+                course_id
+        ) student_counts ON course.course_id = student_counts.course_id
+        LEFT JOIN (
+            SELECT 
+                course_id,
+                COUNT(lesson_id) AS lesson_count
+            FROM 
+                lesson
+            GROUP BY 
+                course_id
+        ) lesson_counts ON course.course_id = lesson_counts.course_id
+        GROUP BY 
+            cohort.cohort_id
+        ORDER BY 
+            cohort.cohort_id;
+        `
+
+    try {
+        const result = await client.query(query);
+        res.send(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: `Error grabbing cohorts` });
+    }
+        
+})
 app.get ("/cohorts-details/:cohort_id", async (req, res) => {
     const id = req.params.cohort_id;
     const query = `

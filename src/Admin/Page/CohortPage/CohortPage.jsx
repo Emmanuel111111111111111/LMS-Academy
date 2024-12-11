@@ -21,7 +21,7 @@ export const CohortPage = () => {
     const fetchCohorts = async () => {
         setIsLoading(true);
         try {
-            const result = await axios(BASE_URL + "/cohorts", {
+            const result = await axios(TEST_URL + "/cohorts-details", {
                 timeout: 10000
             });
             setCohorts(result.data);
@@ -105,10 +105,9 @@ export const CohortPage = () => {
                         <div className={styles.cohorts}>
 
                             {cohorts.map((coho, index) => (
-                                <div className={styles.cohortBox}>
+                                <div className={styles.cohortBox} key={index}>
                                     <div className={styles.infoHeader}>
                                         <div>
-                                            {/* <h3>Cohort {coho.number}</h3> */}
                                             <h3>{coho.cohort_name}</h3>
                                             <p>{coho.description}</p>
                                         </div>
@@ -121,12 +120,17 @@ export const CohortPage = () => {
                                         </div>
                                         <div>
                                             <img src={getImageUrl('forStudents.png')} alt="" />
-                                            {coho.studentsNo} Students
+                                            {coho.course.reduce((sum, item) => sum + item.student_count, 0)} Students
                                         </div>
                                     </div>
                                     <div className={styles.cohortLoader}>
-                                        <p>{coho.completedCourses}/{coho.totalCourses}</p>
-                                        <progress className={`${coho.totalCourses === coho.completedCourses ? styles.complete : ''} ${styles.progress}`} id="progress" max={coho.totalCourses} value={coho.completedCourses} />
+                                        <p>{coho.course.filter(e => e.completed === true).length}/{coho.course.length}</p>
+                                        <progress
+                                            id="progress"
+                                            className={`${coho.course.filter(e => e.completed === true).length === coho.course.length ? styles.complete : ''} ${styles.progress}`}
+                                            max={coho.course.length}
+                                            value={coho.course.filter(e => e.completed === true).length}
+                                        />
                                     </div>
                                     <button className={styles.viewButton} onClick={()=>handleViewCohort(coho.cohort_id)}>
                                         <img src={getImageUrl('view.png')} alt="" />

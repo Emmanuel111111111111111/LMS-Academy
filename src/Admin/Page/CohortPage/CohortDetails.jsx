@@ -95,13 +95,15 @@ export const CohortDetails = () => {
         event.preventDefault();
         setIsLoading2(true);
         try {
-            const response = await axios.post(TEST_URL + '/new-cohort-course', addedCourseValues);
+            const response = await axios.post(BASE_URL + '/new-cohort-course', addedCourseValues);
             console.log(response);
+
             setIsOpenCourse(false);
             // handleSuccess();
             fetchCohortData();
             setIsLoading2(false);
             console.log("added.")
+            
         } catch (err) {
             console.log(err);
             setIsLoading2(false);
