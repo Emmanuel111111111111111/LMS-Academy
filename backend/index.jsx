@@ -670,6 +670,7 @@ app.post('/remove-course', async (req, res) => {
 })
 
 
+
 app.get("/activity-log", async (req, res) => {
     try {
         const result = await client.query("SELECT * FROM activity_log ORDER BY date DESC");

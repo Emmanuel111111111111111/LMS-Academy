@@ -21,7 +21,7 @@ export const CohortPage = () => {
     const fetchCohorts = async () => {
         setIsLoading(true);
         try {
-            const result = await axios(TEST_URL + "/cohorts-details", {
+            const result = await axios(BASE_URL + "/cohorts-details", {
                 timeout: 10000
             });
             setCohorts(result.data);

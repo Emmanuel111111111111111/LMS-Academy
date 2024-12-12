@@ -42,7 +42,11 @@ export const CohortDetails = () => {
     const fetchCohortData = async () => {
         setIsLoading(true);
         try {
-            const result = await axios(BASE_URL + `/cohorts-details/${id}`);
+            const result = await axios(BASE_URL + `/cohorts-details/${id}`,
+                {
+                    timeout: 20000,
+                }
+            );
             if (result.data[0] === undefined || result.data[0] === null) {
                 window.location.href = "/admin-dashboard/cohort";
             } else {
