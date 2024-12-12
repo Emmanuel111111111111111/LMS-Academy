@@ -7,6 +7,7 @@ import Modal from "../ActiveCourses/Modal";
 import { useParams } from "react-router-dom";
 import Pagination from "../../../Components/Pagination/Pagination";
 import { BASE_URL, TEST_URL } from "../../../../config";
+import { ConfirmModal } from "../../Components/Modals/ConfirmModal";
 
 export const CohortDetails = () => {
 
@@ -21,8 +22,13 @@ export const CohortDetails = () => {
     const [ isLoading, setIsLoading ] = useState(false);
     const [ isLoading2, setIsLoading2 ] = useState(false);
 
+    const [ actionsOpen, setActionsOpen ] = useState({});
+    const [ selected, setSelected ] = useState({});
+    const [ confirmType, setConfirmType ] = useState('');
+    const [ isOpenConfirm, setIsOpenConfirm ] = useState(false);
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ itemsPerPage, setItemsPerPage ] = useState(5);
+    
     const scroll = useRef(null);
     const actionsRef = useRef(null);
 
@@ -145,6 +151,18 @@ export const CohortDetails = () => {
         };
     }, []);
 
+
+    const toCourseDetail = (id) => {
+        window.location.href = `/admin-dashboard/courses/detail/${id}`;
+    }
+    const handleOpenConfirm = (theCourse, type) => {
+        setSelected(theCourse);
+        setConfirmType(type);
+        setIsOpenConfirm(true);
+    }
+
+
+
     return (
         <>
 
@@ -201,7 +219,7 @@ export const CohortDetails = () => {
                                         <th><input type="checkbox" /></th>
                                         <th>Course Title</th>
                                         <th>No. Of Students</th>
-                                        <th>No. of Lessons</th>
+                                        <th>No. of Classes</th>
                                         <th>Action</th>
                                     </thead>
                                     <tbody>
@@ -213,6 +231,12 @@ export const CohortDetails = () => {
                                                 <td>{cour.lesson_count}</td>
                                                 <td>
                                                     <button className={styles.actionsButton} onClick={()=>toggleAction(index)}><img src={getImageUrl('threeDots.png')} /></button>
+                                                    {actionsOpen[index] && <div className={styles.theActions} ref={actionsRef}>
+                                                        <h5>ACTION</h5>
+                                                        <button onClick={()=>toCourseDetail(cour.course_id)}><img src={getImageUrl('edit.png')} />EDIT</button>
+                                                        <button onClick={()=>handleOpenConfirm(cour, 'suspend')}><img src={getImageUrl('approve.png')} />SUSPEND</button>
+                                                        <button onClick={()=>handleOpenConfirm(cour, 'remove')}><img src={getImageUrl('delete.png')} />REMOVE</button>
+                                                    </div>}
                                                 </td>
                                             </tr>
                                         ))}
@@ -298,6 +322,8 @@ export const CohortDetails = () => {
 
             </div>
         </Modal>
+
+        <ConfirmModal isOpenConfirm={isOpenConfirm} setIsOpenConfirm={setIsOpenConfirm} cohort={cohort} selected={selected} confirmType={confirmType} reload={fetchCohortData} />
         </>
     )
 }
