@@ -323,7 +323,7 @@ export const CohortDetails = () => {
             </div>
         </Modal>
 
-        <ConfirmModal isOpenConfirm={isOpenConfirm} setIsOpenConfirm={setIsOpenConfirm} cohort={cohort} selected={selected} confirmType={confirmType} reload={fetchCohortData} />
+        <ConfirmModal isOpen={isOpenConfirm} setOpen={setIsOpenConfirm} item={'Course'} cohort={cohort} selected={selected} confirmType={confirmType} reload={fetchCohortData} />
         </>
     )
 }

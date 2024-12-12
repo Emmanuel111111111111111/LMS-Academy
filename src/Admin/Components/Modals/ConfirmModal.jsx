@@ -4,9 +4,10 @@ import styles from './Modal.module.css';
 import { getImageUrl } from "../../../utilis";
 import axios from "axios";
 import { BASE_URL, TEST_URL } from "../../../../config";
+import { it } from "date-fns/locale";
 
 
-export const ConfirmModal = ({ isOpenConfirm, setIsOpenConfirm, cohort, selected, confirmType, reload }) => {
+export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmType, reload }) => {
 
     const [ isLoading, setIsLoading ] = useState(false);
     const [ openSuccess, setOpenSuccess ] = useState(false);
@@ -26,7 +27,7 @@ export const ConfirmModal = ({ isOpenConfirm, setIsOpenConfirm, cohort, selected
             const result = await axios.post(BASE_URL + '/suspend-course', values)
             console.log(result);
             
-            setIsOpenConfirm(false);
+            setOpen(false);
             setIsLoading(false);
             handleSuccess();
         } catch (err) {
@@ -49,7 +50,7 @@ export const ConfirmModal = ({ isOpenConfirm, setIsOpenConfirm, cohort, selected
             const result = await axios.post(BASE_URL + '/remove-course', values)
             console.log(result);
             
-            setIsOpenConfirm(false);
+            setOpen(false);
             setIsLoading(false);
             handleSuccess();
         } catch (err) {
@@ -70,18 +71,18 @@ export const ConfirmModal = ({ isOpenConfirm, setIsOpenConfirm, cohort, selected
     
     return (
         <div>
-        <Modal isOpen={isOpenConfirm}>
+        <Modal isOpen={isOpen}>
             <div className={styles.confirmMod}>
                 <div className={styles.head}>
                     <div>
-                        <h3 style={{textTransform: 'capitalize'}}>{confirmType} Course</h3>
+                        <h3 style={{textTransform: 'capitalize'}}>{confirmType} {item}</h3>
                         <p>{selected.course_name}</p>
                     </div>
-                    <button onClick={()=>setIsOpenConfirm(false)} className={styles.close}><img src={getImageUrl('close.png')} /></button>
+                    <button onClick={()=>setOpen(false)} className={styles.close}><img src={getImageUrl('close.png')} /></button>
                 </div>
 
                 <div className={styles.contentBody}>
-                    <p>Are you sure you want to <b>{confirmType}</b> the course: {selected.course_name}</p>
+                    <p>Are you sure you want to <b>{confirmType}</b> the {item}: {selected.course_name}</p>
                     
                     <button className={styles.cohortButton} onClick={confirmType === "suspend" ? handleSuspension : confirmType === "remove" ? handleRemoving : ''}>
                         {isLoading ? "..." : confirmType}
@@ -96,7 +97,7 @@ export const ConfirmModal = ({ isOpenConfirm, setIsOpenConfirm, cohort, selected
 
         <Modal isOpen={openSuccess}>
             <div className={styles.confirmMod}>
-                Course <b>{selected.course_name}</b> {
+                {item} <b>{selected.course_name}</b> {
                     confirmType === 'suspend' ? 'suspended'
                     : confirmType === 'remove' ? 'removed'
                     : ''
