@@ -126,7 +126,7 @@
 .infoHeader {
     display: flex;
     justify-content: space-between;
-    margin-top: 12px;
+    /* margin-top: 12px; */
     gap: 8px;
 }
 .infoHeader h3 {

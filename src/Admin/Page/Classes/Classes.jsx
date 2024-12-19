@@ -8,68 +8,35 @@ import { BASE_URL, TEST_URL } from "../../../../config";
 
 export const Classes = () => {
 
-    // const [ classes, setClasses ] = useState([]);
+    const [ classes, setClasses ] = useState([]);
     const [ isOpen, setIsOpen ] = useState(false);
     const [ actionsOpen, setActionsOpen ] = useState({});
     const [ isLoading, setIsLoading ] = useState(false);
     const actionsRef = useRef(null);
     const createRef = useRef(null);
 
+    useEffect(() => {
+        fetchClasses();
+    }, []);
 
-    const classes = [
-        {
-            title: "Class Name",
-            course: "Course Name",
-            length: "4 min",
-            dueDate: "2024-11-08",
-        },
-        {
-            title: "Class Name",
-            course: "Course Name",
-            length: "4 min",
-            dueDate: "2024-11-08",
-        },
-        {
-            title: "Class Name",
-            course: "Course Name",
-            length: "4 min",
-            dueDate: "2024-11-08",
-        },
-        {
-            title: "Class Name",
-            course: "Course Name",
-            length: "4 min",
-            dueDate: "2024-11-09",
-        },
-        {
-            title: "Class Name",
-            course: "Course Name",
-            length: "4 min",
-            dueDate: "2024-11-09",
-        },
-        {
-            title: "Class Name",
-            course: "Course Name",
-            length: "4 min",
-            dueDate: "2024-11-10",
-        },
-        {
-            title: "Class Name",
-            course: "Course Name",
-            length: "4 min",
-            dueDate: "2024-11-10",
-        },
-        {
-            title: "Class Name",
-            course: "Course Name",
-            length: "4 min",
-            dueDate: "2024-11-11",
+    const fetchClasses = async () => {
+        setIsLoading(true);
+        try {
+            const result = await axios(TEST_URL + "/lessons-info", {
+                timeout: 20000
+            });
+            setClasses(result.data);
+            console.log(result.data);
+            setIsLoading(false);
+        } catch (err) {
+            console.log(err);
+            setIsLoading(false);
+            // setErrorMessage(true);
         }
-    ]
+    }
 
     const handleToDetails = (event, clas) => {
-        // event.stopPropagation();
-        window.location.href = `classes/${clas.id}`;
+        window.location.href = `classes/${clas.lesson_id}`;
     }
 
     const toggleAction = (event, index) => {
@@ -122,9 +89,9 @@ export const Classes = () => {
                         
                         {classes.map((clas, index) => (
                             <div key={index} className={styles.classInfo} onClick={''} id="outer">
-                                <div className={styles.classImage}>
+                                {/* <div className={styles.classImage}>
                                     <img src={getImageUrl('frame7.png')} />
-                                </div>
+                                </div> */}
                                 <div className={styles.infoHeader}>
                                     <h3>{clas.title}</h3>
                                     <div>
@@ -133,17 +100,17 @@ export const Classes = () => {
                                             <h5>ACTION</h5>
                                             <button onClick={(e)=>handleToDetails(e, clas)}><img src={getImageUrl('edit.png')} />EDIT</button>
                                             <button><img src={getImageUrl('approve.png')} />SUSPEND</button>
-                                            <button><img src={getImageUrl('delete.png')} />DECLINE</button>
+                                            <button><img src={getImageUrl('delete.png')} />DELETE</button>
                                         </div>}
                                     </div>
                                 </div>
-                                <p>Course: {clas.course}</p>
+                                <p>Course: {clas.course_name}</p>
                                 <div className={styles.classData}>
-                                    <div className={styles.timeData}><img src={getImageUrl('timer.png')} alt="" />{clas.length}</div>
-                                    <div className={styles.timeData}><img src={getImageUrl('blueCalendar.png')} alt="" />{format(new Date(clas.dueDate), 'd MMM')}</div>
+                                    {/* <div className={styles.timeData}><img src={getImageUrl('timer.png')} alt="" />{clas.length}</div>
+                                    <div className={styles.timeData}><img src={getImageUrl('blueCalendar.png')} alt="" />{format(new Date(clas.dueDate), 'd MMM')}</div> */}
                                 </div>
                                 <div className={styles.crumb}>
-                                    <div className={styles.profile}><img src={getImageUrl('profile.svg')} alt="" />Instructor</div>
+                                    <div className={styles.profile}><img src={getImageUrl('profile.svg')} alt="" />{clas.instructor_name}</div>
                                     <div className={styles.students}><img src={getImageUrl('frame5.png')} alt="" />{clas.student_count} {clas.student_count === 1 ? 'Student' : 'Students'}</div>
                                 </div>
                             </div>

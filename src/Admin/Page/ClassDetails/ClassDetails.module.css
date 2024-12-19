@@ -158,7 +158,7 @@
 input[type="file"] {
     display: none;
 }
-.uploadBox div {
+.uploadBox .uploadDiv {
     text-align: center;
     width: 60%;
 }
@@ -172,6 +172,16 @@ input[type="file"] {
     font-weight: 500;
     color: #A9ACB4;
     margin-bottom: 18px;
+}
+.uploadBox .theFiles {
+    margin-bottom: 20px;
+}
+.uploadBox .theFiles p {
+    margin: 0;
+    padding: 0;
+    margin-bottom: -8px;
+    /* color: #292D32;
+    font-weight: 600; */
 }
 .uploadBox .uploadButton {
     border: 1px solid #CBD0DC;

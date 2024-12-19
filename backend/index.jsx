@@ -1,10 +1,16 @@
-const bcrypt = require('bcrypt');
-require("dotenv").config();
 const express = require('express');
 const { Client } = require('pg');
 const cors = require('cors');
+const bcrypt = require('bcrypt');
+const multer = require('multer');
+require("dotenv").config();
 
 const app = express();
+// const upload = multer();
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+module.exports = upload;
+
 const port = process.env.PORT || 8081;
 app.use(express.json());
 app.use(cors());
@@ -206,8 +212,7 @@ app.get('/courses-instructor-studentscount-lessons', async (req, res) => {
                 i.last_name AS instructor_last_name,
                 COUNT(s.student_id) AS student_count,
                 l.lesson_id AS lesson_id,
-                l.title AS lesson_title,
-                l.lesson_data AS lesson_data
+                l.title AS lesson_title
             FROM course c
             LEFT JOIN instructorCourses ic ON c.course_id = ic.course_id
             LEFT JOIN instructor i ON ic.instructor_id = i.instructor_id
@@ -233,7 +238,6 @@ app.get('/courses-instructor-studentscount-lessons', async (req, res) => {
                 delete formattedCourses[row.course_id].instructor_id;
                 delete formattedCourses[row.course_id].instructor_first_name;
                 delete formattedCourses[row.course_id].instructor_last_name;
-                delete formattedCourses[row.course_id].lesson_data;
                 delete formattedCourses[row.course_id].lesson_id;
                 delete formattedCourses[row.course_id].lesson_title;
             }
@@ -246,8 +250,7 @@ app.get('/courses-instructor-studentscount-lessons', async (req, res) => {
             if (row.lesson_id) {
                 formattedCourses[row.course_id].lessons.push({
                     id: row.lesson_id,
-                    title: row.lesson_title,
-                    lesson_data: row.lesson_data,
+                    title: row.lesson_title
                 });
             }
         });
@@ -338,6 +341,99 @@ app.get("/lessons", async (req, res) => {
         console.log(err);
         res.status(500).json({message: "Error fetching lessons"});
     }
+});
+app.get("/lessons-info", async (req, res) => {
+    const query = `
+        SELECT 
+            lesson.lesson_id,
+            lesson.title,
+            lesson.description,
+            lesson.number,
+            lesson.course_id,
+            COALESCE(course.name, 'NA') AS course_name,
+            COALESCE(instructor.first_name || '' || instructor.last_name, 'NA') AS instructor_name,
+            COALESCE(student_counts.student_count, 0) AS student_count
+        FROM 
+            lesson
+        LEFT JOIN 
+            course ON lesson.course_id = course.course_id
+		LEFT JOIN 
+            instructorcourses ON course.course_id = instructorcourses.course_id
+        LEFT JOIN 
+            instructor ON instructorcourses.instructor_id = instructor.instructor_id
+		LEFT JOIN (
+            SELECT 
+                course_id,
+                COUNT(student_id) AS student_count
+            FROM 
+                enrollment
+            GROUP BY 
+                course_id
+        ) student_counts ON course.course_id = student_counts.course_id
+        GROUP BY 
+            lesson.lesson_id,
+			lesson.title,
+			lesson.description,
+			lesson.number,
+			course.name,
+			instructor.first_name,
+			instructor.last_name,
+			student_counts.student_count
+        ORDER BY 
+            lesson.lesson_id;
+        `
+
+    try {
+        const result = await client.query(query);
+        res.send(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: `Error grabbing cohorts` });
+    }
+});
+app.post(`/lesson-info`, upload.array('files'), async (req, res) => {
+    try {
+        console.log(req.body);
+        console.log(req.files);
+        console.log(req.body.files);
+        const files = req.body.files;
+
+        const putQuery = `UPDATE lesson SET title = $1, description = $2 WHERE lesson_id = $3`
+        const putValues = [
+            req.body.title,
+            req.body.description,
+            req.body.lesson_id,
+        ];
+
+        await client.query(putQuery, putValues);
+
+        if (files && files.length > 0) {
+            for (const file of files) {
+
+                const postQuery = `INSERT INTO lesson_files (lesson_id, file_name, file_type, file_size, file_data) VALUES ($1, $2, $3, $4, $5) RETURNING *;`;
+                const postValues = [
+                    req.body.lesson_id,
+                    file.originalname,
+                    file.mimetype,
+                    file.size,
+                    file.buffer
+                ];
+                console.log(file);
+                console.log(file.originalname);
+                console.log(postValues);
+                // await client.query(postQuery, postValues);
+            }
+        }
+
+        res.status(200).json({ message: 'Lesson updated successfully' });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message:'Error updating lesson or adding files' });
+    }
+})
+app.use((req, res, next) => {
+    console.log('Headers:', req.headers['content-type']);
+    next();
 });
 app.get("/lessons-len", async (req, res) => {
     try {
@@ -668,6 +764,7 @@ app.post('/remove-course', async (req, res) => {
         return res.status(500).json({message: "Error in suspending course or logging"});
     }
 })
+
 
 
 

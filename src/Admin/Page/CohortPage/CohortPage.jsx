@@ -22,7 +22,7 @@ export const CohortPage = () => {
         setIsLoading(true);
         try {
             const result = await axios(BASE_URL + "/cohorts-details", {
-                timeout: 10000
+                timeout: 20000
             });
             setCohorts(result.data);
             setIsLoading(false);
