@@ -33,6 +33,7 @@ import { CohortDetails } from './Admin/Page/CohortPage/CohortDetails';
 import { ClassDetails } from './Admin/Page/ClassDetails/ClassDetails';
 import { TaskPage } from './Admin/Page/TaskPage/TaskPage';
 import { Classes } from './Admin/Page/Classes/Classes';
+import { PageNotFound } from './Page/404';
 
 function App() { 
 
@@ -44,6 +45,8 @@ function App() {
     { path: '/Account', element: <Accountpage /> },
     { path: '/Password', element: <Password /> },
     { path: '/Reset', element: <Resetpage /> },
+
+    { path: '/404', element: <PageNotFound /> },
     {
       path: '/dashboard', element: <DashboardLayout />,
       children: [

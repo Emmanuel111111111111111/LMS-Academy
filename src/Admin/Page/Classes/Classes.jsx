@@ -22,7 +22,7 @@ export const Classes = () => {
     const fetchClasses = async () => {
         setIsLoading(true);
         try {
-            const result = await axios(TEST_URL + "/lessons-info", {
+            const result = await axios(BASE_URL + "/lessons-info", {
                 timeout: 20000
             });
             setClasses(result.data);

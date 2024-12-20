@@ -69,8 +69,8 @@ export const CourseDetail = () => {
 
             if (response.ok) {
                 console.log('Course updated successfully');
-                // loadCourseDetails();
-                navigate('/admin-dashboard/courses');
+                loadCourseDetails();
+                // navigate('/admin-dashboard/courses');
             } else {
                 console.error("Failed to update course");
             }
@@ -200,7 +200,6 @@ export const CourseDetail = () => {
                             <button type="button" onClick={()=>setIsOpenClass(true)}>+ Add new class</button>
                         </div>
                         {course.lessons && course.lessons.map((cla, i) => (
-                        // {classes.sort((a,b) => a.week - b.week).map((cla, i) => (
                             <div className={styles.section} key={i}>
                                 <div className={styles.text}>
                                     <img src={getImageUrl('reorder.png')} alt="" />
@@ -251,9 +250,9 @@ export const CourseDetail = () => {
                     <div className={styles.box}>
                         <h5>Course Status</h5>
                         <div className={styles.detailForm}>
-                            <label htmlFor="">Product Status</label>
-                            <select name="" id="">
-                                <option value="">Published</option>
+                            <label htmlFor="status">Product Status</label>
+                            <select name="status" id="status">
+                                <option value={null}>Published</option>
                             </select>
                             <label htmlFor="" className={styles.checkbox}>
                                 <input type="checkbox" name="" id="" />
@@ -266,8 +265,8 @@ export const CourseDetail = () => {
                     <div className={styles.box}>
                         <h5>Course Level</h5>
                         <div className={styles.detailForm}>
-                            <label htmlFor="">Level</label>
-                            <select name="" id="">
+                            <label htmlFor="level">Level</label>
+                            <select name="level" id="level" value={course.level} onChange={handleInputChange}>
                                 <option value="Beginner">Beginner</option>
                                 <option value="Intermediate">Intermediate</option>
                                 <option value="Advanced">Advanced</option>

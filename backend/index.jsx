@@ -6,12 +6,23 @@ const multer = require('multer');
 require("dotenv").config();
 
 const app = express();
-// const upload = multer();
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
-module.exports = upload;
+const upload = multer();
+// const storage = multer.memoryStorage();
+// const upload = multer({ storage: storage });
+// module.exports = upload;
 
 const port = process.env.PORT || 8081;
+
+// app.use((req, res, next) => {
+//     console.log('--- Debug Middleware ---');
+//     console.log('Method:', req.method);
+//     console.log('URL:', req.originalUrl);
+//     console.log('Headers:', req.headers);
+//     console.log('Body:', req.body); // For parsed bodies
+//     console.log('-------------------------');
+//     next();
+// });
+// app.use(upload.array());
 app.use(express.json());
 app.use(cors());
 
@@ -177,11 +188,11 @@ app.get("/courses/detail/:course_id", async (req, res) => {
 
 app.put('/courses/detail/:course_id', async (req, res) => {
     const id = req.params.course_id;
-    const { name, description } = req.body;
+    const { name, description, level, status } = req.body;
 
     try {
-        const query = "UPDATE course SET name = $1, description = $2 WHERE course_id = $3";
-        await client.query(query, [name, description, id]);
+        const query = "UPDATE course SET name = $1, description = $2, level = $3, status = $4 WHERE course_id = $5";
+        await client.query(query, [name, description, level, status, id]);
 
         res.status(200).json({ message: 'Course updated successfully' });
     } catch (err) {
@@ -398,16 +409,33 @@ app.post(`/lesson-info`, upload.array('files'), async (req, res) => {
         console.log(req.body.files);
         const files = req.body.files;
 
-        const putQuery = `UPDATE lesson SET title = $1, description = $2 WHERE lesson_id = $3`
+        const putQuery = `UPDATE lesson SET title = $1, description = $2, level = $3, status = $4 WHERE lesson_id = $5`
         const putValues = [
             req.body.title,
             req.body.description,
-            req.body.lesson_id,
+            req.body.level,
+            req.body.status,
+            req.body.lesson_id
         ];
 
         await client.query(putQuery, putValues);
 
-        if (files && files.length > 0) {
+        if (files && files.length === 1) {
+            const postQuery = `INSERT INTO lesson_files (lesson_id, file_name, file_type, file_size, file_data) VALUES ($1, $2, $3, $4, $5) RETURNING *;`;
+            const postValues = [
+                req.body.lesson_id,
+                files.originalname,
+                files.mimetype,
+                files.size,
+                files.buffer
+            ];
+            console.log(files);
+            console.log(files.originalname);
+            console.log(postValues);
+            // await client.query(postQuery, postValues);
+        }
+
+        if (files && files.length > 1) {
             for (const file of files) {
 
                 const postQuery = `INSERT INTO lesson_files (lesson_id, file_name, file_type, file_size, file_data) VALUES ($1, $2, $3, $4, $5) RETURNING *;`;
@@ -431,10 +459,6 @@ app.post(`/lesson-info`, upload.array('files'), async (req, res) => {
         res.status(500).json({ message:'Error updating lesson or adding files' });
     }
 })
-app.use((req, res, next) => {
-    console.log('Headers:', req.headers['content-type']);
-    next();
-});
 app.get("/lessons-len", async (req, res) => {
     try {
         const result = await client.query("SELECT COUNT(*) FROM lesson");
@@ -508,6 +532,87 @@ app.get('/assignments/:studentID', async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Error grabbing lesson_student info' });
+    }
+});
+
+app.get("/exams", async (req, res) => {
+    try {
+        const result = await client.query("SELECT * FROM exam");
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching exams"});
+    }
+});
+app.get('/exams/:studentID', async (req, res) => {
+    try {
+        const id = req.params.course_id;
+        // const query = `
+        //     SELECT * FROM lesson l
+        //     LEFT JOIN lesson_student ls ON ls.student_id = ($1)
+        // `;
+        const query = "SELECT * FROM lesson_student WHERE student_id = ($1)";
+        
+        const result = await client.query(query, [id]);
+        res.send(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error grabbing lesson_student info' });
+    }
+});
+
+
+app.get("/tasks", async (req, res) => {
+    try {
+        const result = await client.query(`
+            SELECT 
+                'assignment' AS type,
+                a.assignment_id AS id,
+                a.assignment_name AS name,
+                c.name AS course_name,
+                a.due_date AS due_date,
+                asgn_student.student_id AS student_id,
+                CONCAT(s.first_name, ' ', s.last_name) AS student_name,
+                asgn_student.graded AS graded,
+                asgn_student.submitted AS submitted,
+                asgn_student.submitted_date AS submitted_date
+            FROM 
+                assignment_student asgn_student
+            JOIN 
+                assignment a ON asgn_student.assignment_id = a.assignment_id
+            JOIN 
+                lesson l ON a.lesson_id = l.lesson_id
+            JOIN 
+                course c ON l.course_id = c.course_id
+            JOIN 
+                student s ON asgn_student.student_id = s.student_id
+
+            UNION ALL
+
+            SELECT 
+                'exam' AS type,
+                e.exam_id AS id,
+                e.exam_name AS name,
+                c.name AS course_name,
+                e.due_date AS due_date,
+                exam_student.student_id AS student_id,
+                CONCAT(s.first_name, ' ', s.last_name) AS student_name,
+                exam_student.graded AS graded,
+                exam_student.submitted AS submitted,
+                exam_student.submitted_date AS submitted_date
+            FROM 
+                exam_student
+            JOIN 
+                exam e ON exam_student.exam_id = e.exam_id
+            JOIN 
+                course c ON e.course_id = c.course_id
+            JOIN 
+                student s ON exam_student.student_id = s.student_id;
+            `);
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching assignments"});
     }
 });
 

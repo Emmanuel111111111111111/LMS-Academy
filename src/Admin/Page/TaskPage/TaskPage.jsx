@@ -10,6 +10,7 @@ import { BASE_URL, TEST_URL } from "../../../../config";
 
 export const TaskPage = () => {
 
+    const [ tasks, setTasks ] = useState([]);
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ itemsPerPage, setItemsPerPage ] = useState(5);
     const [ search, setSearch ] = useState("");
@@ -19,57 +20,23 @@ export const TaskPage = () => {
     const actionsRef = useRef(null);
 
 
-    const tasks = [
-        {
-            studentName: 'John Doe',
-            course: 'Data Science',
-            title: 'Quiz',
-            dueDate: '2024-06-01 12:38:00',
-            status: 'Graded'
-        },
-        {
-            studentName: 'John Doe',
-            course: 'Data Science',
-            title: 'Quiz',
-            dueDate: '2024-06-01 12:38:00',
-            status: 'Graded'
-        },
-        {
-            studentName: 'John Doe',
-            course: 'Data Science',
-            title: 'Quiz',
-            dueDate: '2024-06-01 12:38:00',
-            status: 'Graded'
-        },
-        {
-            studentName: 'John Doe',
-            course: 'Data Science',
-            title: 'Quiz',
-            dueDate: '2024-06-01 12:38:00',
-            status: 'Pending'
-        },
-        {
-            studentName: 'John Doe',
-            course: 'Data Science',
-            title: 'Quiz',
-            dueDate: '2024-06-01 12:38:00',
-            status: 'Pending'
-        },
-        {
-            studentName: 'John Doe',
-            course: 'Data Science',
-            title: 'Quiz',
-            dueDate: '2024-06-01 12:38:00',
-            status: 'Pending'
-        },
-        {
-            studentName: 'John Doe',
-            course: 'Data Science',
-            title: 'Quiz',
-            dueDate: '2024-06-01 12:38:00',
-            status: 'Graded'
-        },
-    ]
+    useEffect(() => {
+        getTasks();
+    }, [])
+
+    const getTasks = async () => {
+        setIsLoading(true);
+        try {
+            const result = await axios(BASE_URL + `/tasks`);
+            console.log(result.data);
+            setTasks(result.data);
+            setIsLoading(false);
+        } catch (err) {
+            console.log(err);
+            setIsLoading(false);
+            // setErrorMessage(true);
+        }
+    }
 
     const handleSearch = (e) => {
         setSearch(e.target.value);
@@ -78,9 +45,9 @@ export const TaskPage = () => {
     const filteredTasks = tasks.filter(task => {
         const searchLower = search.toLowerCase();
         return (
-            task.studentName.toLowerCase().includes(searchLower) ||
-            task.course.toLowerCase().includes(searchLower) ||
-            task.title.toLowerCase().includes(searchLower)
+            task.student_name.toLowerCase().includes(searchLower) ||
+            task.course_name.toLowerCase().includes(searchLower) ||
+            task.name.toLowerCase().includes(searchLower)
         );
     });
 
@@ -143,7 +110,7 @@ export const TaskPage = () => {
                         Total <br /> Tasks
                         <div className={styles.blueBox}><img src={getImageUrl('assignment.png')} /></div>
                     </div>
-                    <h4>100</h4>
+                    <h4>{tasks.length}</h4>
                 </div>
 
                 <div className={styles.eachOverview}>
@@ -151,7 +118,7 @@ export const TaskPage = () => {
                         Pending <br /> Grading
                         <div className={styles.blueBox}><img src={getImageUrl('forStudents.png')} /></div>
                     </div>
-                    <h4>124</h4>
+                    <h4>{tasks.filter(e => e.graded === false).length}</h4>
                 </div>
 
                 <div className={styles.eachOverview}>
@@ -159,7 +126,7 @@ export const TaskPage = () => {
                         Completed <br />Tasks
                         <div className={styles.blueBox}><img src={getImageUrl('teachersIcon.png')} /></div>
                     </div>
-                    <h4>52</h4>
+                    <h4>{tasks.filter(e => e.graded === true).length}</h4>
                 </div>
             </div>
 
@@ -167,7 +134,7 @@ export const TaskPage = () => {
 
             <div className={styles.search}>
                 <img src={getImageUrl('searchIcon.png')} alt="" />
-                <input onChange={handleSearch} type="text" placeholder="Search by student name, course, or task ID" />
+                <input onChange={handleSearch} type="text" placeholder="Search by student name, course, or task name" />
             </div>
 
             <div className={styles.tasks}>
@@ -194,17 +161,14 @@ export const TaskPage = () => {
                                 {currentTasks.map((task, index) => (
                                     <tr key={index}>
                                         <td><input type="checkbox" /></td>
-                                        <td>{task.studentName}</td>
-                                        <td>{task.course}</td>
-                                        <td>{task.title}</td>
-                                        <td>{format(new Date(task.dueDate), 'MMMM d, yyyy hh:mm:ss a')}</td>
+                                        <td>{task.student_name}</td>
+                                        <td>{task.course_name}</td>
+                                        <td>{task.name}</td>
+                                        <td>{format(new Date(task.submitted_date), 'MMMM d, yyyy hh:mm:ss a')}</td>
                                         <td>
-                                            <div className={task.status.toLowerCase() === 'graded' ? styles.graded
-                                                        : task.status.toLowerCase() === 'pending' ? styles.pending
-                                                        : ''
-                                            }>
+                                            <div className={task.graded === true ? styles.graded : styles.pending}>
                                                 <div></div>
-                                                {task.status}
+                                                {task.graded === true ? 'Graded' : 'Pending'}
                                             </div>
                                         </td>
                                         <td>

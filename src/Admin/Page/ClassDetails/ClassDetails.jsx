@@ -38,6 +38,10 @@ export const ClassDetails = () => {
             });
             console.log(result.data.filter(e => e.lesson_id === parseInt(id))[0]);
             setClass(result.data.filter(e => e.lesson_id === parseInt(id))[0]);
+            
+            if (result.data.filter(e => e.lesson_id === parseInt(id)).length != 1) {
+                navigate('/404');
+            }
             setIsLoading(false);
         } catch (err) {
             console.log(err);
@@ -45,13 +49,6 @@ export const ClassDetails = () => {
             // setErrorMessage(true);
         }
     }
-
-    const [newLessonValues, setNewLessonValues] = useState({
-        lesson_id: theClass.lesson_id,
-        title: theClass.title,
-        description: theClass.description,
-        file: selectedFiles,
-    })
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -77,22 +74,15 @@ export const ClassDetails = () => {
         formData.append('lesson_id', theClass.lesson_id);
         formData.append('title', theClass.title);
         formData.append('description', theClass.description);
+        formData.append('level', theClass.level);
+        formData.append('status', theClass.status);
         if (selectedFiles && selectedFiles.length > 0) {
             for (const file of selectedFiles) {
                 formData.append('files', file);
             }
         }
-        // const newLessonValues = {
-        //     lesson_id: theClass.lesson_id,
-        //     title: theClass.title,
-        //     description: theClass.description,
-        //     files: selectedFiles,
-        // }
-        for (const [key, value] of formData.entries()) {
-            console.log(`${key}:`, value);
-        }
         try {
-            const response = await fetch(TEST_URL + `/lesson-info`, {
+            const response = await fetch(BASE_URL + `/lesson-info`, {
                 method: 'POST',
                 body: formData,
             });
@@ -256,8 +246,8 @@ export const ClassDetails = () => {
                             <div className={styles.box}>
                                 <h5>Class Level</h5>
                                 <div className={styles.detailForm}>
-                                    <label htmlFor="">Level</label>
-                                    <select name="" id="">
+                                    <label htmlFor="level">Level</label>
+                                    <select name="level" id="level" value={theClass.level} onChange={handleInputChange}>
                                         <option value="Beginner">Beginner</option>
                                         <option value="Intermediate">Intermediate</option>
                                         <option value="Advanced">Advanced</option>

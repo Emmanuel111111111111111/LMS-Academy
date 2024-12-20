@@ -23,7 +23,6 @@ export const AdminOverview = () => {
     const [ isStudLoading, setIsStudLoading ] = useState(false);
     const [ isLessLoading, setIsLessLoading ] = useState(false);
     const [ isActivityLoading, setIsActivityLoading ] = useState(false);
-    // const navigate = useNavigate();
     const scroll = useRef(null);
 
     useEffect(() => {
@@ -38,7 +37,7 @@ export const AdminOverview = () => {
         setIsTeachLoading(true);
         try {
             const result = await axios(BASE_URL + "/teachers-len", {
-                timeout: 10000
+                timeout: 25000
             });
             setTeachersLen(result.data);
             setIsTeachLoading(false);
@@ -51,7 +50,7 @@ export const AdminOverview = () => {
         setIsStudLoading(true);
         try {
             const result = await axios(BASE_URL + "/students-len", {
-                timeout: 10000
+                timeout: 25000
             });
             setStudentsLen(result.data);
             setIsStudLoading(false);
@@ -64,7 +63,7 @@ export const AdminOverview = () => {
         setIsLessLoading(true);
         try {
             const result = await axios(BASE_URL + "/lessons-len", {
-                timeout: 10000
+                timeout: 25000
             });
             setLessonsLen(result.data);
             setIsLessLoading(false);
@@ -78,7 +77,7 @@ export const AdminOverview = () => {
         setIsCourseLoading(true);
         try {
             const result = await axios(BASE_URL + "/courses-instructor-studentscount-lessons", {
-                timeout: 10000
+                timeout: 25000
             });
             setCourses(result.data.sort((a,b) => new Date(b.date_added) - new Date(a.date_added)).slice(0,3));
             setIsCourseLoading(false);
@@ -92,7 +91,7 @@ export const AdminOverview = () => {
         setIsActivityLoading(true);
         try {
             const result = await axios(BASE_URL + "/activity-log", {
-                timeout: 10000
+                timeout: 25000
             });
             setActivities(result.data.sort((a,b) => new Date(b.date) - new Date(a.date)));
             setIsActivityLoading(false);
@@ -126,6 +125,7 @@ export const AdminOverview = () => {
             result.months = interval.months || 0;
             result.weeks = interval.weeks || 0;
             result.days = interval.days || 0;
+            result.hours = interval.hours || 0;
         
             return result;
         }
@@ -198,7 +198,7 @@ export const AdminOverview = () => {
                                         
                                         <h3>{course.name} - <span>{course.type}</span></h3>
                                             
-                                        <p>Lorem ipsum dolor sit amet consectetur. Feugia t blandit turpis.</p>
+                                        <p>{course.description}</p>
 
                                         <div style={{marginTop: 'auto', justifySelf: 'end'}}>
                                             <div className={styles.courseData}>
