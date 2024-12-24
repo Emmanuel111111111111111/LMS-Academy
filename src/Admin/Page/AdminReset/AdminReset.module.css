@@ -53,7 +53,7 @@
     align-self: start;
     justify-self: start;
 }
-.pan p {
+.pan span {
     font-size: 16px;
     color: #343434;
     font-weight: 700;
@@ -228,7 +228,7 @@ form a {
     .pan {
         font-size: 14px;
     }
-    .pan p {
+    .pan span {
         font-size: 14px;
     }
     .pan img {

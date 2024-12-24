@@ -34,6 +34,8 @@ import { ClassDetails } from './Admin/Page/ClassDetails/ClassDetails';
 import { TaskPage } from './Admin/Page/TaskPage/TaskPage';
 import { Classes } from './Admin/Page/Classes/Classes';
 import { PageNotFound } from './Page/404';
+import { AdminReset } from './Admin/Page/AdminReset/AdminReset';
+import { NewAdmin } from './Admin/Page/NewAdmin/NewAdmin';
 
 function App() { 
 
@@ -42,9 +44,11 @@ function App() {
     { path: '/CWG', element: <CWGpage /> },
     { path: '/Login', element: <Loginpage /> },
     { path: '/Admin-login', element: <AdminLoginPage /> },
+    { path: '/new-admin/:id', element: <NewAdmin /> },
     { path: '/Account', element: <Accountpage /> },
     { path: '/Password', element: <Password /> },
     { path: '/Reset', element: <Resetpage /> },
+    { path: '/admin-reset', element: <AdminReset /> },
 
     { path: '/404', element: <PageNotFound /> },
     {

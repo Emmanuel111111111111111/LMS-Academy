@@ -1,45 +1,65 @@
 import React, { useEffect, useState } from "react";
 import { getImageUrl } from "../../../utilis";
-import styles from "./AdminLogin.module.css";
+import styles from "./NewAdmin.module.css";
 import axios from 'axios';
 import { BASE_URL, TEST_URL } from "../../../../config";
+import { useParams } from "react-router-dom";
 
 
-export const AdminLogin = () => {
 
+export const NewAdmin = () => {
+
+  const { id } = useParams();
+
+  const [ teacher, setTeacher ] = useState({});
   const [ email, setEmail ] = useState('');
   const [ password, setPassword ] = useState('');
   const [ errorMessage, setErrorMesage ] = useState(false);
   const [ isLoading, setIsLoading ] = useState(false);
 
   useEffect(() => {
-    // sessionStorage.clear();
+    getInstructor();
   }, [])
+
+  const getInstructor = async () => {
+    setIsLoading(true);
+    try {
+      const result = await axios(BASE_URL + `/teachers/${id}`,
+        {
+          timeout: 30000,
+        }
+      );
+      if (result.data[0] === undefined || result.data[0] === null) {
+          window.location.href = "/CWG";
+      } else {
+          setTeacher(result.data[0]);
+          console.log(result.data[0]);
+          setIsLoading(false);
+      }
+    } catch (err) {
+      console.log(err);
+      setIsLoading(false);
+    }
+  }
 
   
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
     try {
-      const response = await axios.post(BASE_URL + '/adminlogin', { email, password });
-      
+      const response = await axios.post(BASE_URL + '/admin-signup', { password, id });
+      console.log(response)
       setIsLoading(false);
-      console.log("signed in");
-      sessionStorage.setItem("id", response.data.student_id);
-      sessionStorage.setItem("first_name", response.data.first_name);
-      sessionStorage.setItem("last_name", response.data.last_name);
-      sessionStorage.setItem("email", response.data.email);
-      console.log(response.data.first_name);
-      window.location.href = "/admin-dashboard";
+      // window.location.href = "/admin-login";
     } catch (err) {
       setIsLoading(false);
-      if (err.response) {
-        console.error(err.response.data.message);
-        if (err.response.data.message === 'No records') setErrorMesage(true);
-        else if (err.response.data.message === 'Invalid credentials') setErrorMesage(true);
-      } else {
-        console.error('Error', err.message);
-      }
+      // if (err.response) {
+      //   console.error(err.response.data.message);
+      //   if (err.response.data.message === 'No records') setErrorMesage(true);
+      //   else if (err.response.data.message === 'Invalid credentials') setErrorMesage(true);
+      // } else {
+      //   console.error('Error', err.message);
+      // }
     }
   }
 
@@ -55,13 +75,13 @@ export const AdminLogin = () => {
 
       <div className={styles.crumb}>
 
-        <a href="/CWG" className={styles.pan}>
+        {/* <a href="/CWG" className={styles.pan}>
           <img src={getImageUrl("arrow.png")} alt="" />
           Back to <p>Home</p>
-        </a>
+        </a> */}
 
         <div className={styles.crumbs}>
-          <h1>Welcome Back</h1>
+          <h1>Welcome to LMS</h1>
           <p>Lets help you get started on CWG Academy</p>
         </div>
 
@@ -70,12 +90,12 @@ export const AdminLogin = () => {
             {errorMessage && <p style={{ color: 'red' }}>Wrong username or password. Try again</p>}
 
             <div className={styles.formgroup}>
-              <label for="name">Phone Number or Email Address</label>
-              <input placeholder="Enter your phone number or email address" name="email" onChange={e => setEmail(e.target.value)} />
+              <label for="name">Email Address</label>
+              <input value={isLoading ? '...' : teacher.email} name="email" disabled />
             </div>
 
             <div className={styles.formgroup}>
-              <label for="Password">Password</label>
+              <label for="Password">Set Your Password</label>
               <div className={styles.password}>
 
                 <input type={showPassword ? 'text' : 'password'} placeholder="Enter your password" name="password" onChange={e => setPassword(e.target.value)} />
@@ -84,9 +104,7 @@ export const AdminLogin = () => {
               </div>
             </div>
 
-            <p>Forgot password? <a href="/admin-reset">Reset Password</a></p>
-
-            <button className={styles.butt}>{isLoading ? '...' : 'Log In'}</button>
+            <button className={styles.butt}>{isLoading ? '...' : 'Set Up'}</button>
 
           </form>
 

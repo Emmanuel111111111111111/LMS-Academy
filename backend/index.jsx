@@ -3,6 +3,7 @@ const { Client } = require('pg');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
+const { id } = require('date-fns/locale');
 require("dotenv").config();
 
 const app = express();
@@ -81,6 +82,17 @@ app.get("/teachers", async (req, res) => {
     } catch(err) {
         console.log(err);
         res.status(500).json({message: "Error fetching teachers"});
+    }
+});
+app.get("/teachers/:id", async (req, res) => {
+    const id = req.params.id;
+    const query = "SELECT * FROM instructor WHERE instructor_id = ($1)"
+    try {
+        const result = await client.query(query, [id]);
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching instructor with id"});
     }
 });
 app.get("/teachers-len", async (req, res) => {
@@ -917,18 +929,13 @@ app.post('/login', async (req, res) => {
 
 app.post('/adminlogin', async (req, res) => {
     const query = 'SELECT * FROM instructor WHERE email = $1';
-    const values = [req.body.email];
     try {
-        const result = await client.query(query, values);
+        const result = await client.query(query, [req.body.email]);
         if (result.rows.length === 0) return res.status(404).json({ message: "No records" });
 
         const instructor = result.rows[0];
-        // const isPasswordValid = await bcrypt.compare(req.body.password, instructor.password);
-        if (req.body.password != instructor.password) return res.status(401).json({message: "Invalid credentials"});
-
-        const loginQuery = "UPDATE student SET last_logged = $1 WHERE student_id = $2";
-        await client.query(loginQuery, [new Date(), student.student_id]);
-
+        const isPasswordValid = await verifyPassword(req.body.password, instructor.password);
+        if (!isPasswordValid) return res.status(401).json({message: "Invalid password"});
         return res.json(instructor);
     } catch (err) {
         console.log(err);
@@ -962,6 +969,27 @@ app.post("/signup", async (req, res) => {
     }
 })
 
+app.post("/admin-signup", async (req, res) => {
+
+    console.log(req.body);
+
+    const hashedPassword = await hashPassword(req.body.password);
+
+    const query = 'UPDATE instructor SET password = $1 WHERE instructor_id = $2';
+    const values = [
+        hashedPassword,
+        req.body.id
+    ]
+    try {
+        const result = await client.query(query, values);
+        console.log(result);
+        return res.status(201).json({ message: "Instructor password added successfully", result });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({message: "Error setting teacher password"});
+    }
+})
+
 
 const hashPassword = async (plainPassword) => {
     try {
@@ -979,7 +1007,7 @@ const verifyPassword = async (plainPassword, hashedPassword) => {
         const isMatch = await bcrypt.compare(plainPassword, hashedPassword);
         return isMatch;
     } catch (error) {
-        console.error("Error verifying password:", error);
+        console.error("Error verifying password: ", error);
         throw error;
     }
 };
