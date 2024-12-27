@@ -737,7 +737,8 @@ app.get("/events/:studentId", async (req, res) => {
                 exam_student exm_student ON e.exam_id = exm_student.exam_id
             WHERE 
                 exm_student.student_id = $1;
-            `, [req.params.studentId]);
+            `,
+            [req.params.studentId]);
         res.send(result.rows);
     } catch(err) {
         console.log(err);
