@@ -8,10 +8,6 @@ require("dotenv").config();
 
 const app = express();
 const upload = multer();
-// const storage = multer.memoryStorage();
-// const upload = multer({ storage: storage });
-// module.exports = upload;
-
 const port = process.env.PORT || 8081;
 
 // app.use((req, res, next) => {
@@ -621,6 +617,127 @@ app.get("/tasks", async (req, res) => {
             JOIN 
                 student s ON exam_student.student_id = s.student_id;
             `);
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching assignments"});
+    }
+});
+
+app.get("/events", async (req, res) => {
+    try {
+        const result = await client.query(`
+            SELECT 
+                'lesson' AS event_type,
+                l.lesson_id AS event_id,
+                l.title AS title,
+                c.course_id,
+                c.name AS course_name,
+                l.start_date AS start,
+                l.end_date AS end
+            FROM 
+                lesson l
+            JOIN 
+                course c ON l.course_id = c.course_id
+
+            UNION ALL
+
+            SELECT 
+                'assignment' AS event_type,
+                a.assignment_id AS event_id,
+                a.assignment_name AS title,
+                c.course_id,
+                c.name AS course_name,
+                a.due_date AS start,
+                NULL AS end
+            FROM 
+                assignment a
+            JOIN 
+                lesson l ON a.lesson_id = l.lesson_id
+            JOIN 
+                course c ON l.course_id = c.course_id
+
+            UNION ALL
+
+            SELECT 
+                'exam' AS event_type,
+                e.exam_id AS event_id,
+                e.exam_name AS title,
+                c.course_id,
+                c.name AS course_name,
+                e.due_date AS start,
+                NULL AS end
+            FROM 
+                exam e
+            JOIN 
+                course c ON e.course_id = c.course_id;
+            `);
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching assignments"});
+    }
+});
+app.get("/events/:studentId", async (req, res) => {
+    try {
+        const result = await client.query(`
+            SELECT 
+                'lesson' AS event_type,
+                l.lesson_id AS event_id,
+                l.title AS title,
+                c.course_id,
+                c.name AS course_name,
+                l.start_date AS start,
+                l.end_date AS end
+            FROM 
+                lesson l
+            JOIN 
+                course c ON l.course_id = c.course_id
+            JOIN 
+                enrollment e ON e.course_id = c.course_id
+            WHERE 
+                e.student_id = $1
+
+            UNION ALL
+
+            SELECT 
+                'assignment' AS event_type,
+                a.assignment_id AS event_id,
+                a.assignment_name AS title,
+                c.course_id,
+                c.name AS course_name,
+                a.due_date AS start,
+                NULL AS end
+            FROM 
+                assignment a
+            JOIN 
+                lesson l ON a.lesson_id = l.lesson_id
+            JOIN 
+                course c ON l.course_id = c.course_id
+            JOIN 
+                assignment_student asgn_student ON a.assignment_id = asgn_student.assignment_id
+            WHERE 
+                asgn_student.student_id = $1
+
+            UNION ALL
+
+            SELECT 
+                'exam' AS event_type,
+                e.exam_id AS event_id,
+                e.exam_name AS title,
+                c.course_id,
+                c.name AS course_name,
+                e.due_date AS start,
+                NULL AS end
+            FROM 
+                exam e
+            JOIN 
+                course c ON e.course_id = c.course_id
+            JOIN 
+                exam_student exm_student ON e.exam_id = exm_student.exam_id
+            WHERE 
+                exm_student.student_id = $1;
+            `, [req.params.studentId]);
         res.send(result.rows);
     } catch(err) {
         console.log(err);
