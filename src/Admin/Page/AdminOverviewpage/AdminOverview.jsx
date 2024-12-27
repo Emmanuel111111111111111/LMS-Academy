@@ -77,7 +77,7 @@ export const AdminOverview = () => {
         setIsCourseLoading(true);
         try {
             const result = await axios(BASE_URL + "/courses-instructor-studentscount-lessons", {
-                timeout: 25000
+                timeout: 30000
             });
             setCourses(result.data.sort((a,b) => new Date(b.date_added) - new Date(a.date_added)).slice(0,3));
             setIsCourseLoading(false);
@@ -91,7 +91,7 @@ export const AdminOverview = () => {
         setIsActivityLoading(true);
         try {
             const result = await axios(BASE_URL + "/activity-log", {
-                timeout: 25000
+                timeout: 30000
             });
             setActivities(result.data.sort((a,b) => new Date(b.date) - new Date(a.date)));
             setIsActivityLoading(false);
