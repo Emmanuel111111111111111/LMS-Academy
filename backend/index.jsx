@@ -101,9 +101,10 @@ app.get("/teachers-len", async (req, res) => {
     }
 });
 app.post('/new-teacher', async (req, res) => {
-    const query = "INSERT INTO instructor (first_name, date_added, email, phone_number) VALUES ($1, $2, $3, $4) RETURNING *";
+    const query = "INSERT INTO instructor (first_name, last_name, date_added, email, phone_number) VALUES ($1, $2, $3, $4, $5) RETURNING *";
     const values = [
-        req.body.name,
+        req.body.first_name,
+        req.body.last_name,
         req.body.date,
         req.body.email,
         req.body.phone_number
@@ -111,6 +112,18 @@ app.post('/new-teacher', async (req, res) => {
     try {
         const result = await client.query(query, values);
         console.log(result.rows[0]);
+        const instructor_id = result.rows[0].instructor_id;
+
+        const assignQuery = "INSERT INTO instructorcourses (instructor_id, course_id) VALUES ($1, $2)";
+        const assignValues = [
+            instructor_id,
+            req.body.course_id
+        ];
+
+        const assignResult = await client.query(assignQuery, assignValues);
+        console.log(assignResult.rows[0])
+
+
 
         const activity = req.body.course_name === ""
             ? 'New instructor, ' + req.body.name + ' added.'
@@ -122,13 +135,56 @@ app.post('/new-teacher', async (req, res) => {
             req.body.date
         ];
 
-
         const logResult = await client.query(logQuery, logValues);
         console.log(logResult.rows[0])
         res.json({message: "Instructor added successfully", instructor: result.rows[0]});
     } catch (err) {
         console.error(err);
         return res.status(500).json({message: "Error in adding new instructor or logging"});
+    }
+});
+app.put('/suspend-teacher', async (req, res) => {
+    const query = "UPDATE instructor SET suspended = true WHERE instructor_id = $1";
+    const values = [
+        req.body.instructor_id
+    ]
+    try {
+        const result = await client.query(query, values);
+        const activity = "Instructor, " + req.body.instructor_name + ", was suspended.";
+        const logQuery = "INSERT INTO activity_log (activity, date) VALUES ($1, $2)";
+        const logValues = [
+            activity,
+            req.body.date
+        ];
+
+        await client.query(logQuery, logValues);
+        res.json({message: "Instructor suspended successfully", instructor: result.rows[0]});
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({message: "Error in adding new course or logging"});
+    }
+});
+app.put('/delete-teacher', async (req, res) => {
+    const query = "UPDATE instructor SET deleted = true WHERE instructor_id = $1";
+    const values = [
+        req.body.instructor_id
+    ]
+    try {
+        const result = await client.query(query, values);
+        const activity = "Instructor, " + req.body.instructor_name + ", was deleted.";
+        const logQuery = "INSERT INTO activity_log (activity, date) VALUES ($1, $2)";
+        const logValues = [
+            activity,
+            req.body.date
+        ];
+
+        await client.query(logQuery, logValues);
+        res.json({message: "Instructor deleted successfully", instructor: result.rows[0]});
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({message: "Error in adding new course or logging"});
     }
 });
 
@@ -163,6 +219,29 @@ app.post('/new-course', async (req, res) => {
 
         await client.query(logQuery, logValues);
         res.json({message: "Instructor added successfully", instructor: result.rows[0]});
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({message: "Error in adding new course or logging"});
+    }
+});
+
+app.put('/delete-course', async (req, res) => {
+    const query = "UPDATE course SET deleted = true WHERE course_id = $1";
+    const values = [
+        req.body.course_id
+    ]
+    try {
+        const result = await client.query(query, values);
+        const activity = "Course, " + req.body.course_name + ", deleted.";
+        const logQuery = "INSERT INTO activity_log (activity, date) VALUES ($1, $2)";
+        const logValues = [
+            activity,
+            req.body.date
+        ];
+
+        await client.query(logQuery, logValues);
+        res.json({message: "Course deleted successfully", instructor: result.rows[0]});
 
     } catch (err) {
         console.error(err);
@@ -238,8 +317,9 @@ app.get('/courses-instructor-studentscount-lessons', async (req, res) => {
             LEFT JOIN enrollment e ON c.course_id = e.course_id
             LEFT JOIN student s ON e.student_id = s.student_id
             LEFT JOIN lesson l ON c.course_id = l.course_id
+            WHERE c.deleted = FALSE
             GROUP BY c.course_id, i.instructor_id, l.lesson_id
-            ORDER BY c.course_id, i.instructor_id;
+            ORDER BY c.date_added, i.instructor_id;
         `;
 
         const result = await client.query(query);
@@ -298,6 +378,7 @@ app.get('/courses-instructor-students', async (req, res) => {
             LEFT JOIN instructor i ON ic.instructor_id = i.instructor_id
             LEFT JOIN enrollment e ON c.course_id = e.course_id
             LEFT JOIN student s ON e.student_id = s.student_id
+            WHERE c.deleted = FALSE
             ORDER BY c.course_id, i.instructor_id, s.student_id;
         `;
 
@@ -367,6 +448,8 @@ app.get("/lessons-info", async (req, res) => {
             lesson.lesson_id,
             lesson.title,
             lesson.description,
+            lesson.start_date,
+            lesson.end_date,
             lesson.number,
             lesson.course_id,
             COALESCE(course.name, 'NA') AS course_name,
@@ -514,6 +597,7 @@ app.get('/lessons/:studentID', async (req, res) => {
         res.status(500).json({ error: 'Error grabbing lesson_student info' });
     }
 });
+
 
 
 

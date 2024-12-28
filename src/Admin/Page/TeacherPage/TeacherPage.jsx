@@ -9,6 +9,7 @@ import Modal from "../ActiveCourses/Modal";
 import axios from 'axios';
 import { format } from 'date-fns';
 import { BASE_URL, TEST_URL } from "../../../../config";
+import { ConfirmModal } from "../../Components/Modals/ConfirmModal";
 
 
 export const TeachersPage = () => {
@@ -20,6 +21,9 @@ export const TeachersPage = () => {
     const [ teachers, setTeachers ] = useState([]);
     const [ courses, setCourses ] = useState([]);
     const [ isLoading, setIsLoading ] = useState(false);
+    const [ selected, setSelected ] = useState({});
+    const [ confirmType, setConfirmType ] = useState('');
+    const [ isOpenConfirm, setIsOpenConfirm ] = useState(false);
     const [ errorMessage, setErrorMessage ] = useState(false);
     const scroll = useRef(null);
     const actionsRef = useRef(null);
@@ -57,7 +61,8 @@ export const TeachersPage = () => {
     }
 
     const [ newTeacherValues, setNewTeacherValues ] = useState({
-        name: '',
+        first_name: '',
+        last_name: '',
         course_id: null,
         course_name: null,
         date: new Date().toISOString().slice(0,19).replace('T', ' '),
@@ -66,7 +71,17 @@ export const TeachersPage = () => {
     })
 
     const handleInput = (event) => {
-        setNewTeacherValues(prev => ({ ...prev, [event.target.name]: event.target.value }))
+        if (event.target.name === 'course_name') {
+            console.log(event.target.value)
+            const [ course_id, course_name ] = event.target.value.split('|')
+            setNewTeacherValues(prev => ({ ...prev, 'course_id': course_id }))
+            setNewTeacherValues(prev => ({ ...prev, 'course_name': course_name }))
+        }
+        else {
+            setNewTeacherValues(prev => ({ ...prev, [event.target.name]: event.target.value }))
+        }
+
+        console.log(newTeacherValues);
     }
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -79,6 +94,20 @@ export const TeachersPage = () => {
         
     }
 
+
+    const handleDelete = (event, teach) => {
+        event.stopPropagation();
+        setSelected(teach);
+        setConfirmType('delete');
+        setIsOpenConfirm(true);
+    }
+
+    const handleSuspend = (event, teach) => {
+        event.stopPropagation();
+        setSelected(teach);
+        setConfirmType('suspend');
+        setIsOpenConfirm(true);
+    }
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -145,14 +174,23 @@ export const TeachersPage = () => {
                         </div>
 
                         <form className={styles.theForm} onSubmit={handleSubmit}>
-                            <h5>Instructor's Name</h5>
-                            <input type="text" placeholder="Enter Instructor Name" name="name" onChange={handleInput}></input>
+                            <div className={styles.formFlex}>
+                                <div>
+                                <h5>First Name</h5>
+                                <input type="text" placeholder="Instructor's First Name" name="first_name" onChange={handleInput}></input>
+                                </div>
+
+                                <div>
+                                <h5>Last Name</h5>
+                                <input type="text" placeholder="Instructor's Last Name" name="last_name" onChange={handleInput}></input>
+                                </div>
+                            </div>
                             
                             <h5>Course</h5>
                             <select id="" name="course_name" onChange={handleInput}>
                                 <option value="">Select Course</option>
                                 {courses.map((cour, i) => (
-                                    <option key={i} value={cour.name}>{cour.name}</option>
+                                    <option key={i} value={cour.course_id + '|' + cour.name}>{cour.name}</option>
                                 ))}
                             </select>
                             
@@ -199,8 +237,8 @@ export const TeachersPage = () => {
                                                 <button className={styles.actionsButton} onClick={() => toggleAction(index)}><img src={getImageUrl('threeDots.png')} /></button>
                                                 <div className={`${styles.actionsClosed} ${actionsOpen[index] && styles.theActions}`} ref={actionsRef}>
                                                     <h5>ACTION</h5>
-                                                    <button><img src={getImageUrl('approve.png')} />SUSPEND</button>
-                                                    <button><img src={getImageUrl('delete.png')} />DECLINE</button>
+                                                    <button onClick={(e)=>handleSuspend(e, teacher)}><img src={getImageUrl('approve.png')} />SUSPEND</button>
+                                                    <button onClick={(e)=>handleDelete(e, teacher)}><img src={getImageUrl('delete.png')} />DELETE</button>
                                                 </div>
                                             </div>
                                         </td>
@@ -233,6 +271,9 @@ export const TeachersPage = () => {
 
                 
             </div>
+
+            <ConfirmModal isOpen={isOpenConfirm} setOpen={setIsOpenConfirm} item={'Teacher'} cohort={'none'} selected={selected} confirmType={confirmType} reload={fetchTeachers} />
+
         </>
     )
 }

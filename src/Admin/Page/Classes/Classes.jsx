@@ -106,8 +106,8 @@ export const Classes = () => {
                                 </div>
                                 <p>Course: {clas.course_name}</p>
                                 <div className={styles.classData}>
-                                    {/* <div className={styles.timeData}><img src={getImageUrl('timer.png')} alt="" />{clas.length}</div>
-                                    <div className={styles.timeData}><img src={getImageUrl('blueCalendar.png')} alt="" />{format(new Date(clas.dueDate), 'd MMM')}</div> */}
+                                    {/* <div className={styles.timeData}><img src={getImageUrl('timer.png')} alt="" />{(Math.abs(new Date(clas.end_date) - new Date(clas.start_date))/1000 * 60 * 60).toFixed(1)}</div> */}
+                                    {clas.start_date != null && <div className={styles.timeData}><img src={getImageUrl('blueCalendar.png')} alt="" />{format(new Date(clas.start_date), 'd MMM')}</div>}
                                 </div>
                                 <div className={styles.crumb}>
                                     <div className={styles.profile}><img src={getImageUrl('profile.svg')} alt="" />{clas.instructor_name}</div>

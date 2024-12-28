@@ -4,6 +4,7 @@ import styles from "./AllCourses.module.css";
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Modal from "../ActiveCourses/Modal";
+import { ConfirmModal } from "../../Components/Modals/ConfirmModal";
 import Pagination from "../../../Components/Pagination/Pagination";
 import { BASE_URL, TEST_URL } from "../../../../config";
 
@@ -18,8 +19,11 @@ export const AllCourses = () => {
     const [ buttonType, setButtonType ] = useState("");
     const [ actionsOpen, setActionsOpen ] = useState({});
     const [ selected, setSelected ] = useState({});
+    const [ confirmType, setConfirmType ] = useState('');
+    const [ isOpenConfirm, setIsOpenConfirm ] = useState(false);
     const [ isLoading, setIsLoading ] = useState(false);
     const [ isLoading2, setIsLoading2 ] = useState(false);
+    const [ isLoadingCourse, setIsLoadingCourse ] = useState(false);
     const [ errorMessage, setErrorMessage ] = useState(false);
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ itemsPerPage, setItemsPerPage ] = useState(5);
@@ -200,6 +204,13 @@ export const AllCourses = () => {
         window.scrollTo({ top: 0});
     }
 
+    const handleDelete = (event, course) => {
+        event.stopPropagation();
+        setSelected(course);
+        setConfirmType('delete');
+        setIsOpenConfirm(true);
+    }
+
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -322,14 +333,14 @@ export const AllCourses = () => {
                                     <img src={getImageUrl('frame7.png')} />
                                 </div>
                                 <div className={styles.infoHeader}>
-                                    <div><h3>{cour.name}<span>Started</span></h3></div>
+                                    <div><h3>{cour.name}</h3><span>Started</span></div>
                                     <div>
                                         <button className={styles.actionsButton} onClick={(e) => toggleAction(e, index)}><img src={getImageUrl('threeDots.png')} /></button>
                                         <div className={`${styles.actionsClosed} ${actionsOpen[index] && styles.theActions}`} ref={actionsRef}>
                                             <h5>ACTION</h5>
                                             <button onClick={(e)=>handleEdit(e, cour)}><img src={getImageUrl('edit.png')} />EDIT</button>
-                                            <button onClick={(e)=>handleEdit(e, index)}><img src={getImageUrl('approve.png')} />SUSPEND</button>
-                                            <button onClick={(e)=>handleEdit(e, index)}><img src={getImageUrl('delete.png')} />DECLINE</button>
+                                            {/* <button onClick={(e)=>handleEdit(e, index)}><img src={getImageUrl('approve.png')} />SUSPEND</button> */}
+                                            <button onClick={(e)=>handleDelete(e, cour)}><img src={getImageUrl('delete.png')} />DELETE</button>
                                         </div>
                                     </div>
                                 </div>
@@ -344,7 +355,7 @@ export const AllCourses = () => {
                                         </div>}
                                     </div>
                                     <div className={styles.crumb}>
-                                        <div className={styles.profile}><img src={getImageUrl('profile.svg')} alt="" />{cour.instructors.length > 0 ? cour.instructors[0].name : 'None'}</div>
+                                        {cour.instructors.length > 0 && <div className={styles.profile}><img src={getImageUrl('profile.svg')} alt="" />{cour.instructors[0].name}</div>}
                                         <div className={styles.students}><img src={getImageUrl('frame5.png')} alt="" />{cour.student_count} {cour.student_count === 1 ? 'Student' : 'Students'}</div>
                                     </div>
                                 </div>
@@ -441,6 +452,7 @@ export const AllCourses = () => {
             </div>
         </Modal>
 
+        <ConfirmModal isOpen={isOpenConfirm} setOpen={setIsOpenConfirm} item={'Course'} cohort={'none'} selected={selected} confirmType={confirmType} reload={fetchCoursesTeachersStudents} />
 
         </>
     )

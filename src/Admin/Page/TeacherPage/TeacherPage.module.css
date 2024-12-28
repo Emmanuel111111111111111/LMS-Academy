@@ -238,6 +238,15 @@
     height: 100%;
     overflow: auto;
 }
+.theForm .formFlex {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    gap: 3%;
+}
+.formFlex div {
+    width: 100%;
+}
 .theForm h5 {
     margin-top: 12px;
     font-size: 16px;

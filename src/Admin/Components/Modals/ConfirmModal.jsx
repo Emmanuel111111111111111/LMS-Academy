@@ -15,21 +15,35 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
 
     const handleSuspension = async () => {
         setIsLoading(true);
-        const values = {
+        const courseValues = {
             cohort_id: cohort.cohort_id,
             course_id:  selected.course_id,
             cohort_name: cohort.cohort_name,
             course_name:  selected.course_name,
             date: new Date().toISOString().slice(0, 19).replace('T', ' '),
         }
-        console.log(values);
+
+        const teacherValues = {
+            instructor_id:  selected.instructor_id,
+            instructor_name:  selected.first_name + (selected.last_name != null ? ' ' + selected.last_name : ''),
+            date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+        }
         try {
-            const result = await axios.post(BASE_URL + '/suspend-course', values)
-            console.log(result);
+            if (item.toLowerCase() === "course") {
+                const result = await axios.post(BASE_URL + '/suspend-course', courseValues)
+                console.log(result);
+                handleSuccess();
+            }
+
+            if (item.toLowerCase() === "teacher") {
+                console.log('here')
+                const result = await axios.put(BASE_URL + '/suspend-teacher', teacherValues)
+                console.log(result);
+                handleSuccess();
+            }
             
             setOpen(false);
             setIsLoading(false);
-            handleSuccess();
         } catch (err) {
             console.log(err);
             setIsLoading(false);
@@ -59,6 +73,42 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
         }
     }
 
+
+    const handleDelete = async () => {
+        setIsLoading(true);
+        const courseValues = {
+            course_id:  selected.course_id,
+            course_name:  selected.name,
+            date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+        }
+
+        const teacherValues = {
+            instructor_id:  selected.instructor_id,
+            instructor_name:  selected.first_name + (selected.last_name != null ? ' ' + selected.last_name : ''),
+            date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+        }
+
+        try {
+            if (item.toLowerCase() === "course") {
+                const result = await axios.put(BASE_URL + '/delete-course', courseValues)
+                console.log(result);
+                handleSuccess();
+            }
+
+            if (item.toLowerCase() === "teacher") {
+                const result = await axios.put(BASE_URL + '/delete-teacher', teacherValues)
+                console.log(result);
+                handleSuccess();
+            }
+            
+            // setOpen(false);
+            setIsLoading(false);
+        } catch (err) {
+            console.log(err);
+            setIsLoading(false);
+        }
+    }
+
     const handleSuccess = () => {
         setOpenSuccess(true);
         setTimeout(() => setOpenSuccess(false), 3000);
@@ -82,9 +132,12 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
                 </div>
 
                 <div className={styles.contentBody}>
-                    <p>Are you sure you want to <b>{confirmType}</b> the {item}: {selected.course_name}</p>
+                    <p>Are you sure you want to <b>{confirmType}</b> the {item}: {item.toLowerCase() === "course" ? (selected.course_name ? selected.course_name : selected.name)
+                                                                                : item.toLowerCase() === 'teacher' ? selected.first_name + (selected.last_name != null ? ' ' + selected.last_name : '')
+                                                                                : ''}
+                    </p>
                     
-                    <button className={styles.cohortButton} onClick={confirmType === "suspend" ? handleSuspension : confirmType === "remove" ? handleRemoving : ''}>
+                    <button className={styles.cohortButton} onClick={confirmType === "suspend" ? handleSuspension : confirmType === "remove" ? handleRemoving : confirmType === 'delete' ? handleDelete : ''}>
                         {isLoading ? "..." : confirmType}
                     </button>
 
@@ -100,6 +153,7 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
                 {item} <b>{selected.course_name}</b> {
                     confirmType === 'suspend' ? 'suspended'
                     : confirmType === 'remove' ? 'removed'
+                    : confirmType === 'delete' ? 'deleted'
                     : ''
                 }
             </div>
