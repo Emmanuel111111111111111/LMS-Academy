@@ -777,6 +777,8 @@ app.get("/events", async (req, res) => {
             JOIN 
                 course c ON l.course_id = c.course_id
 
+            WHERE c.deleted = FALSE
+
             UNION ALL
 
             SELECT 
@@ -791,6 +793,9 @@ app.get("/events", async (req, res) => {
                 exam e
             JOIN 
                 course c ON e.course_id = c.course_id;
+            
+            WHERE c.deleted = FALSE
+            
             `);
         res.send(result.rows);
     } catch(err) {
