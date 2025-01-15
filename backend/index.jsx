@@ -792,15 +792,15 @@ app.get("/events", async (req, res) => {
             FROM 
                 exam e
             JOIN 
-                course c ON e.course_id = c.course_id;
+                course c ON e.course_id = c.course_id
             
-            WHERE c.deleted = FALSE
+            WHERE c.deleted = FALSE;
             
             `);
         res.send(result.rows);
     } catch(err) {
         console.log(err);
-        res.status(500).json({message: "Error fetching assignments"});
+        res.status(500).json({message: "Error fetching events"});
     }
 });
 app.get("/events/:studentId", async (req, res) => {
