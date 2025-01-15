@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { getImageUrl } from "../../../utilis";
-import styles from "./CompletedCourses.module.css";
+import styles from "./Courses.module.css";
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
-import Modal from "../ActiveCourses/Modal";
+import Modal from "../../Components/Modals/Modal";
 
-export const CompletedCourses = () => {
+export const UpcomingCourses = () => {
 
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ isOpen, setIsOpen ] = useState(false);
@@ -43,8 +43,7 @@ export const CompletedCourses = () => {
 
     };
     
-    const toggleAction = (event, index) => {
-        event.stopPropagation();
+    const toggleAction = (index) => {
         setActionsOpen(prevState => ({
             ...prevState,
             [index]: !prevState[index]
@@ -132,19 +131,41 @@ export const CompletedCourses = () => {
             duration: '10 weeks',
             students: 72,
             location: 'Physical'
-        }
+        },
+        // {
+        //     title: 'Course Title 7',
+        //     description: 'A short lesson description...',
+        //     teacher: 'Arafat Murad',
+        //     currentLesson: 7,
+        //     totalLessons: 12,
+        //     currentAssignment: 5,
+        //     duration: '10 weeks',
+        //     students: 72,
+        //     location: 'Physical'
+        // },
+        // {
+        //     title: 'Course Title 8',
+        //     description: 'A short lesson description...',
+        //     teacher: 'Arafat Murad',
+        //     currentLesson: 7,
+        //     totalLessons: 12,
+        //     currentAssignment: 5,
+        //     duration: '10 weeks',
+        //     students: 72,
+        //     location: 'Physical'
+        // }
     ]
     
 
     return (
         <>
         <div className={styles.whole}>
-
-            <div className={styles.breadcrumb}><a href="/admin-dashboard/courses">Courses</a> {'>'} Completed</div>
+    
+            <div className={styles.breadcrumb}><a href="/admin-dashboard/courses">Courses</a> {'>'} Upcoming</div>
 
             <div>
                 <div className={styles.title}>
-                    <h1>Completed Courses</h1>
+                    <h1>Upcoming Courses</h1>
                     <div className={styles.buttons}>
                         <button className={styles.buttonOne}>Sort By<img src={getImageUrl('sortIcon.png')} /></button>
                         <button className={styles.buttonTwo} onClick={toggleDropdown} ><img src={getImageUrl('whitePlus.png')} />Create Event</button>
@@ -204,7 +225,7 @@ export const CompletedCourses = () => {
                             <div className={styles.infoHeader}>
                                 <div><h3>Artificial Intelligence<span>Started</span></h3></div>
                                 <div>
-                                    <button className={styles.actionsButton} onClick={(event) => toggleAction(event, index)}><img src={getImageUrl('threeDots.png')} /></button>
+                                    <button className={styles.actionsButton} onClick={() => toggleAction(index)}><img src={getImageUrl('threeDots.png')} /></button>
                                     <div className={`${styles.actionsClosed} ${actionsOpen[index] && styles.theActions}`} ref={actionsRef}>
                                         <h5>ACTION</h5>
                                         <button><img src={getImageUrl('edit.png')} />EDIT</button>

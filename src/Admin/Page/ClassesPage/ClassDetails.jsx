@@ -4,7 +4,7 @@ import styles from "./ClassDetails.module.css";
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { BASE_URL, TEST_URL } from "../../../../config";
-import Modal from "../ActiveCourses/Modal";
+import Modal from "../../Components/Modals/Modal";
 import Calendar from 'react-calendar';
 import "../../../App.css"
 
@@ -89,8 +89,8 @@ export const ClassDetails = () => {
 
             if (response.ok) {
                 console.log('Class updated successfully');
-                loadLessonDetails();
-                // navigate('/admin-dashboard/classes');
+                // loadLessonDetails();
+                navigate('/admin-dashboard/classes');
             } else {
                 console.error("Failed to update class");
             }
@@ -104,40 +104,6 @@ export const ClassDetails = () => {
         navigate('/admin-dashboard/classes');
     }
 
-
-    const handleNewLesson = async (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-    
-        if (!newLessonTitle.trim()) {
-            setTitleErrorMsg(true);
-            return;
-        }
-
-        const newLesson = { newLessonTitle, class_id: theClass.class_id };
-        console.log(newLesson);
-    
-        try {
-            const response = await fetch(BASE_URL + '/new-lesson', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(newLesson),
-            });
-    
-            if (response.ok) {
-                setIsOpenContent(false);
-                loadLessonDetails();
-                alert('Lesson added successfully');
-            } else {
-                alert('Failed to add lesson');
-            }
-        } catch (error) {
-            console.error('Error adding lesson:', error);
-            alert('Error adding lesson');
-        }
-    };
 
     return(
         <div className={styles.whole}>
@@ -274,23 +240,6 @@ export const ClassDetails = () => {
                 </form>
                 </>
             }
-
-            <Modal isOpen={isOpenContent}>
-                <div className={styles.addContent}>
-                    <div className={styles.head}>
-                        <h3>Add Content</h3>
-                        <button onClick={()=>setIsOpenContent(false)} className={styles.close}><img src={getImageUrl('close.png')} /></button>
-                    </div>
-                    <form action={''} className={styles.contentBody}>
-                        <label htmlFor="title">Title</label>
-                        <input type="text" name="title" id="title" placeholder="Enter title"
-                            value={newLessonTitle} onChange={(e)=>setNewLessonTitle(e.target.value)}
-                        />
-                        {titleErrorMsg && <p style={{color: 'red', fontSize: '12px'}}>Title can't be empty</p>}
-                        <button type="button" onClick={handleNewLesson}>Submit</button>
-                    </form>
-                </div>
-            </Modal>
         </div>
     )
 }

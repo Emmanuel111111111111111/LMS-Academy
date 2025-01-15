@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Modal from "../../Page/ActiveCourses/Modal";
+import Modal from "./Modal";
 import styles from './Modal.module.css';
 import { getImageUrl } from "../../../utilis";
 import axios from "axios";
@@ -21,12 +21,14 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
             cohort_name: cohort.cohort_name,
             course_name:  selected.course_name,
             date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+            user: sessionStorage.getItem('full_name'),
         }
 
         const teacherValues = {
             instructor_id:  selected.instructor_id,
             instructor_name:  selected.first_name + (selected.last_name != null ? ' ' + selected.last_name : ''),
             date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+            user: sessionStorage.getItem('full_name'),
         }
         try {
             if (item.toLowerCase() === "course") {
@@ -58,6 +60,7 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
             cohort_name: cohort.cohort_name,
             course_name:  selected.course_name,
             date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+            user: sessionStorage.getItem('full_name'),
         }
         console.log(values);
         try {
@@ -80,12 +83,14 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
             course_id:  selected.course_id,
             course_name:  selected.name,
             date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+            user: sessionStorage.getItem('full_name'),
         }
 
         const teacherValues = {
             instructor_id:  selected.instructor_id,
             instructor_name:  selected.first_name + (selected.last_name != null ? ' ' + selected.last_name : ''),
             date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+            user: sessionStorage.getItem('full_name'),
         }
 
         try {
@@ -101,7 +106,7 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
                 handleSuccess();
             }
             
-            // setOpen(false);
+            setOpen(false);
             setIsLoading(false);
         } catch (err) {
             console.log(err);

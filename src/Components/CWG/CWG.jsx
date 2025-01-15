@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { getImageUrl } from "../../utilis";
 import styles from "./CWG.module.css";
 import { useNavigate } from "react-router-dom";
-import Modal from "../../Admin/Page/ActiveCourses/Modal";
+import Modal from "../../Admin/Components/Modals/Modal";
 
 export const CWG = () => {
 

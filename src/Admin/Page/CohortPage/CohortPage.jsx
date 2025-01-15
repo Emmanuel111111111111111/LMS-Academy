@@ -3,7 +3,7 @@ import { getImageUrl } from "../../../utilis";
 import styles from "./CohortPage.module.css";
 import axios from 'axios';
 import { format } from "date-fns";
-import Modal from "../ActiveCourses/Modal";
+import Modal from "../../Components/Modals/Modal";
 import { BASE_URL, TEST_URL } from "../../../../config";
 
 export const CohortPage = () => {
@@ -25,6 +25,7 @@ export const CohortPage = () => {
                 timeout: 20000
             });
             setCohorts(result.data);
+            console.log(result.data);
             setIsLoading(false);
         } catch (err) {
             console.log(err);
@@ -42,6 +43,7 @@ export const CohortPage = () => {
         end_date: '',
         year: new Date().toISOString().slice(0,4),
         date_added: new Date().toISOString().slice(0, 19).replace('T', ' '),
+        user: sessionStorage.getItem('full_name'),
     })
 
     const handleInput = (event) => {
@@ -53,6 +55,8 @@ export const CohortPage = () => {
     const handleSubmitCohort = async (event) => {
         event.preventDefault();
         setIsLoading2(true);
+
+
         try {
             axios.post(BASE_URL + '/new-cohort', newCohortValues)
             .then(res => {
@@ -77,6 +81,7 @@ export const CohortPage = () => {
         window.location.href = `/admin-dashboard/cohort/${id}`;
     }
 
+
     return (
         <>
 
@@ -89,7 +94,11 @@ export const CohortPage = () => {
                     <h3>All Cohorts</h3>
                     <div className={styles.buttons}>
                         <button className={styles.buttonOne}>Sort By<img src={getImageUrl('sortIcon.png')} alt="" /></button>
-                        <button className={styles.buttonTwo} onClick={()=>setIsOpenCohort(true)}>
+                        <button
+                            className={styles.buttonTwo}
+                            onClick={()=>setIsOpenCohort(true)}
+                            // disabled={cohorts?.length >= 3 ? true : false}
+                        >
                             <img src={getImageUrl('whitePlus.png')} alt="" />
                             Add New Cohort
                         </button>
@@ -116,7 +125,7 @@ export const CohortPage = () => {
                                     <div className={styles.cohortData}>
                                         <div>
                                             <img src={getImageUrl('blueCalendar.png')} alt="" />
-                                            {format( new Date(coho.start_date), 'MMMM')} - {format( new Date(coho.end_date), 'MMMM')}
+                                            {format( new Date(coho.start_date), 'MMMM')} - {format( new Date(coho.end_date), 'MMMM')} {format( new Date(coho.end_date), 'yyyy')}
                                         </div>
                                         <div>
                                             <img src={getImageUrl('forStudents.png')} alt="" />
@@ -173,18 +182,35 @@ export const CohortPage = () => {
                     
                     <div className={styles.form}>
                         <label htmlFor="description">Description</label>
-                        <textarea name="description" id="" placeholder="Enter description" onInput={handleInput}></textarea>
+                        <textarea name="description" id="description" placeholder="Enter description" onInput={handleInput}></textarea>
                     </div>
                     
                     <div className={styles.flex}>
                         <div className={styles.form}>
                             <label htmlFor="title">Start Date</label>
-                            <input type="date" name="start_date" id="start_date" onInput={handleInput} required />
+                            <input
+                                type="date"
+                                name="start_date"
+                                id="start_date"
+                                min={cohorts.length > 0 && new Date(Math.max(...cohorts.map(e => new Date(e.end_date)))).toISOString().split("T")[0]}
+                                onInput={handleInput}
+                                required
+                            />
                         </div>
 
                         <div className={styles.form}>
                             <label htmlFor="title">End Date</label>
-                            <input type="date" name="end_date" id="end_date" onInput={handleInput} required />
+                            <input
+                                type="date"
+                                name="end_date"
+                                id="end_date"
+                                min={
+                                    newCohortValues.start_date ? newCohortValues.start_date :
+                                    cohorts.length > 0 && new Date(Math.max(...cohorts.map(e => new Date(e?.end_date)))).toISOString().split("T")[0]
+                                }
+                                onInput={handleInput}
+                                required
+                            />
                         </div>
                         
                     </div>

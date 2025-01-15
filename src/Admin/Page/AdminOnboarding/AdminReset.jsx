@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 import { getImageUrl } from "../../../utilis";
-import styles from "./AdminReset.module.css";
+import styles from "./AdminOnboarding.module.css";
 
 
 export const AdminReset = () => {

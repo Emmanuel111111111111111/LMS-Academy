@@ -5,7 +5,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import Modal from "../ActiveCourses/Modal";
+import Modal from "../../Components/Modals/Modal";
 import { format } from 'date-fns';
 import axios from 'axios';
 import { BASE_URL, TEST_URL } from "../../../../config";
@@ -14,15 +14,21 @@ import { BASE_URL, TEST_URL } from "../../../../config";
 export const SchedulePage = () => {
 
     const [ events, setEvents ] = useState([]);
+    const [ allCourses, setAllCourses ] = useState([]);
+    const [ allLessons, setAllLessons ] = useState([]);
     const [ isLoading, setIsLoading ] = useState(false);
+    const [ isLoading2, setIsLoading2 ] = useState(false);
     const [ search, setSearch ] = useState("");
     const [ viewType, setViewType ] = useState('timeGridWeek');
     const [ open, setOpen ] = useState(false);
+    const [ openSuccess, setOpenSuccess ] = useState(false);
+    const [ eventType, setEventType ] = useState("");
     const calendarRef = useRef(null);
     const calendarAPI = calendarRef?.current?.getApi();
 
     useEffect(() => {
         fetchEvents();
+        fetchAllCourses();
     }, []);
 
     const fetchEvents = async () => {
@@ -39,11 +45,51 @@ export const SchedulePage = () => {
             setIsLoading(false);
         }
     }
+
+    const fetchAllCourses = async () => {
+        try {
+            const result = await axios(BASE_URL + `/courses`);
+            setAllCourses(result.data)
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    const fetchAllLessons = async (Id) => {
+        try {
+            const result = await axios(BASE_URL + `/lessons-course/${Id}`);
+            setAllLessons(result.data)
+            console.log(result.data)
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+
+    const [ newEventValues, setNewEventValues ] = useState({
+        name: null,
+        type: null,
+        course_id: null,
+        course_name: null,
+        lesson_id: null,
+        start_date: null,
+        end_date: null,
+        due_date: null
+    })
     
     const handleClose = () => {
         setOpen(false);
+        setNewEventValues({
+            name: null,
+            type: null,
+            course_id: null,
+            course_name: null,
+            lesson_id: null,
+            start_date: null,
+            end_date: null,
+            due_date: null
+        })
     };
-
     const handleOpen = () => {
         setOpen(true);
     };
@@ -70,6 +116,66 @@ export const SchedulePage = () => {
     });
 
 
+    const handleInput = (event) => {
+
+        setNewEventValues(prev => ({ ...prev, [event.target.name]: event.target.value }))
+
+        if ((event.target.name === 'due_date')
+        || (event.target.name === 'start_date')
+        || (event.target.name === 'end_date')) {
+            setNewEventValues(prev => ({ ...prev, [event.target.name]: event.target.value.replace('T', ' ') + '+01' }))
+        }
+        
+        if (event.target.name === 'type' && event.target.value === 'Assignment' && newEventValues.course_id) {
+            fetchAllLessons(newEventValues.course_id);
+        }
+        if (event.target.name === 'course_id' && newEventValues.type === 'Assignment') {
+            fetchAllLessons(event.target.value);
+        }
+        console.log(newEventValues);
+    }
+    const handleSubmitEvent = async (event) => {
+        event.preventDefault();
+        console.log(newEventValues);
+        setIsLoading2(true);
+        try {
+
+            var response = '';
+
+            if (newEventValues.type === 'Class') {
+                response = await axios.post(BASE_URL + '/new-lesson-date', newEventValues);
+                setIsLoading2(false);
+                handleSuccess('Class');
+            }
+            else if (newEventValues.type === 'Assignment') {
+                response = await axios.post(BASE_URL + '/new-assignment', newEventValues);
+                setIsLoading2(false);
+                handleSuccess('Assignment');
+            }
+            else if (newEventValues.type === 'Exam') {
+                response = await axios.post(BASE_URL + '/new-exam', newEventValues);
+                setIsLoading2(false);
+                handleSuccess('Exam');
+            }
+            
+            console.log(response);
+            setOpen(false);
+            
+        } catch (err) {
+            console.log(err);
+            setIsLoading2(false);
+        }
+    }
+
+
+    const handleSuccess = (type) => {
+        setEventType(type);
+        setOpenSuccess(true);
+        setTimeout(() => setOpenSuccess(false), 3000);
+        setTimeout(() => fetchEvents(), 3000);
+    }
+
+
 
     return (
         <>
@@ -87,9 +193,9 @@ export const SchedulePage = () => {
             </div>
 
             <Modal isOpen={open} >
-                <div className={styles.course_modal}>
+                <form className={styles.course_modal} onSubmit={handleSubmitEvent}>
                     <div className={styles.head}>
-                        <h3>Create Event </h3>
+                        <h3>Create Event</h3>
                         <button onClick={handleClose} className={styles.close}><img src={getImageUrl('close.png')} alt="" /></button>
                     </div>
 
@@ -97,34 +203,61 @@ export const SchedulePage = () => {
                         <div className={styles.content}>
                             <div>
                                 <h5>Event Name</h5>
-                                <input type="text" placeholder="Enter Event Name"></input>
+                                <input type="text" name="name" placeholder="Enter Event Name" onChange={handleInput} required></input>
                             </div>
                             <div>
                                 <h5>Event Type</h5>
-                                <select name="" id="">
-                                    <option value="">Select Event Type</option>
-                                    <option value="">Class</option>
-                                    <option value="">Assignment</option>
-                                    <option value="">Exam</option>
+                                <select name="type" onChange={handleInput} required>
+                                    <option className={styles.first} value="">Select Event Type</option>
+                                    <option value="Class">Class</option>
+                                    <option value="Assignment">Assignment</option>
+                                    <option value="Exam">Exam</option>
                                 </select>
                             </div>
 
+                            <div>
+                                <h5>Course</h5>
+                                <select name="course_id" onChange={handleInput} required>
+                                    <option className={styles.first} value="">Select Course</option>
+                                    {allCourses.map((cours, index) => (
+                                        <option key={index} value={cours.course_id}>{cours.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            {newEventValues.type === 'Assignment' && newEventValues.course_id && <div>
+                                <h5>Lesson</h5>
+                                <select name="lesson_id" onChange={handleInput} required>
+                                    <option value={null}>Select Lesson</option>
+                                    {allLessons.map((less, index) => (
+                                        <option key={index} value={less.lesson_id}>{less.title}</option>
+                                    ))}
+                                </select>
+                            </div>}
+
                         </div>
-                        <div className={styles.contain}>
+                        {newEventValues.type === 'Class' && <div className={styles.contain}>
                             <div>
                                 <h5>Start Date & Time</h5>
-                                <input type="datetime-local" name="" id="" />
+                                <input type="datetime-local" name="start_date" onChange={handleInput} />
                             </div>
                             <div>
                                 <h5>End Date & Time</h5>
-                                <input type="datetime-local" name="" id="" />
+                                <input type="datetime-local" name="end_date" onChange={handleInput}/>
                             </div>
-                        </div>
+                        </div>}
 
+                        {newEventValues.type != 'Class' && <div className={styles.contain}>
+                            <div>
+                                <h5>Due Date & Time</h5>
+                                <input type="datetime-local" name="due_date" onChange={handleInput}/>
+                            </div>
+                        </div>}
                     </div>
 
-                    <button className={styles.submit}>Submit</button>
-                </div>
+                    <button className={styles.submit}>{isLoading2 ? '...' : 'Submit'}</button>
+
+                </form>
             </Modal>
 
 
@@ -161,7 +294,7 @@ export const SchedulePage = () => {
                             headerToolbar={false}
                             slotEventOverlap={false}
                             eventOverlap={false}
-                            events={events}
+                            events={filteredEvents}
                             startParam="start"
                             endParam="end"
                             eventBorderColor="transparent"
@@ -169,11 +302,13 @@ export const SchedulePage = () => {
                                 const { date, view } = args;
                                 const dayOfWeek = date.toLocaleDateString('en-US', { weekday: 'short' });
                                 const dayOfMonth = date.getDate();
+                                // const month = date.toLocaleDateString('en-US', { month: 'short' });
 
                                 const isDayGridView = view.type.startsWith('dayGrid');
 
                                 return (
                                     <div className={styles.dayHeader}>
+                                        {/* {isDayGridView && <h2>{month}</h2>} */}
                                         <h1>{dayOfWeek.toUpperCase()}</h1>
                                         {!isDayGridView && <h2>{dayOfMonth}</h2>}
                                     </div>
@@ -209,6 +344,12 @@ export const SchedulePage = () => {
                 </div>
             }
         </div>
+
+        <Modal isOpen={openSuccess}>
+            <div className={styles.added}>
+                {eventType} ADDED!
+            </div>
+        </Modal>
         </>
     )
 }

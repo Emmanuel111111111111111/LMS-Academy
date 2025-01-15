@@ -31,6 +31,7 @@ export const Login = () => {
       sessionStorage.setItem("first_name", response.data.first_name);
       sessionStorage.setItem("last_name", response.data.last_name);
       sessionStorage.setItem("email", response.data.email);
+      sessionStorage.setItem("type", "student");
       window.location.href = "/dashboard";
       
     } catch (err) {

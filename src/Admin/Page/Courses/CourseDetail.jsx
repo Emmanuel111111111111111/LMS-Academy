@@ -4,7 +4,7 @@ import styles from "./CourseDetail.module.css";
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { BASE_URL, TEST_URL } from "../../../../config";
-import Modal from "../../Page/ActiveCourses/Modal";
+import Modal from "../../Components/Modals/Modal";
 import Calendar from "react-calendar";
 import "../../../App.css";
 
@@ -310,9 +310,16 @@ export const CourseDetail = () => {
                     <label htmlFor="title">Description</label>
                     <textarea type="text" name="title" id="description" placeholder="Enter description" />
 
-                    <label htmlFor="title">Week</label>
-                    <input type="number" name="week" id="week" placeholder="Enter week number" />
-                    <button type="button" onClick={handleNewLesson}>Submit</button>
+                    <div className={styles.contain}>
+                        <div>
+                            <h5>Start Date & Time</h5>
+                            <input type="datetime-local" name="start_date" onChange={''} />
+                        </div>
+                        <div>
+                            <h5>End Date & Time</h5>
+                            <input type="datetime-local" name="end_date" onChange={''}/>
+                        </div>
+                    </div>
                 </form>
             </div>
         </Modal>

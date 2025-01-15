@@ -216,7 +216,7 @@
     outline: none;
 }
 .head {
-    margin-top: 10px;
+    /* margin-top: 10px; */
     display: flex;
     justify-content: space-between;
     padding-bottom: 8px;
@@ -256,7 +256,7 @@
     color: #4B5563;
 }
 .content input::placeholder,
-.content select {
+.content select .first {
     font-size: 16px;
     font-weight: 400;
     color: #9CA3AF;
@@ -316,4 +316,14 @@
 }
 :global(.fc-timegrid-event .fc-event-title .class-event) {
     color: #0369A1 !important;
+}
+
+.added {
+    border-radius: 10px;
+    padding: 16px;
+    border: 1px solid #BDD9FF;
+    box-shadow: 0px 3px 5px 0px #00000017;
+    background-color: #FFFFFF;
+    width: fit-content;
+    height: fit-content;
 }

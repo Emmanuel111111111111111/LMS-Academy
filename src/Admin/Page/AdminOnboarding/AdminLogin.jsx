@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getImageUrl } from "../../../utilis";
-import styles from "./AdminLogin.module.css";
+import styles from "./AdminOnboarding.module.css";
 import axios from 'axios';
 import { BASE_URL, TEST_URL } from "../../../../config";
 
@@ -13,7 +13,7 @@ export const AdminLogin = () => {
   const [ isLoading, setIsLoading ] = useState(false);
 
   useEffect(() => {
-    // sessionStorage.clear();
+    sessionStorage.clear();
   }, [])
 
   
@@ -29,6 +29,8 @@ export const AdminLogin = () => {
       sessionStorage.setItem("first_name", response.data.first_name);
       sessionStorage.setItem("last_name", response.data.last_name);
       sessionStorage.setItem("email", response.data.email);
+      sessionStorage.setItem("full_name", response.data.first_name + (response.data.last_name != null ? ' ' + response.data.last_name : ''));
+      sessionStorage.setItem("type", 'teacher');
       console.log(response.data.first_name);
       window.location.href = "/admin-dashboard";
     } catch (err) {

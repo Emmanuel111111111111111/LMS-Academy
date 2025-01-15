@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getImageUrl } from "../../../utilis";
-import styles from "./NewAdmin.module.css";
+import styles from "./AdminOnboarding.module.css";
 import axios from 'axios';
 import { BASE_URL, TEST_URL } from "../../../../config";
 import { useParams } from "react-router-dom";

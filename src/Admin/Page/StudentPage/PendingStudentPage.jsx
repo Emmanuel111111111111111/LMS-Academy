@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import styles from './PendingStudentPage.module.css';
+import styles from './StudentPage.module.css';
 import { getImageUrl } from "../../../utilis";
 import Pagination from "../../../Components/Pagination/Pagination";
 

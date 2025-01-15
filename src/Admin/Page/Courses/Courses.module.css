@@ -401,23 +401,47 @@
     border: 1px solid #BDD9FF;
     box-shadow: 0px 3px 5px 0px #00000017;
     background-color: #FFFFFF;
-    width: 125%;
+    width: 80vw;
+    max-width: 900px;
     height: fit-content;
     max-height: 80vh;
 }
 
-.Modal {
+.Modhead {
+    padding-bottom: 12px;
+    border-bottom: 1.5px solid #CBD0DC;
+}
+.Modhead div {
     display: flex;
-    /* display: grid;
-    grid-template-columns: 1fr, 2fr; */
-    gap: 24px;
-    margin-top: 25px;
-    height: 100%;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+.Modhead p {
+    font-size: 16px;
+    font-weight: 500;
+    color: #A9ACB4;
 }
 
-.Modal .text {
-    width: 100%;
+
+
+.Modal {
+    display: flex;
+    align-items: stretch;
+    /* align-items: center; */
+    gap: 24px;
+    margin-top: 25px;
+    /* height: 100%; */
+}
+.Modal .modImg {
     height: 100%;
+    /* max-width: 100%;
+    height: auto; */
+}
+.Modal .text {
+    /* width: 100%;
+    height: 100%; */
+    flex: 1;
 }
 
 .Header{
@@ -425,12 +449,10 @@
     justify-content: space-between;
     gap: 16px;
 }
-
 .Header img {
     width: 20px;
     height: 20px;
 }
-
 .Header button {
     border: 1px solid #A1B2D1;
     outline: none;
@@ -445,17 +467,14 @@
     height: fit-content;
 }
 
-.crunb h3{
+.Header h3{
     font-weight: 600;
-    font-size: 18px;
-    line-height: 28px;
-    color: #2c2f7e; 
+    font-size: 16px;
+    color: #2C2F7E; 
     font-family: 'Work', 'Gill Sans', sans-serif;
 }
-
-.crunb span{
+.Header span {
     font-size: 13px;
-    line-height: 34.86px;
     font-weight: 500;
     color: #309e0c;
     background: #dce8cc;
@@ -463,41 +482,55 @@
     border-radius: 5px;
     margin-left: 8px;
 }
-
-.Modal p{
+.Modal p {
     font-weight: 400;
     size: 12.38px;
     line-height: 15.92px;
     color: #4D4D4D;
     margin-top: 10px;
-    
 }
 
-.coursesDatas {
+.text .coursesDatas {
     display: flex;
-    justify-content: space-between;
     gap: 16px;
     margin-top: auto;
+    font-size: 12px;
+    font-weight: 500;
+    color: #89939E;
 }
 
-.coursesDatas .profile{
-    font-weight: 500;
-    font-size: 10px;
+.coursesDatas .pro {
     line-height: 18px;
     display: inline-flex;
     align-items: center;
-    gap: 0px;
+    gap: 6px;
 }
-
-.coursesDatas img{
+.coursesDatas .stud {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.coursesDatas img {
     width: 26px;
     height: 26px;
+}
+.coursesDatas .pro img {
+    border-radius: 50px;
+    border: 1px solid #BDD9FF;
 }  
+
 
 .coursetable {
     width: 100%;
     border-spacing: 0 8px;
     margin-top: 25px;
+    table-layout: fixed;
+}
+.coursetable .check {
+    width: 30px;
+}
+.coursetable .act {
+    width: 80px;
 }
 .coursetable thead {
     background: #F9F9F9;
@@ -516,6 +549,8 @@
     padding: 6px 4px;
     border-top: 1px solid #E4E4E4;
     border-bottom: 1px solid #E4E4E4;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .coursetable th:first-child,
 .coursetable td:first-child {
@@ -533,20 +568,12 @@
     border-left: none;
 }
 
-.line {
-    width:100%;
-    height: 1px;
-    border: 1px solid #CBD0DC;
+.bigPag {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    margin-top: 24px;
 }
-
-.courseInfo_modal .texts{
-    font-weight: 500;
-    font-size: 16.67px;
-    line-height: 19.55px;
-    color: #A9ACB4;
-    margin-top: 20px;
-}
-
 .showRows{
     flex: 70%;
     display: flex;
@@ -556,7 +583,6 @@
     font-weight: 500;
     color: #000;
 }
-
 .showRows select{
     border: 1px solid #BDD9FF;
     box-shadow: 0px 3.76px 5.64px 0px #00000017;

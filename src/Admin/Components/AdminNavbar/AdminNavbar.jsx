@@ -21,13 +21,13 @@ export const AdminNavbar = () => {
                     <img src={getImageUrl("scheduleIcon.png")} />
                     Schedule
                 </a>
+                <a href="/admin-dashboard/cohort" className={currentPath.includes("/admin-dashboard/cohort") ? styles.active : ""}>
+                    <img src={getImageUrl("cohortIcon.png")} />
+                    Cohorts
+                </a>
                 <a href="/admin-dashboard/courses" className={currentPath.includes("/admin-dashboard/courses") ? styles.active : ""}>
                     <img src={getImageUrl("coursesIcon.png")} />
                     Courses
-                </a>
-                <a href="/admin-dashboard/cohort" className={currentPath.includes("/admin-dashboard/cohort") ? styles.active : ""}>
-                    <img src={getImageUrl("cohortIcon.png")} />
-                    Cohort
                 </a>
                 <a href="/admin-dashboard/classes" className={currentPath.includes("/admin-dashboard/classes") ? styles.active : ""}>
                     <img src={getImageUrl("classIcon.png")} />

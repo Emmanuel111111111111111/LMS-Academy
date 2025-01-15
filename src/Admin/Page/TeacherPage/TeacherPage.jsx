@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from './TeacherPage.module.css';
 import { getImageUrl } from "../../../utilis";
 import Pagination from "../../../Components/Pagination/Pagination";
-import Modal from "../ActiveCourses/Modal";
+import Modal from "../../Components/Modals/Modal";
 import axios from 'axios';
 import { format } from 'date-fns';
 import { BASE_URL, TEST_URL } from "../../../../config";
@@ -27,6 +27,8 @@ export const TeachersPage = () => {
     const [ errorMessage, setErrorMessage ] = useState(false);
     const scroll = useRef(null);
     const actionsRef = useRef(null);
+
+    const username = sessionStorage.getItem('full_name');
 
 
     useEffect(() => {
@@ -68,6 +70,7 @@ export const TeachersPage = () => {
         date: new Date().toISOString().slice(0,19).replace('T', ' '),
         email: null,
         phone_number: null,
+        user: username,
     })
 
     const handleInput = (event) => {

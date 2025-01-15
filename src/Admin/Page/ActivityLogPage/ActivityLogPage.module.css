@@ -80,6 +80,7 @@
 .activitesTable {
     width: 100%;
     border-spacing: 0 8px;
+    table-layout: fixed;
 }
 .activitesTable thead {
     background: #F9F9F9;
@@ -88,6 +89,10 @@
     font-weight: 600;
     color: #2C2F7E;
 }
+.activitesTable .check { width: 40px; }
+.activitesTable .act { width: 80px; }
+.activitesTable .detail { width: 40%; }
+
 .activitesTable th {
     padding: 10px 4px;
     text-align: left;
@@ -98,6 +103,9 @@
     padding: 6px 4px;
     border-top: 1px solid #E4E4E4;
     border-bottom: 1px solid #E4E4E4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .activitesTable th:first-child,
 .activitesTable td:first-child {

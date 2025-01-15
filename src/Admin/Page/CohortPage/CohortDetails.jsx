@@ -3,7 +3,7 @@ import { getImageUrl } from "../../../utilis";
 import styles from "./CohortPage.module.css";
 import axios from 'axios';
 import { format } from "date-fns";
-import Modal from "../ActiveCourses/Modal";
+import Modal from "../../Components/Modals/Modal";
 import { useParams } from "react-router-dom";
 import Pagination from "../../../Components/Pagination/Pagination";
 import { BASE_URL, TEST_URL } from "../../../../config";
@@ -79,6 +79,7 @@ export const CohortDetails = () => {
         course_name: 0,
         end_date: '',
         date_added: new Date().toISOString().slice(0, 19).replace('T', ' '),
+        user: sessionStorage.getItem('full_name'),
     })
 
     const handleInput = (event) => {

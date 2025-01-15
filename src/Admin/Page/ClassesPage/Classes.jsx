@@ -2,21 +2,27 @@ import React, { useEffect, useRef, useState } from "react";
 import { getImageUrl } from "../../../utilis";
 import styles from "./Classes.module.css";
 import axios from 'axios';
-import Modal from "../ActiveCourses/Modal";
+import Modal from "../../Components/Modals/Modal";
 import { format } from "date-fns";
 import { BASE_URL, TEST_URL } from "../../../../config";
 
 export const Classes = () => {
 
     const [ classes, setClasses ] = useState([]);
-    const [ isOpen, setIsOpen ] = useState(false);
+    const [ allCourses, setAllCourses ] = useState([]);
+    const [ startDate, setStartDate ] = useState(null);
+    // const [ isOpen, setIsOpen ] = useState(false);
+    const [ open, setOpen ] = useState(false);
+    const [ openSuccess, setOpenSuccess ] = useState(false);
     const [ actionsOpen, setActionsOpen ] = useState({});
     const [ isLoading, setIsLoading ] = useState(false);
+    const [ isLoading2, setIsLoading2 ] = useState(false);
     const actionsRef = useRef(null);
     const createRef = useRef(null);
 
     useEffect(() => {
         fetchClasses();
+        fetchAllCourses();
     }, []);
 
     const fetchClasses = async () => {
@@ -34,10 +40,79 @@ export const Classes = () => {
             // setErrorMessage(true);
         }
     }
+    const fetchAllCourses = async () => {
+        try {
+            const result = await axios(BASE_URL + `/courses`);
+            setAllCourses(result.data)
+        } catch (err) {
+            console.log(err);
+        }
+    }
 
     const handleToDetails = (event, clas) => {
         window.location.href = `classes/${clas.lesson_id}`;
     }
+
+
+    const [ newClassValues, setNewClassValues ] = useState({
+        name: null,
+        course_id: null,
+        start_date: null,
+        end_date: null,
+    })
+    
+    const handleClose = () => {
+        setOpen(false);
+        setNewClassValues({
+            name: null,
+            course_id: null,
+            start_date: null,
+            end_date: null,
+        })
+    };
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+
+    const handleInput = (event) => {
+
+        setNewClassValues(prev => ({ ...prev, [event.target.name]: event.target.value }))
+
+
+        if ((event.target.name === 'start_date')
+        || (event.target.name === 'end_date')) {
+            setNewClassValues(prev => ({ ...prev, [event.target.name]: event.target.value.replace('T', ' ') + '+01' }))
+        }
+
+
+        console.log(newClassValues);
+        console.log(event.target.value)
+    }
+    const handleSubmitClass = async (event) => {
+        event.preventDefault();
+        console.log(newClassValues);
+        setIsLoading2(true);
+        try {
+
+            const response = await axios.post(BASE_URL + '/new-lesson', newClassValues);
+            setIsLoading2(false);
+            handleSuccess();
+            console.log(response);
+            handleClose();
+            
+        } catch (err) {
+            console.log(err);
+            setIsLoading2(false);
+        }
+    }
+
+    const handleSuccess = () => {
+        setOpenSuccess(true);
+        setTimeout(() => setOpenSuccess(false), 3000);
+        setTimeout(() => fetchClasses(), 3000);
+    }
+
 
     const toggleAction = (event, index) => {
         event.stopPropagation();
@@ -52,7 +127,7 @@ export const Classes = () => {
             setActionsOpen(false);
         }
         if (createRef.current && !createRef.current.contains(event.target)) {
-            setIsOpen(false);
+            setOpen(false);
         }
     };
     useEffect(() => {
@@ -74,7 +149,7 @@ export const Classes = () => {
                     <h1>Classes</h1>
                     <div className={styles.buttons}>
                         <button className={styles.buttonOne}>Sort By<img src={getImageUrl('sortIcon.png')} /></button>
-                        <button className={styles.buttonTwo} onClick={''} ><img src={getImageUrl('whitePlus.png')} />Create Class</button>
+                        <button className={styles.buttonTwo} onClick={handleOpen} ><img src={getImageUrl('whitePlus.png')} />Create Class</button>
                     </div>
                 </div>
 
@@ -88,7 +163,7 @@ export const Classes = () => {
                     <div className={styles.classes}>
                         
                         {classes.map((clas, index) => (
-                            <div key={index} className={styles.classInfo} onClick={''} id="outer">
+                            <div key={index} className={styles.classInfo} id="outer">
                                 {/* <div className={styles.classImage}>
                                     <img src={getImageUrl('frame7.png')} />
                                 </div> */}
@@ -119,6 +194,59 @@ export const Classes = () => {
                 }
             </div>
         </div>
+
+
+        <Modal isOpen={open} >
+            <form className={styles.class_modal} onSubmit={handleSubmitClass}>
+                <div className={styles.head}>
+                    <h3>Create Class</h3>
+                    <button onClick={handleClose} className={styles.close}><img src={getImageUrl('close.png')} alt="" /></button>
+                </div>
+
+                <div style={{overflow: 'auto'}}>
+                    <div className={styles.formDiv}>
+                        <h5>Class Name</h5>
+                        <input type="text" name="name" placeholder="Enter Class Name" onChange={handleInput} required></input>
+                    </div>
+
+                    <div className={styles.formDiv}>
+                        <h5>Course</h5>
+                        <select name="course_id" onChange={handleInput} required>
+                            <option className={styles.first} value="">Select Course</option>
+                            {allCourses.map((cours, index) => (
+                                <option key={index} value={cours.course_id}>{cours.name}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className={styles.contain}>
+                        <div>
+                            <h5>Start Date & Time</h5>
+                            <input
+                                type="datetime-local"
+                                name="start_date"
+                                // min={newClassValues.course_id && new Date(newClassValues.course_id).toISOString().split("T")[0]}
+                                onChange={handleInput}
+                            />
+                        </div>
+                        <div>
+                            <h5>End Date & Time</h5>
+                            <input type="datetime-local" name="end_date" onChange={handleInput}/>
+                        </div>
+                    </div>
+                </div>
+
+                <button className={styles.submit}>{isLoading2 ? '...' : 'Submit'}</button>
+
+            </form>
+        </Modal>
+
+
+        <Modal isOpen={openSuccess}>
+            <div className={styles.added}>
+                Class ADDED!
+            </div>
+        </Modal>
 
         </>
     )

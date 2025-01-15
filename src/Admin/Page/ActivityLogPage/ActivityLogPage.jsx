@@ -28,7 +28,6 @@ export const ActivityLogPage = () => {
             const result = await axios(BASE_URL + "/activity-log", {
                 timeout: 10000
             });
-            console.log(result);
             setActivities(result.data);
             setIsLoading(false);
         } catch (err) {
@@ -97,19 +96,19 @@ export const ActivityLogPage = () => {
                     <>
                     <table className={styles.activitesTable}>
                         <thead>
-                            <th><input type="checkbox" /></th>
-                            <th>Activities</th>
-                            <th>Time and Date</th>
-                            <th>Due Date</th>
-                            <th>Action</th>
+                            <th className={styles.check}><input type="checkbox" /></th>
+                            <th className={styles.detail}>Activities</th>
+                            <th>User</th>
+                            <th>Date and Time</th>
+                            <th className={styles.act}>Action</th>
                         </thead>
                         <tbody>
                             {currentActivities.map((activity, index) => (
                                 <tr>
                                     <td><input type="checkbox" /></td>
                                     <td>{activity.activity}</td>
+                                    <td>{activity.user}</td>
                                     <td>{format(new Date (activity.date), 'MMMM dd, yyyy hh:mm a')}</td>
-                                    <td>{activity.due_date}</td>
                                     <td>
                                         <button className={styles.actionsButton} onClick={()=>toggleAction(index)}><img src={getImageUrl('threeDots.png')} /></button>
                                     </td>
