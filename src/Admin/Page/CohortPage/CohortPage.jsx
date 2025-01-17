@@ -25,7 +25,7 @@ export const CohortPage = () => {
                 timeout: 20000
             });
             setCohorts(result.data);
-            console.log(result.data);
+            console.log(result);
             setIsLoading(false);
         } catch (err) {
             console.log(err);

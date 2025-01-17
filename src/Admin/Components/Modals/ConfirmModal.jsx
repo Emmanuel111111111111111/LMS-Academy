@@ -4,7 +4,6 @@ import styles from './Modal.module.css';
 import { getImageUrl } from "../../../utilis";
 import axios from "axios";
 import { BASE_URL, TEST_URL } from "../../../../config";
-import { it } from "date-fns/locale";
 
 
 export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmType, reload }) => {
@@ -21,7 +20,7 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
             cohort_name: cohort.cohort_name,
             course_name:  selected.course_name,
             date: new Date().toISOString().slice(0, 19).replace('T', ' '),
-            user: sessionStorage.getItem('full_name'),
+            user: sessionStorage.getItem('full_name')
         }
 
         const teacherValues = {
@@ -43,6 +42,45 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
                 console.log(result);
                 handleSuccess();
             }
+            
+            setOpen(false);
+            setIsLoading(false);
+        } catch (err) {
+            console.log(err);
+            setIsLoading(false);
+        }
+    }
+
+    const handleResumption = async () => {
+        setIsLoading(true);
+        const courseValues = {
+            cohort_id: cohort.cohort_id,
+            course_id:  selected.course_id,
+            cohort_name: cohort.cohort_name,
+            course_name:  selected.course_name,
+            date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+            user: sessionStorage.getItem('full_name')
+        }
+
+        // const teacherValues = {
+        //     instructor_id:  selected.instructor_id,
+        //     instructor_name:  selected.first_name + (selected.last_name != null ? ' ' + selected.last_name : ''),
+        //     date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+        //     user: sessionStorage.getItem('full_name'),
+        // }
+        try {
+            if (item.toLowerCase() === "course") {
+                const result = await axios.post(BASE_URL + '/resume-course', courseValues)
+                console.log(result);
+                handleSuccess();
+            }
+
+            // if (item.toLowerCase() === "teacher") {
+            //     console.log('here')
+            //     const result = await axios.put(BASE_URL + '/suspend-teacher', teacherValues)
+            //     console.log(result);
+            //     handleSuccess();
+            // }
             
             setOpen(false);
             setIsLoading(false);
@@ -142,12 +180,11 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
                                                                                 : ''}
                     </p>
                     
-                    <button className={styles.cohortButton} onClick={confirmType === "suspend" ? handleSuspension : confirmType === "remove" ? handleRemoving : confirmType === 'delete' ? handleDelete : ''}>
+                    <button className={styles.cohortButton} onClick={confirmType === "suspend" ? handleSuspension : confirmType === "remove" ? handleRemoving : confirmType === 'delete' ? handleDelete : confirmType === 'resume' ? handleResumption : ''}>
                         {isLoading ? "..." : confirmType}
                     </button>
 
                 </div>
-
 
             </div>
         </Modal>
@@ -159,6 +196,7 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
                     confirmType === 'suspend' ? 'suspended'
                     : confirmType === 'remove' ? 'removed'
                     : confirmType === 'delete' ? 'deleted'
+                    : confirmType === 'resume' ? 'resumed'
                     : ''
                 }
             </div>

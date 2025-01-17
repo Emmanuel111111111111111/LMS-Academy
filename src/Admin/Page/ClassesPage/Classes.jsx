@@ -174,7 +174,7 @@ export const Classes = () => {
                                         {actionsOpen[index] && <div className={styles.theActions} ref={actionsRef}>
                                             <h5>ACTION</h5>
                                             <button onClick={(e)=>handleToDetails(e, clas)}><img src={getImageUrl('edit.png')} />EDIT</button>
-                                            <button><img src={getImageUrl('approve.png')} />SUSPEND</button>
+                                            {/* <button><img src={getImageUrl('approve.png')} />SUSPEND</button> */}
                                             <button><img src={getImageUrl('delete.png')} />DELETE</button>
                                         </div>}
                                     </div>

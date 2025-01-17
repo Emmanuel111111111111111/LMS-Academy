@@ -3,6 +3,7 @@ import { getImageUrl } from "../../../utilis";
 import styles from "./Courses.module.css";
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { format } from 'date-fns';
 import Modal from "../../Components/Modals/Modal";
 import { ConfirmModal } from "../../Components/Modals/ConfirmModal";
 import Pagination from "../../../Components/Pagination/Pagination";
@@ -18,11 +19,15 @@ export const AllCourses = () => {
     const [ eventType, setEventType ] = useState("");
     const [ buttonType, setButtonType ] = useState("");
     const [ actionsOpen, setActionsOpen ] = useState({});
+    const [ actionsOpen2, setActionsOpen2 ] = useState(false);
     const [ selected, setSelected ] = useState({});
+    const [ selectedStudents, setSelectedStudents ] = useState([]);
     const [ confirmType, setConfirmType ] = useState('');
     const [ isOpenConfirm, setIsOpenConfirm ] = useState(false);
     const [ isLoading, setIsLoading ] = useState(false);
     const [ isLoading2, setIsLoading2 ] = useState(false);
+    const [ isLoading3, setIsLoading3 ] = useState(false);
+    const [ isLoadingCourse, setIsLoadingCourse ] = useState(false);
     const [ errorMessage, setErrorMessage ] = useState(false);
     
     const [ currentPage, setCurrentPage ] = useState(1);
@@ -38,19 +43,35 @@ export const AllCourses = () => {
     useEffect(() => {
         fetchCoursesTeachersStudents();
     }, []);
-
+    
     const fetchCoursesTeachersStudents = async () => {
         setIsLoading(true);
         try {
             const result = await axios(BASE_URL + "/courses-instructor-studentscount-lessons", {
                 timeout: 20000
             });
-            setCourses(result.data.sort((a,b)=> new Date(b.date_added) - new Date(a.date_added)));
+            setCourses(result.data);
+            console.log(result.data[0]);
             setIsLoading(false);
         } catch (err) {
             console.log(err);
             setIsLoading(false);
             setErrorMessage(true);
+        }
+    }
+
+    const fetchStudentsForCourse = async (course_id) => {
+        setIsLoadingCourse(true);
+        try {
+            const result = await axios(BASE_URL + `/students-for-course/${course_id}`, {
+                timeout: 20000
+            });
+            setSelectedStudents(result.data);
+            console.log(result.data);
+            setIsLoadingCourse(false);
+        } catch (err) {
+            console.log(err);
+            setIsLoadingCourse(false);
         }
     }
 
@@ -98,43 +119,6 @@ export const AllCourses = () => {
         };
     }
 
-    const students = [
-        {
-            student_first_name: 'Feranmi',
-            student_last_name: 'Jones',
-            student_phone_no: '+23490543322',
-            student_email: 'FeranmiJ@gmail.com',
-            date: '12/12/2024'
-        },
-        {
-            student_first_name: 'Feranmi',
-            student_last_name: 'Jones',
-            student_phone_no: '+23490543322',
-            student_email: 'FeranmiJ@gmai.com',
-            date: '12/12/2024'
-        },
-        {
-            student_first_name: 'Feranmi',
-            student_last_name: 'Jones',
-            student_phone_no: '+23490543322',
-            student_email: 'FeranmiJ@gmail.com',
-            date: '12/12/2024'
-        },
-        {
-            student_first_name: 'Feranmi',
-            student_last_name: 'Jones',
-            student_phone_no: '+23490543322',
-            student_email: 'FeranmiJ@gmail.com',
-            date: '12/12/2024'
-        },
-        {
-            student_first_name: 'Feranmi',
-            student_last_name: 'Jones',
-            student_phone_no: '+23490543322',
-            student_email: 'FeranmiJ@gmail.com',
-            date: '12/12/2024'
-        }
-    ]
 
 
     const [ newEventValues, setNewEventValues ] = useState({
@@ -188,18 +172,18 @@ export const AllCourses = () => {
     const handleCloseCreate = () => {
         setOpenCreate(false);
     };
-    const handleOpenCreate = (type) => {
-        setButtonType(type);
+    const handleOpenCreate = () => {
         setOpenCreate(true);
     };
 
     const handleOpenCourse = (event, course) => {
         setSelected(course);
+        fetchStudentsForCourse(course.course_id);
         console.log(course)
         setOpenCourseInfo(true);
     };
     const handleCloseCourseInfo = (index) => {
-        setSelected(0)
+        setSelected({})
         setOpenCourseInfo(false);
     };
 
@@ -208,10 +192,37 @@ export const AllCourses = () => {
         navigate(`detail/${course.course_id}`, {state: course.course_id });
         window.scrollTo({ top: 0});
     }
-    const handleDelete = (event, course) => {
+    const handleRemove = async (student) => {
+        // event.preventDefault();
+        setIsLoading3(true);
+        const submitValues = ({
+            student_id: student.student_id,
+            student_name: student.first_name || '' || ' ' || student.last_name,
+            course_id: selected.course_id,
+            course_name: selected.course_name,
+            date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+            user: sessionStorage.getItem('full_name'),
+        })
+        console.log(submitValues);
+        try {
+            
+            const response = await axios.post(BASE_URL + '/unenroll-student', submitValues);
+            console.log(response);
+
+            fetchStudentsForCourse(selected.course_id);
+            fetchCoursesTeachersStudents();
+            setIsLoading3(false);
+
+        } catch (err) {
+            console.log(err);
+            setIsLoading3(false);
+        }
+    }
+
+    const handleOpenConfirm = (event, theCourse, type) => {
         event.stopPropagation();
-        setSelected(course);
-        setConfirmType('delete');
+        setSelected(theCourse);
+        setConfirmType(type);
         setIsOpenConfirm(true);
     }
 
@@ -222,7 +233,7 @@ export const AllCourses = () => {
 
     const indexOfLastStudent = currentStudentPage * studentsPerPage;
     const indexOfFirstStudent = indexOfLastStudent - studentsPerPage;
-    const currentStudents = students.slice(indexOfFirstStudent, indexOfLastStudent);
+    const currentStudents = selectedStudents.slice(indexOfFirstStudent, indexOfLastStudent);
 
     const handleCoursePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
@@ -243,9 +254,6 @@ export const AllCourses = () => {
         scroll.current.scrollIntoView();
     };
 
-    const toggleDropdown = () => {
-        setIsOpen(!isOpen);
-    };
     const toggleAction = (event, index) => {
         event.stopPropagation();
         setActionsOpen(prevState => ({
@@ -284,30 +292,22 @@ export const AllCourses = () => {
                     <div className={styles.buttons}>
                         <button className={styles.buttonOne}>Sort By<img src={getImageUrl('sortIcon.png')} /></button>
                         {/* <button className={styles.buttonTwo} onClick={toggleDropdown} ><img src={getImageUrl('whitePlus.png')} />Create Event</button> */}
-                        <button className={styles.buttonTwo} onClick={() => handleOpenCreate("course")} ><img src={getImageUrl('whitePlus.png')} />Create Course</button>
+                        <button className={styles.buttonTwo} onClick={() => handleOpenCreate()} ><img src={getImageUrl('whitePlus.png')} />Create Course</button>
                     </div>
-                    {isOpen && (
-                        <ul className={styles.createDiv} ref={createRef}>
-                            <button onClick={() => handleOpenCreate("course")}><img src={getImageUrl('courseIcon.png')} />COURSE</button>
-                            <button onClick={() => handleOpenCreate("assignment")}><img src={getImageUrl('assignments.png')} />ASSIGNMENTS</button>
-                            <button onClick={() => handleOpenCreate("quiz")}><img src={getImageUrl('quizIcon.png')} />QUIZ</button>
-                        </ul>
-                    )}
                     <Modal isOpen={openCreate}>
                         <>
                         <div className={styles.course_modal}>
                             <div className={styles.head}>
-                                <h3>{buttonType === "course" ? "Create Course" : buttonType === "assignment" ? "Create Assignment" : "Create Quiz"}</h3>
+                                <h3>Create Course</h3>
                                 <button onClick={handleCloseCreate} className={styles.close}><img src={getImageUrl('close.png')} /></button>
                             </div>
 
-                            <form className={styles.theForm} onSubmit={buttonType === 'course' ? handleSubmitCourse : ''}>
+                            <form className={styles.theForm} onSubmit={handleSubmitCourse}>
                                 <div>
-                                    <h5>{buttonType === "course" ? "Course Name" : buttonType === "assignment" ? "Content title" : "Event Name"}</h5>
-                                    <input type="text" name="name" placeholder="Enter Event Name" onChange={handleInput}/>
+                                    <h5>Course Name</h5>
+                                    <input type="text" name="name" placeholder="Enter Course Name" onChange={handleInput}/>
                                 </div>
-                                {buttonType === 'course' && <div>
-                                    {/* <h5>{buttonType === "course" ? "Event Type" : buttonType === "assignment" ? "Duration" : "Event Type"}</h5> */}
+                                <div>
                                     <h5>Course Type</h5>
                                     <select name="type" onChange={handleInput}>
                                         <option>Select Course Type</option>
@@ -315,7 +315,7 @@ export const AllCourses = () => {
                                         <option value="Physical">Physical</option>
                                         <option value="Hybrid">Hybrid</option>
                                     </select>
-                                </div>}
+                                </div>
 
                                 {/* <h5>Duration</h5> */}
                                 <div className={styles.duration}>
@@ -353,15 +353,17 @@ export const AllCourses = () => {
                                         <img src={getImageUrl('frame7.png')} />
                                     </div>
                                     <div className={styles.infoHeader}>
-                                        <div><h3>{cour.name}</h3><span>Started</span></div>
+                                        <div><h3>{cour.course_name}</h3>{cour.suspended ? <span className={styles.susp}>Suspended</span> : cour.is_active ? <span>Started</span> : ''}</div>
                                         <div>
                                             <button className={styles.actionsButton} onClick={(e) => toggleAction(e, index)}><img src={getImageUrl('threeDots.png')} /></button>
-                                            <div className={`${styles.actionsClosed} ${actionsOpen[index] && styles.theActions}`} ref={actionsRef}>
+                                            {actionsOpen[index] && <div className={styles.theActions} ref={actionsRef}>
                                                 <h5>ACTION</h5>
+                                                {cour.suspended}
                                                 <button onClick={(e)=>handleEdit(e, cour)}><img src={getImageUrl('edit.png')} />EDIT</button>
-                                                {/* <button onClick={(e)=>handleEdit(e, index)}><img src={getImageUrl('approve.png')} />SUSPEND</button> */}
-                                                <button onClick={(e)=>handleDelete(e, cour)}><img src={getImageUrl('delete.png')} />DELETE</button>
-                                            </div>
+                                                {!cour.suspended && <button onClick={(e)=>handleOpenConfirm(e, cour, 'suspend')}><img src={getImageUrl('approve.png')} />SUSPEND</button>}
+                                                {cour.suspended && <button onClick={(e)=>handleOpenConfirm(e, cour, 'resume')}><img src={getImageUrl('approve.png')} />RESUME</button>}
+                                                <button onClick={(e)=>handleOpenConfirm(e, cour, 'delete')}><img src={getImageUrl('delete.png')} />DELETE</button>
+                                            </div>}
                                         </div>
                                     </div>
                                     <p>{cour.description}</p>
@@ -375,7 +377,7 @@ export const AllCourses = () => {
                                             </div>}
                                         </div>
                                         <div className={styles.crumb}>
-                                            {cour.instructors.length > 0 && <div className={styles.profile}><img src={getImageUrl('profile.svg')} alt="" />{cour.instructors[0].name}</div>}
+                                            {cour.instructors.length > 0 && <div className={styles.profile}><img src={getImageUrl('profile.svg')} alt="" />{cour.instructors[0].full_name}</div>}
                                             <div className={styles.students}><img src={getImageUrl('frame5.png')} alt="" />{cour.student_count} {cour.student_count === 1 ? 'Student' : 'Students'}</div>
                                         </div>
                                     </div>
@@ -391,7 +393,7 @@ export const AllCourses = () => {
                                     <option value={24}>24</option>
                                     <option value={36}>36</option>
                                 </select>
-                                Rows
+                                Courses
                             </div>
                             <Pagination className={styles.pag}
                                 currentData={courses}
@@ -415,7 +417,7 @@ export const AllCourses = () => {
                         <h3>Course Details</h3>
                         <button onClick={handleCloseCourseInfo} className={styles.close}><img src={getImageUrl('close.png')} /></button>
                     </div>
-                    <p className={styles.texts}>{selected.name}</p>
+                    <p className={styles.texts}>{selected.course_name}</p>
                 </div>
 
                 <div style={{overflow: 'auto', display: 'flex',flexDirection: 'column'}}>
@@ -424,8 +426,20 @@ export const AllCourses = () => {
                         <img className={styles.modImg} src={getImageUrl("Frm.png")} alt="g" />
                         <div className={styles.text}>
                             <div className={styles.Header}>
-                                <h3>{selected.name}<span>Started</span></h3>
-                                <button><img src={getImageUrl('threeDots.png')} alt="" /></button>
+                                <h3>
+                                    {selected.course_name}
+                                    {selected.suspended ? <span className={styles.susp}>Suspended</span> : selected.is_active ? <span>Started</span> : ''}
+                                </h3>
+                                {/* <div>
+                                    <button className={styles.actionsButton} onClick={()=>setActionsOpen2(!actionsOpen2)}><img src={getImageUrl('threeDots.png')} alt="" /></button>
+                                    {actionsOpen2 && <div className={styles.theActions} ref={actionsRef}>
+                                        <h5>ACTION</h5>
+                                        <button onClick={(e)=>handleEdit(e, selected)}><img src={getImageUrl('edit.png')} />EDIT</button>
+                                        {!selected.suspended && <button onClick={(e)=>handleOpenConfirm(e, selected, 'suspend')}><img src={getImageUrl('approve.png')} />SUSPEND</button>}
+                                        {selected.suspended && <button onClick={(e)=>handleOpenConfirm(e, selected, 'resume')}><img src={getImageUrl('approve.png')} />RESUME</button>}
+                                        <button onClick={(e)=>handleOpenConfirm(e, selected, 'delete')}><img src={getImageUrl('delete.png')} />DELETE</button>
+                                    </div>}
+                                </div> */}
                             </div>
 
                             <p>{selected.description}</p>
@@ -433,7 +447,7 @@ export const AllCourses = () => {
                             <div className={styles.coursesDatas}>
                                 {selected.instructors?.length > 0 && <div className={styles.pro}>
                                     <img src={getImageUrl('profile.svg')} alt="" />
-                                    {selected.instructors?.length > 0 && selected.instructors[0].name}
+                                    {selected.instructors?.length > 0 && selected.instructors[0].full_name}
                                 </div>}
                                 <div className={styles.stud}>
                                     <img src={getImageUrl('forStudents.png')} alt="" />
@@ -442,52 +456,61 @@ export const AllCourses = () => {
                             </div>
                         </div>
                     </div>
-                    <table className={styles.coursetable} ref={scroll}>
-                        <thead>
-                            <th className={styles.check}><input type="checkbox" /></th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Phone Number</th>
-                            <th>Email</th>
-                            <th>Date</th>
-                            <th className={styles.act}>Action</th>
-                        </thead>
-                        <tbody>
-                            {currentStudents.map((stud, ind) => (
-                                <tr key={ind}>
-                                    <td><input type="checkbox" /></td>
-                                    <td>{stud.student_first_name}</td>
-                                    <td>{stud.student_last_name}</td>
-                                    <td>{stud.student_phone_no}</td>
-                                    <td>{stud.student_email}</td>
-                                    <td>{stud.date}</td>
-                                    <td><button className={styles.app}>Approve</button></td>
-                                </tr>
-                            ))}
+                    {isLoadingCourse ? 
+                        <p className={styles.loading}>Loading...</p>
+                    :
+                    currentStudents.length < 1 ? 
+                        <p className={styles.noStudents}>No students under this course yet</p>
+                    :
+                    <>
+                        <table className={styles.coursetable} ref={scroll}>
+                            <thead>
+                                <th className={styles.check}><input type="checkbox" /></th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Phone Number</th>
+                                <th>Email</th>
+                                <th>Date</th>
+                                <th className={styles.act}>Action</th>
+                            </thead>
+                            <tbody>
+                                {currentStudents.map((stud, ind) => (
+                                    <tr key={ind}>
+                                        <td><input type="checkbox" /></td>
+                                        <td style={{color: '#171717'}}>{stud.first_name}</td>
+                                        <td>{stud.last_name}</td>
+                                        <td>{stud.phone_no}</td>
+                                        <td>{stud.email}</td>
+                                        <td>{format(new Date(stud.enrollment_date), 'MMMM dd, yyyy hh:mm')}</td>
+                                        <td onClick={()=>handleRemove(stud)}><button className={styles.app}>{isLoading3 ? '...' : 'Remove'}</button></td>
+                                    </tr>
+                                ))}
+                                
+                            </tbody>
+                        </table>
+                        <div className={styles.bigPag}>
+                            <div className={styles.showRows}>
+                                Show
+                                <select onChange={(e) => handleStudentPageNumber(e.target.value)}>
+                                <option value={5}>5</option>
+                                <option value={10}>10</option>
+                                <option value={15}>15</option>
+                                </select>
+                                Rows
+                            </div>
                             
-                        </tbody>
-                    </table>
-                    <div className={styles.bigPag}>
-                        <div className={styles.showRows}>
-                            Show
-                            <select onChange={(e) => handleStudentPageNumber(e.target.value)}>
-                            <option value={5}>5</option>
-                            <option value={10}>10</option>
-                            <option value={15}>15</option>
-                            </select>
-                            Row
+                            <Pagination
+                                className={styles.pag}
+                                currentData={currentStudents}
+                                currentPage={currentStudentPage}
+                                itemsPerPage={studentsPerPage}
+                                onPageChange={handleStudentPageChange}
+                            />       
                         </div>
+                    </>
+                    }
                         
-                        <Pagination
-                            className={styles.pag}
-                            currentData={currentStudents}
-                            currentPage={currentStudentPage}
-                            itemsPerPage={studentsPerPage}
-                            onPageChange={handleStudentPageChange}
-                        />       
-                    </div>
-                        
-                    <button className={styles.yes}>Submit</button>
+                    {/* <button className={styles.yes}>Submit</button> */}
                 </div>
                         
             </div>

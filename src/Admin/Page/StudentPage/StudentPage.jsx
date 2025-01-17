@@ -4,7 +4,8 @@ import { getImageUrl } from "../../../utilis";
 import Pagination from "../../../Components/Pagination/Pagination";
 import { format } from 'date-fns';
 import axios from 'axios';
-import { BASE_URL } from "../../../../config";
+import Modal from "../../Components/Modals/Modal";
+import { BASE_URL, TEST_URL } from "../../../../config";
 
 
 export const StudentPage = () => {
@@ -15,7 +16,22 @@ export const StudentPage = () => {
     const scroll = useRef(null);
     const actionsRef = useRef(null);
     const [ students, setStudents ] = useState([]);
+    const [ allCourses, setAllCourses ] = useState([]);
+    const [ allNotCourses, setAllNotCourses ] = useState([]);
     const [ isLoading, setIsLoading ] = useState(false);
+    const [ isLoading2, setIsLoading2 ] = useState(false);
+    const [ isLoading3, setIsLoading3 ] = useState(false);
+    const [ isOpenCourse, setIsOpenCourse ] = useState(false);
+    const [ selected, setSelected ] = useState({});
+    const [ type, setType ] = useState('');
+    const [ submitValues, setSubmitValues ] = useState({
+        course_name: '',
+        course_id: '',
+        student_name: '',
+        student_id: '',
+        date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+        user: sessionStorage.getItem('full_name')
+    });
 
     
     useEffect(() => {
@@ -28,12 +44,92 @@ export const StudentPage = () => {
             const result = await axios(BASE_URL + "/students", {
                 timeout: 10000
             });
-            console.log(result);
             setStudents(result.data);
             setIsLoading(false);
         } catch (err) {
             setIsLoading(false);
             console.log(err);
+        }
+    }
+
+    const fetchAllNotCourses = async (student_id) => {
+        setIsLoading2(true);
+        try {
+            const result = await axios(BASE_URL + `/courses-not/${student_id}`, {
+                timeout: 10000
+            });
+            setAllCourses(result.data);
+            setIsLoading2(false);
+        } catch (err) {
+            setIsLoading2(false);
+            console.log(err);
+        }
+    }
+    const fetchAllCourses = async (student_id) => {
+        setIsLoading2(true);
+        try {
+            const result = await axios(BASE_URL + `/courses/${student_id}`, {
+                timeout: 10000
+            });
+            setAllCourses(result.data);
+            setIsLoading2(false);
+        } catch (err) {
+            setIsLoading2(false);
+            console.log(err);
+        }
+    }
+
+
+    const handleAdd = (student) => {
+        setSelected(student);
+        setType('Add');
+        fetchAllNotCourses(student.student_id);
+        console.log(student);
+        setIsOpenCourse(true);
+    }
+    const handleRemove = (student) => {
+        setSelected(student);
+        setType('Remove');
+        fetchAllCourses(student.student_id);
+        console.log(student);
+        setIsOpenCourse(true);
+    }
+
+    const handleCourseInput = (event) => {
+        const nameId = event.target.value.split('-');
+        setSubmitValues(prev => ({ ...prev, 'course_id': nameId[0] }));
+        setSubmitValues(prev => ({ ...prev, 'course_name': nameId[1] }));
+        setSubmitValues(prev => ({ ...prev, 'student_name': selected.first_name || '' || ' ' || selected.last_name }));
+        setSubmitValues(prev => ({ ...prev, 'student_id': selected.student_id }));
+    }
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        setIsLoading3(true);
+        console.log(submitValues);
+        try {
+            var response;
+            if (type === 'Add') {
+                response = await axios.post(BASE_URL + '/enroll-student', submitValues);
+                console.log(response);
+
+                setIsOpenCourse(false);
+                // handleSuccess();
+
+            } else if (type === 'Remove') {
+                response = await axios.post(BASE_URL + '/unenroll-student', submitValues);
+                console.log(response);
+
+                setIsOpenCourse(false);
+                // handleSuccess();
+            }
+
+            setIsLoading3(false);
+            fetchStudents();
+
+        } catch (err) {
+            console.log(err);
+            setIsLoading3(false);
         }
     }
 
@@ -95,7 +191,7 @@ export const StudentPage = () => {
                             <thead>
                                 <th><input type="checkbox" /></th>
                                 <th>Name</th>
-                                <th>Course</th>
+                                <th>Courses</th>
                                 <th>Date Added</th>
                                 <th>Email</th>
                                 <th>Phone Number</th>
@@ -104,7 +200,7 @@ export const StudentPage = () => {
                             </thead>
                             <tbody>
                                 {currentStudents.map((student, index) => (
-                                    <tr>
+                                    <tr key={index}>
                                         <td><input type="checkbox" /></td>
                                         <td>{student.first_name} {student.last_name}</td>
                                         <td>{student.course}</td>
@@ -121,8 +217,8 @@ export const StudentPage = () => {
                                                 <button className={styles.actionsButton} onClick={()=>toggleAction(index)}><img src={getImageUrl('threeDots.png')} /></button>
                                                 <div className={`${styles.actionsClosed} ${actionsOpen[index] && styles.theActions}`} ref={actionsRef}>
                                                     <h5>ACTION</h5>
-                                                    <button><img src={getImageUrl('approve.png')} />APPROVE</button>
-                                                    <button><img src={getImageUrl('delete.png')} />DECLINE</button>
+                                                    <button onClick={()=>handleAdd(student)}><img src={getImageUrl('approve.png')} />ADD TO COURSE</button>
+                                                    <button onClick={()=>handleRemove(student)}><img src={getImageUrl('delete.png')} />REMOVE FROM COURSE</button>
                                                 </div>
                                             </div>
                                         </td>
@@ -152,6 +248,40 @@ export const StudentPage = () => {
                         </>
                 }
         </div>
+
+
+        <Modal isOpen={isOpenCourse}>
+            <div className={styles.addCohort}>
+                <div className={styles.head}>
+                    <div>
+                        <h3>{type} Student {type === 'Add' ? 'to' : 'from'} Course</h3>
+                        <p>{selected.first_name}</p>
+                    </div>
+                    <button onClick={()=>setIsOpenCourse(false)} className={styles.close}><img src={getImageUrl('close.png')} /></button>
+                </div>
+
+                <form onSubmit={handleSubmit} className={styles.contentBody}>
+                    
+                    {isLoading2 ?
+                        <p className={styles.loading}>Loading...</p>
+                    :
+                        <div className={styles.form}>
+                            <label htmlFor="course">Course</label>
+                            <select name="course_id" id="course_id" onInput={handleCourseInput} required>
+                                <option value="">Select course</option>
+                                {allCourses.map((cours, index) => (
+                                    <option key={index} value={cours.course_id + '-' + cours.name}>{cours.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    }
+                    <button className={styles.cohortButton} type="submit">{isLoading3 ? "..." : "Submit"}</button>
+
+                </form>
+
+
+            </div>
+        </Modal>
         </>
     )
 }

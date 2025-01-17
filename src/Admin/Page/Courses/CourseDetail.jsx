@@ -147,10 +147,10 @@ export const CourseDetail = () => {
 
         <form className={styles.whole} onSubmit={handleSubmit}>
 
-            <div className={styles.breadcrumb}><a href="/admin-dashboard/courses">Courses</a> {'>'} {course.name}</div>
+            <div className={styles.breadcrumb}><a href="/admin-dashboard/courses">Courses</a> {'>'} {course.course_name}</div>
 
             <div className={styles.courseTitle}>
-                <h3>{course.name}</h3>
+                <h3>{course.course_name}</h3>
                 <div className={styles.buttons}>
                     <button className={styles.buttonOne} onClick={handleCancel} type="button">Cancel</button>
                     <button className={styles.buttonTwo} type="submit">Save</button>
@@ -167,7 +167,7 @@ export const CourseDetail = () => {
                         </div>
                         <div className={styles.detailForm}>
                             <label htmlFor="name">Name</label>
-                            <input type="text" name="name" id="name" value={course.name} onChange={handleInputChange}/>
+                            <input type="text" name="name" id="name" value={course.course_name} onChange={handleInputChange}/>
 
                             <label htmlFor="description">Description</label>
                             <textarea style={{width: '100%', height: '100px'}} type="text" name="description" id="" value={course.description} onChange={handleInputChange}/>

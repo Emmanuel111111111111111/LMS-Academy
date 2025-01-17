@@ -195,6 +195,15 @@
     font-weight: 400;
     color: #2C2F7E;
 }
+.noStudents {
+    width: 100%;
+    margin-top: 30px;
+    margin-bottom: 22px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 400;
+    color: #2C2F7E;
+}
 
 
 .course {
@@ -256,6 +265,10 @@
     /* margin-left: 8px; */
     height: fit-content;
     width: fit-content;
+}
+.infoHeader span.susp {
+    background: #E1E1E1;
+    color: #343434;
 }
 
 .infoHeader .actionsButton {
@@ -453,7 +466,7 @@
     width: 20px;
     height: 20px;
 }
-.Header button {
+.Header .actionsButton {
     border: 1px solid #A1B2D1;
     outline: none;
     background-color: transparent;
@@ -481,6 +494,10 @@
     padding: 4px;
     border-radius: 5px;
     margin-left: 8px;
+}
+.Header span.susp {
+    background: #E1E1E1;
+    color: #343434;
 }
 .Modal p {
     font-weight: 400;
@@ -525,6 +542,7 @@
     border-spacing: 0 8px;
     margin-top: 25px;
     table-layout: fixed;
+    color: #727272;
 }
 .coursetable .check {
     width: 30px;

@@ -79,7 +79,7 @@ export const AdminOverview = () => {
             const result = await axios(BASE_URL + "/courses-instructor-studentscount-lessons", {
                 timeout: 30000
             });
-            setCourses(result.data.sort((a,b) => new Date(b.date_added) - new Date(a.date_added)).slice(0,3));
+            setCourses(result.data.filter(e => e.is_active === true).slice(0,3));
             setIsCourseLoading(false);
         } catch (err) {
             setIsCourseLoading(false);
@@ -196,7 +196,7 @@ export const AdminOverview = () => {
                                     </div>
                                     <div className={styles.courseInfo}>
                                         
-                                        <h3>{course.name} - <span>{course.type}</span></h3>
+                                        <h3>{course.course_name} {course.type && <span>{course.type}</span>}</h3>
                                             
                                         <p>{course.description}</p>
 

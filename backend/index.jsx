@@ -118,7 +118,7 @@ app.post('/new-teacher', async (req, res) => {
             ? 'New instructor, ' + req.body.name + ' added.'
             : 'New instructor, ' + req.body.name + ' added to ' + req.body.course_name + '.';
 
-        const logQuery = "INSERT INTO activity_log (activity, user, date) VALUES ($1, $2) RETURNING *";
+        const logQuery = "INSERT INTO activity_log (activity, actor, date) VALUES ($1, $2, $3) RETURNING *";
         const logValues = [
             activity,
             req.body.user,
@@ -141,7 +141,7 @@ app.put('/suspend-teacher', async (req, res) => {
     try {
         const result = await client.query(query, values);
         const activity = "Instructor, " + req.body.instructor_name + ", was suspended.";
-        const logQuery = "INSERT INTO activity_log (activity, user, date) VALUES ($1, $2)";
+        const logQuery = "INSERT INTO activity_log (activity, actor, date) VALUES ($1, $2, $3)";
         const logValues = [
             activity,
             req.body.user,
@@ -164,7 +164,7 @@ app.put('/delete-teacher', async (req, res) => {
     try {
         const result = await client.query(query, values);
         const activity = "Instructor, " + req.body.instructor_name + ", was deleted.";
-        const logQuery = "INSERT INTO activity_log (activity, user, date) VALUES ($1, $2)";
+        const logQuery = "INSERT INTO activity_log (activity, actor, date) VALUES ($1, $2, $3)";
         const logValues = [
             activity,
             req.body.user,
@@ -202,7 +202,7 @@ app.post('/new-course', async (req, res) => {
     try {
         const result = await client.query(query, values);
         const activity = "New course, " + req.body.name + ", added.";
-        const logQuery = "INSERT INTO activity_log (activity, user, date) VALUES ($1, $2)";
+        const logQuery = "INSERT INTO activity_log (activity, actor, date) VALUES ($1, $2, $3)";
         const logValues = [
             activity,
             req.body.user,
@@ -225,7 +225,7 @@ app.put('/delete-course', async (req, res) => {
     try {
         const result = await client.query(query, values);
         const activity = "Course, " + req.body.course_name + ", deleted.";
-        const logQuery = "INSERT INTO activity_log (activity, user, date) VALUES ($1, $2)";
+        const logQuery = "INSERT INTO activity_log (activity, actor, date) VALUES ($1, $2, $3)";
         const logValues = [
             activity,
             req.body.user,
@@ -243,7 +243,30 @@ app.put('/delete-course', async (req, res) => {
 
 app.get("/courses/:student_id", async (req, res) => {
     const id = req.params.student_id;
-    const query = "SELECT * FROM course INNER JOIN enrollment ON course.course_id = enrollment.course_id WHERE enrollment.student_id = ($1) AND course.deleted = FALSE"
+    const query = "SELECT * FROM course INNER JOIN enrollment ON course.course_id = enrollment.course_id WHERE enrollment.student_id = ($1) AND course.deleted = FALSE AND course.suspended = FALSE"
+    try {
+        const result = await client.query(query, [id]);
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching courses/studentId"});
+    }
+});
+app.get("/courses-not/:student_id", async (req, res) => {
+    const id = req.params.student_id;
+    const query = `
+        SELECT * FROM course c
+        WHERE 
+            c.deleted = FALSE
+            AND c.suspended = FALSE
+            AND c.course_id NOT IN (
+                SELECT e.course_id
+                FROM enrollment e
+                WHERE e.student_id = $1
+            )
+        ORDER BY 
+            c.name ASC;
+    `
     try {
         const result = await client.query(query, [id]);
         res.send(result.rows);
@@ -297,10 +320,32 @@ app.get('/courses-instructor-studentscount-lessons', async (req, res) => {
             c.name AS course_name,
             c.description,
             c.date_added,
+            c.duration,
+            c.type,
+            c.suspended,
+            c.completed,
+            c.level,
+            c.status,
+            CASE 
+                WHEN EXISTS (
+                    SELECT 1 
+                    FROM cohort_course cc
+                    JOIN cohort co ON cc.cohort_id = co.cohort_id
+                    WHERE cc.course_id = c.course_id AND co.is_active = true
+                ) THEN true
+                WHEN EXISTS (
+                    SELECT 1
+                    FROM cohort_course cc
+                    JOIN cohort co ON cc.cohort_id = co.cohort_id
+                    WHERE cc.course_id = c.course_id AND co.is_active IS NULL
+                ) THEN NULL
+                ELSE false
+            END AS is_active,
             COALESCE(
                 JSON_AGG(
                     JSON_BUILD_OBJECT(
                         'instructor_id', i.instructor_id,
+                        'full_name', COALESCE(i.first_name || '' || ' ' || i.last_name, 'NA'),
                         'first_name', i.first_name,
                         'last_name', i.last_name
                     )
@@ -334,7 +379,8 @@ app.get('/courses-instructor-studentscount-lessons', async (req, res) => {
         GROUP BY 
             c.course_id
         ORDER BY 
-            c.date_added;
+            c.date_added DESC,
+            c.name ASC;
     `;
 
     try {
@@ -345,7 +391,6 @@ app.get('/courses-instructor-studentscount-lessons', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
-
 app.get('/courses-instructor-students', async (req, res) => {
     const query = `
         SELECT 
@@ -459,6 +504,7 @@ app.get("/lessons-info", async (req, res) => {
                 course_id
         ) student_counts ON course.course_id = student_counts.course_id
         WHERE course.deleted = FALSE
+        AND course.suspended = FALSE
         GROUP BY 
             lesson.lesson_id,
 			lesson.title,
@@ -712,6 +758,7 @@ app.get("/tasks", async (req, res) => {
             JOIN 
                 student s ON asgn_student.student_id = s.student_id
 			WHERE c.deleted = FALSE
+            AND c.suspended = FALSE
 
             UNION ALL
 
@@ -734,7 +781,8 @@ app.get("/tasks", async (req, res) => {
                 course c ON e.course_id = c.course_id
             JOIN 
                 student s ON exam_student.student_id = s.student_id
-			WHERE c.deleted = FALSE;
+			WHERE c.deleted = FALSE
+            AND c.suspended = FALSE;
             `);
         res.send(result.rows);
     } catch(err) {
@@ -759,6 +807,7 @@ app.get("/events", async (req, res) => {
             JOIN 
                 course c ON l.course_id = c.course_id
             WHERE c.deleted = FALSE
+            AND c.suspended = FALSE
 
             UNION ALL
 
@@ -778,6 +827,7 @@ app.get("/events", async (req, res) => {
                 course c ON l.course_id = c.course_id
 
             WHERE c.deleted = FALSE
+            AND c.suspended = FALSE
 
             UNION ALL
 
@@ -794,7 +844,8 @@ app.get("/events", async (req, res) => {
             JOIN 
                 course c ON e.course_id = c.course_id
             
-            WHERE c.deleted = FALSE;
+            WHERE c.deleted = FALSE
+            AND c.suspended = FALSE;
             
             `);
         res.send(result.rows);
@@ -908,7 +959,7 @@ app.post('/new-cohort', async (req, res) => {
         const result = await client.query(query, values);
         
         const activity = "New cohort, " + req.body.name + ", added.";
-        const logQuery = "INSERT INTO activity_log (activity, user, date) VALUES ($1, $2)";
+        const logQuery = "INSERT INTO activity_log (activity, actor, date) VALUES ($1, $2, $3)";
         const logValues = [
             activity,
             req.body.user,
@@ -950,7 +1001,7 @@ app.get ("/cohorts-details", async (req, res) => {
         FROM 
             cohort
         LEFT JOIN 
-            cohort_course ON cohort.cohort_id = cohort_course.cohort_id AND cohort_course.suspended = false
+            cohort_course ON cohort.cohort_id = cohort_course.cohort_id
         LEFT JOIN 
             course ON cohort_course.course_id = course.course_id
         LEFT JOIN (
@@ -1013,7 +1064,7 @@ app.get ("/cohorts-details/:cohort_id", async (req, res) => {
         FROM 
             cohort
         LEFT JOIN 
-            cohort_course ON cohort.cohort_id = cohort_course.cohort_id AND cohort_course.suspended = false
+            cohort_course ON cohort.cohort_id = cohort_course.cohort_id
         LEFT JOIN 
             course ON cohort_course.course_id = course.course_id
         LEFT JOIN (
@@ -1061,7 +1112,7 @@ app.post('/new-cohort-course', async (req, res) => {
         const result = await client.query(query, values);
         
         const activity = "New course, " + req.body.course_name + " added to Cohort: " + req.body.cohort_name + ".";
-        const logQuery = "INSERT INTO activity_log (activity, user, date) VALUES ($1, $2)";
+        const logQuery = "INSERT INTO activity_log (activity, actor, date) VALUES ($1, $2, $3)";
         const logValues = [
             activity,
             req.body.user,
@@ -1078,17 +1129,17 @@ app.post('/new-cohort-course', async (req, res) => {
 })
 app.post('/suspend-course', async (req, res) => {
 
+    console.log(req.body)
     const values = [
-        req.body.cohort_id,
         req.body.course_id
     ]
-    const query = 'UPDATE cohort_course SET suspended = true WHERE cohort_id = $1 AND course_id = $2';
+    const query = 'UPDATE course SET suspended = true WHERE course_id = $1';
 
     try {
         const result = await client.query(query, values);
 
-        const activity = "Course, " + req.body.course_name + ", was suspended from Cohort: " + req.body.cohort_name + ".";
-        const logQuery = "INSERT INTO activity_log (activity, user, date) VALUES ($1, $2)";
+        const activity = "Course, " + req.body.course_name + ", was suspended.";
+        const logQuery = "INSERT INTO activity_log (activity, actor, date) VALUES ($1, $2, $3)";
         const logValues = [
             activity,
             req.body.user,
@@ -1114,7 +1165,7 @@ app.post('/remove-course', async (req, res) => {
         const result = await client.query(query, values);
 
         const activity = "Course, " + req.body.course_name + ", was removed from Cohort: " + req.body.cohort_name + ".";
-        const logQuery = "INSERT INTO activity_log (activity, user, date) VALUES ($1, $2)";
+        const logQuery = "INSERT INTO activity_log (activity, actor, date) VALUES ($1, $2, $3)";
         const logValues = [
             activity,
             req.body.user,
@@ -1122,13 +1173,74 @@ app.post('/remove-course', async (req, res) => {
         ];
 
         await client.query(logQuery, logValues);
-        res.json({message: "Suspended course successfully", cohort: result.rows[0]});
+        res.json({message: "Removed course successfully", cohort: result.rows[0]});
     } catch (err) {
         console.error(err);
-        return res.status(500).json({message: "Error in suspending course or logging"});
+        return res.status(500).json({message: "Error in removing course or logging"});
+    }
+})
+app.post('/resume-course', async (req, res) => {
+
+    console.log(req.body)
+    const values = [
+        req.body.course_id
+    ]
+    const query = 'UPDATE course SET suspended = false WHERE course_id = $1';
+
+    try {
+        const result = await client.query(query, values);
+
+        const activity = "Course, " + req.body.course_name + ", was resumed.";
+        const logQuery = "INSERT INTO activity_log (activity, actor, date) VALUES ($1, $2, $3)";
+        const logValues = [
+            activity,
+            req.body.user,
+            req.body.date
+        ];
+
+        await client.query(logQuery, logValues);
+        res.json({message: "Resumed course successfully", cohort: result.rows[0]});
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({message: "Error in resuming course or logging"});
     }
 })
 
+app.post('/update-active', async (req, res) => {
+    try {
+        const query = `
+            UPDATE cohort
+                SET is_active = FALSE;
+            
+            WITH closest_past_cohort AS (
+                SELECT cohort_id
+                FROM cohort
+                WHERE start_date <= CURRENT_DATE
+                ORDER BY start_date DESC
+                LIMIT 1
+            )
+            UPDATE cohort
+            SET is_active = TRUE
+            WHERE cohort_id IN (SELECT cohort_id FROM closest_past_cohort);
+
+            WITH next_future_cohort AS (
+                SELECT cohort_id
+                FROM cohort
+                WHERE start_date > CURRENT_DATE
+                ORDER BY start_date ASC
+                LIMIT 1
+            )
+            UPDATE cohort
+            SET is_active = NULL
+            WHERE cohort_id IN (SELECT cohort_id FROM next_future_cohort);
+        `
+        const result = await client.query(query);
+        res.send(result.rows);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: 'Error setting active or upcoming cohorts' });
+    }
+})
 
 
 
@@ -1152,6 +1264,83 @@ app.get("/enrollment", async (req, res) => {
         res.status(500).json({message: "Error fetching enrollments"});
     }
 });
+app.get("/students-for-course/:course_id", async (req, res) => {
+    
+    const id = req.params.course_id;
+    const query = `
+        SELECT 
+            s.student_id,
+            s.first_name,
+            s.last_name,
+            s.email,
+            s.phone_number,
+            e.enrollment_date
+        FROM 
+            enrollment e
+        JOIN 
+            student s ON e.student_id = s.student_id
+        WHERE 
+            e.course_id = $1;
+    `
+    try {
+        const result = await client.query(query, [ id ]);
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching enrollments"});
+    }
+});
+app.post('/enroll-student', async (req, res) => {
+    const query = "INSERT INTO enrollment (student_id, course_id) VALUES ($1, $2)";
+    const values = [
+        req.body.student_id,
+        req.body.course_id
+    ]
+    try {
+        const result = await client.query(query, values);
+        
+        const activity = "Student, " + req.body.student_name + ", added to Course: " + req.body.course_name + ".";
+        const logQuery = "INSERT INTO activity_log (activity, actor, date) VALUES ($1, $2, $3)";
+        const logValues = [
+            activity,
+            req.body.user,
+            req.body.date
+        ];
+
+        await client.query(logQuery, logValues);
+        res.json({message: "Student added to Course successfully", cohort: result.rows[0]});
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({message: "Error in adding student to course or logging"});
+    }
+})
+app.post('/unenroll-student', async (req, res) => {
+    const query = "DELETE FROM enrollment WHERE student_id = $1 AND course_id = $2";
+    const values = [
+        req.body.student_id,
+        req.body.course_id
+    ]
+    try {
+        const result = await client.query(query, values);
+        
+        const activity = "Student, " + req.body.student_name + ", removed from Course: " + req.body.course_name + ".";
+        const logQuery = "INSERT INTO activity_log (activity, actor, date) VALUES ($1, $2, $3)";
+        const logValues = [
+            activity,
+            req.body.user,
+            req.body.date
+        ];
+
+        await client.query(logQuery, logValues);
+        res.json({message: "Student removed from Course successfully", cohort: result.rows[0]});
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({message: "Error in removing student from course or logging"});
+    }
+})
+
 
 app.post('/login', async (req, res) => {
     const query = 'SELECT * FROM student WHERE email = $1';

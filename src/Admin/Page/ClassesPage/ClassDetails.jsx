@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getImageUrl } from "../../../utilis";
-import styles from "./ClassDetails.module.css";
+import styles from "./Classes.module.css";
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { BASE_URL, TEST_URL } from "../../../../config";
@@ -36,7 +36,6 @@ export const ClassDetails = () => {
             const result = await axios(BASE_URL + `/lessons`, {
                 timeout: 20000
             });
-            console.log(result.data.filter(e => e.lesson_id === parseInt(id))[0]);
             setClass(result.data.filter(e => e.lesson_id === parseInt(id))[0]);
             
             if (result.data.filter(e => e.lesson_id === parseInt(id)).length != 1) {
@@ -119,8 +118,8 @@ export const ClassDetails = () => {
                     <div className={styles.classTitle}>
                         <h3>{theClass.title}</h3>
                         <div className={styles.buttons}>
-                            <button className={styles.buttonOne} onClick={handleCancel} type="button">Cancel</button>
-                            <button className={styles.buttonTwo} type="submit">Save</button>
+                            <button className={styles.button1} onClick={handleCancel} type="button">Cancel</button>
+                            <button className={styles.button2} type="submit">Save</button>
                         </div>
                     </div>
                     
@@ -170,7 +169,6 @@ export const ClassDetails = () => {
                             <div className={styles.box}>
                                 <div className={styles.flexHeader}>
                                     <h5>Content</h5>
-                                    {/* <button type="button" onClick={()=>setIsOpenContent(true)}>+ Add new section</button> */}
                                 </div>
                                 {theClass.lessons && theClass.lessons.map((sec, i) => (
                                     <div className={styles.section} key={i}>
