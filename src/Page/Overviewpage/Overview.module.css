@@ -330,6 +330,7 @@
 .eventsTable {
     width: 100%;
     border-spacing: 0 8px;
+    text-transform: capitalize;
 }
 .eventsTable thead {
     background: #F9F9F9;
@@ -395,6 +396,10 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
+}
+.dueDate {
+    font-weight: 700;
+    color: #2C2F7E;
 }
 
 

@@ -4,23 +4,27 @@ import { getImageUrl } from "../../utilis";
 import Pagination from "../../Components/Pagination/Pagination";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
+import { format } from 'date-fns';
 import { BASE_URL, TEST_URL } from "../../../config";
+import { customToast } from "../../Components/Notifications.jsx";
 
 export const Overview = () => {
 
     const [ name, setName ] = useState("");
-    const [ id, setId ] = useState("");
-    const [ errorMessage, setErrorMessage ] = useState("");
 
-    const [ completedLess, setCompletedLess ] = useState(0);
+    const [ allLess, setAllLess ] = useState([]);
+    const [ completedLess, setCompletedLess ] = useState([]);
     const [ dueLess, setDueLess ] = useState([]);
+    const [ allAssign, setAllAssign ] = useState([]);
     const [ dueAssign, setDueAssign ] = useState([]);
-    const [ coursess, setCourses ] = useState([]);
+    const [ courses, setCourses ] = useState([]);
+    const [ events, setEvents ] = useState([]);
 
     const [ loadingCL, setLoadingCL ] = useState(false);
     const [ loadingDL, setLoadingDL ] = useState(false);
     const [ loadingDA, setLoadingDA ] = useState(false);
     const [ loadingCourse, setLoadingCourse ] = useState(false);
+    const [ loadingEvents, setLoadingEvents ] = useState(false);
 
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ itemsPerPage, setItemsPerPage ] = useState(5);
@@ -28,146 +32,90 @@ export const Overview = () => {
     const scroll = useRef(null);
 
     useEffect(() => {
-        fetchLessons();
-        setName(sessionStorage.getItem("first_name"));
+        fetchLessonsAndAssignmets();
+        // fetchAssignments();
+        fetchEvents();
         fetchCoursesTeachersStudents();
+
     }, []);
 
 
-
-    const fetchLessons = async () => {
+    const fetchLessonsAndAssignmets = async () => {
         setLoadingCL(true);
         setLoadingDL(true);
+        setLoadingDA(true);
         try {
-            const result = await axios(BASE_URL + `/lessons/${id}`, {
+            const result = await axios(BASE_URL + `/lessons/${sessionStorage.getItem("id")}`, {
                 timeout: 10000
             });
             console.log(result.data);
+            setAllLess(result.data);
+
             setCompletedLess(result.data.filter(e => e.completed === true));
             setLoadingCL(false);
 
             setDueLess(result.data.filter(e => e.completed === false));
             setLoadingDL(false);
+
+            setAllAssign(result.data.filter(e => e.assignments.length > 0));
+            setDueAssign(result.data.filter(e => e.completed === false).filter(e => e.assignments.length > 0));
+            setLoadingDA(false);
         } catch (err) {
             console.log(err);
-            setErrorMessage("Error fetching lessons. Try again later.")
+            customToast("We're having trouble fetching your lessons. Please try again later.")
             setLoadingCL(false);
             setLoadingDL(false);
+            setLoadingDA(false);
         }
     }
 
     const fetchCoursesTeachersStudents = async () => {
         setLoadingCourse(true);
         try {
-            const result = await axios(BASE_URL + "/courses-instructor-students");
-            setCourses(result.data.filter(e => e.students.some(student => String(student.id) === id)));
+            const result = await axios(BASE_URL + `/courses-instructor-students-lessons/${sessionStorage.getItem("id")}`);
+            setCourses(result.data.filter(e => e.is_active === true));
             setLoadingCourse(false);
         } catch (err) {
             console.log(err);
+            customToast("We're having trouble fetching your courses. Please try again later.")
             setLoadingCourse(false);
+        }
+    }
+
+    const fetchEvents = async () => {
+        setLoadingEvents(true);
+        try {
+            const result = await axios(BASE_URL + `/events/${sessionStorage.getItem("id")}`, {
+                timeout: 25000
+            });
+            console.log(result.data);
+            setEvents(result.data.filter(e => e.completed === false));
+            setLoadingEvents(false);
+        } catch (err) {
+            console.log(err);
+            customToast("We're having trouble fetching your events. Please try again later.")
+            setLoadingEvents(false);
         }
     }
 
 
 
-    const courses = [
-        {
-            title: 'Course Title 1',
-            description: 'A short lesson description...',
-            teacher: 'Arafat Murad',
-            currentLesson: 7,
-            totalLessons: 12,
-            currentAssignment: 6,
-            time: '7h 25m'
-        },
-        {
-            title: 'Course Title 2',
-            description: 'A short lesson description...',
-            teacher: 'Arafat Murad',
-            currentLesson: 16,
-            totalLessons: 30,
-            currentAssignment: 7,
-            time: '7h 25m'
-        },
-        {
-            title: 'Course Title 3',
-            description: 'A short lesson description...',
-            teacher: 'Arafat Murad',
-            currentLesson: 7,
-            totalLessons: 12,
-            currentAssignment: 5,
-            time: '7h 25m'
-        }
-    ]
+    function convertDuration(interval) {
+        const result = { hours: 0, days: 0, months: 0 };
 
-    const events = [
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'July 1, 2024'
-        },
-        {
-            courseName: 'Oracle',
-            eventType: 'CLASS',
-            dueTime: '12:38:00 PM',
-            dueDate: 'July 25, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 1, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 22, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'CLASS',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 29, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 1, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'July 1, 2024'
-        },
-        {
-            courseName: 'Oracle',
-            eventType: 'CLASS',
-            dueTime: '12:38:00 PM',
-            dueDate: 'July 25, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 1, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'ASSIGNMENT',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 22, 2024'
-        },
-        {
-            courseName: 'IT Infrastructure',
-            eventType: 'CLASS',
-            dueTime: '12:38:00 PM',
-            dueDate: 'August 29, 2024'
+        if (interval === null) {
+            return result;
         }
-    ]
+        else {
+            result.months = interval.months || 0;
+            result.weeks = interval.weeks || 0;
+            result.days = interval.days || 0;
+            result.hours = interval.hours || 0;
+        
+            return result;
+        }
+    }
+
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -181,7 +129,6 @@ export const Overview = () => {
         setItemsPerPage(itemNumber);
         setCurrentPage(1);
         scroll.current.scrollIntoView();
-        // window.scrollTo({ top: 50});
     };
 
     const toProfilePage = () => {
@@ -192,6 +139,9 @@ export const Overview = () => {
     }
     const toCoursesPage = () => {
         window.location.href = "/dashboard/courses";
+    }
+    const goToCourse = (id) => {
+        window.location.href = `/dashboard/courses/detail/${id}`;
     }
 
     return (
@@ -204,7 +154,7 @@ export const Overview = () => {
                     <img src={getImageUrl('profile.svg')} />
                     <div className={styles.text}>
                         <h3>Welcome Back,</h3>
-                        <h2>{name}</h2>
+                        <h2>{sessionStorage.getItem("first_name")}</h2>
                     </div>
                 </div>
                 <button onClick={toProfilePage}>Edit Profile</button>
@@ -220,8 +170,9 @@ export const Overview = () => {
                             <div className={styles.blueBox}><img src={getImageUrl('completed.png')} /></div>
                         </div>
                         <div className={styles.loader}>
-                            {loadingCL ? '...' : '5/8'}
-                            <progress className={styles.progress} id="progress" value={5} max={8} />
+                            {loadingCL ? '...' :
+                            completedLess.length + '/' + allLess.length}
+                            <progress className={styles.progress} id="progress" value={completedLess.length} max={allLess.length} />
                         </div>
                     </div>
 
@@ -231,8 +182,9 @@ export const Overview = () => {
                             <div className={styles.blueBox}><img src={getImageUrl('instructors.png')} /></div>
                         </div>
                         <div className={styles.loader}>
-                            {loadingDL ? '...' : '3/12'}
-                            <progress className={styles.progress} id="progress" value={3} max={12} />
+                            {loadingCL ? '...' :
+                            dueLess.length + '/' + allLess.length}
+                            <progress className={styles.progress} id="progress" value={dueLess.length} max={allLess.length} />
                         </div>
                     </div>
 
@@ -242,8 +194,9 @@ export const Overview = () => {
                             <div className={styles.blueBox}><img src={getImageUrl('assignment.png')} /></div>
                         </div>
                         <div className={styles.loader}>
-                            {loadingDA ? '...' : '4/6'}
-                            <progress className={styles.progress} id="progress" value={4} max={6} />
+                            {loadingCL ? '...' :
+                            dueAssign.length + '/' + allAssign.length}
+                            <progress className={styles.progress} id="progress" value={dueAssign.length} max={allAssign.length} />
                         </div>
                     </div>
                 </div>
@@ -265,22 +218,27 @@ export const Overview = () => {
                             </div>
                             <div className={styles.courseInfo}>
                                 <div className={styles.infoHeader}>
-                                    <h3>{course.title}</h3>
+                                    <h3>{course.course_name}</h3>
                                     <button><img src={getImageUrl('threeDots.png')} alt="" /></button>
                                 </div>
                                 <p>{course.description}</p>
                                 <div className={styles.courseData}>
-                                    <div className={styles.profile}><img src={getImageUrl('profile.svg')} alt="" />{course.teacher}</div>
-                                    <div><img src={getImageUrl('instructors.png')} alt="" />Lesson {course.currentLesson}</div>
+                                    <div className={styles.profile}><img src={getImageUrl('profile.svg')} alt="" />{course.instructors[0].full_name}</div>
+                                    {course.lessons.length > 0 && <div><img src={getImageUrl('instructors.png')} alt="" />Lesson {Math.min(...course.lessons.filter(e => e.completed === false).map(e => e.number))}</div>}
                                     <div><img src={getImageUrl('assignment.png')} alt="" />Assignment {course.currentAssignment}</div>
-                                    <div><img src={getImageUrl('timer.png')} alt="" />{course.time}</div>
+                                    {course.duration != null && <div>
+                                        <img src={getImageUrl('timer.png')} />
+                                        {convertDuration(course.duration).months === 0 ? '' : convertDuration(course.duration).months + ' months '}
+                                        {convertDuration(course.duration).days === 0 ? '' : convertDuration(course.duration).days + ' days '}
+                                        {convertDuration(course.duration).hours === 0 ? '' : convertDuration(course.duration).hours + ' hours '}
+                                    </div>}
                                 </div>
                                 <div className={styles.withLoader}>
                                     <div className={styles.coursesLoader}>
-                                        {course.currentLesson}/{course.totalLessons} Modules
-                                        <progress className={styles.progress} id="progress" max={course.totalLessons} value={course.currentLesson} />
+                                        {course.lessons.filter(e => e.completed).length}/{course.lessons.length} Lessons
+                                        <progress className={styles.progress} id="progress" max={course.lessons.length} value={course.lessons.filter(e => e.completed).length} />
                                     </div>
-                                    <button>Continue Course</button>
+                                    <button onClick={()=>goToCourse(course.course_id)}>Continue Course</button>
                                 </div>
                             </div>
                         </div>
@@ -294,49 +252,55 @@ export const Overview = () => {
                     Upcoming Events
                     <button onClick={toEventsPage}>View All<img src={getImageUrl('greyRightAngle.png')} alt="" /></button>
                 </div>
-                
-                <table className={styles.eventsTable} ref={scroll}>
-                    <thead>
-                        <th><input type="checkbox" /></th>
-                        <th>Event Name</th>
-                        <th>Due Time</th>
-                        <th>Due Date</th>
-                        <th>Action</th>
-                    </thead>
-                    <tbody>
-                        {currentEvents.map((event, index) => (
-                            <tr key={index}>
-                                <td><input type="checkbox" /></td>
-                                <td>{event.courseName} ... <span>{event.eventType}</span></td>
-                                <td><div className={styles.dueTime}><img src={getImageUrl('timer.png')} />{event.dueTime}</div></td>
-                                <td>{event.dueDate}</td>
-                                <td><button><img src={getImageUrl('threeDots.png')} /></button></td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
 
-                <div style={{ w:'100%', display:"flex", alignItems:'center' }}>
-                    <div className={styles.showRows}>
-                        Show
-                        <select onChange={(e) => handlePageNumber(e.target.value)} >
-                            <option value={5}>5</option>
-                            <option value={10}>10</option>
-                            <option value={15}>15</option>
-                        </select>
-                        Rows
+                {loadingEvents ? <p className={styles.loading}>Loading...</p>
+                :
+                currentEvents.length < 1 ? <h4 className={styles.none}>NO UPCOMING EVENTS</h4>
+                :
+                <>           
+                    <table className={styles.eventsTable} ref={scroll}>
+                        <thead>
+                            <th><input type="checkbox" /></th>
+                            <th>Event Name</th>
+                            <th>Due Time</th>
+                            <th>Due Date</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            {currentEvents.map((event, index) => (
+                                <tr key={index}>
+                                    <td><input type="checkbox" /></td>
+                                    <td>{event.course_name} ... <span>{event.event_type}</span></td>
+                                    <td><div className={styles.dueTime}><img src={getImageUrl('timer.png')} />{format(new Date(event.start), 'hh:mm a')}</div></td>
+                                    <td className={new Date(event.start) <= new Date() && styles.dueDate}>{format(new Date(event.start), 'MMMM d, yyyy')}</td>
+                                    <td><button><img src={getImageUrl('threeDots.png')} /></button></td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+
+                    <div style={{ w:'100%', display:"flex", alignItems:'center' }}>
+                        <div className={styles.showRows}>
+                            Show
+                            <select onChange={(e) => handlePageNumber(e.target.value)} >
+                                <option value={5}>5</option>
+                                <option value={10}>10</option>
+                                <option value={15}>15</option>
+                            </select>
+                            Rows
+                        </div>
+                        
+                        <Pagination
+                            className={styles.pag}
+                            currentData={events}
+                            currentPage={currentPage}
+                            itemsPerPage={itemsPerPage}
+                            onPageChange={handlePageChange}
+                        />
+
                     </div>
-                    
-                    <Pagination
-                        className={styles.pag}
-                        currentData={events}
-                        currentPage={currentPage}
-                        itemsPerPage={itemsPerPage}
-                        onPageChange={handlePageChange}
-                    />
-
-                </div>
-                
+                </>
+                }
                 
             </div>
         </div>

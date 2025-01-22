@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Navigate, Routes, Route, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import styles from './App.module.css'
+import { Toaster } from "react-hot-toast";
+
 
 import { CWGpage } from './Page/CWGpage/CWGpage'
-import { Loginpage } from './Page/Loginpage/Loginpage'
+import { LoginPage } from './Page/Onboarding/LoginPage';
 import { AdminLogin } from './Admin/Page/AdminOnboarding/AdminLogin';
-import { Accountpage } from './Page/Accountpage/Accountpage'
-import { Password } from './Page/Password/Password';
-import { Resetpage } from './Page/Resetpage/Resetpage'
 import { AdminReset } from './Admin/Page/AdminOnboarding/AdminReset';
+import { ResetPage } from './Page/Onboarding/ResetPage';
+import { AccountPage } from './Page/Onboarding/AccountPage';
+import { PasswordPage } from './Page/Onboarding/PasswordPage';
 import { NewAdmin } from './Admin/Page/AdminOnboarding/NewAdmin';
 
 import { DashboardLayout } from './Page/DashboardLayout'
@@ -16,11 +18,11 @@ import { BlankPage } from './Page/BlankPage'
 import { PageNotFound } from './Page/404';
 
 import { Overview } from './Page/Overviewpage/Overview'
-import { Course } from './Page/Course/Course'
-import { CompletedCourse } from './Page/CompletedCourses/CompletedCourses';
+import { ActiveCourse } from './Page/Course/ActiveCourse'
+import { CompletedCourse } from './Page/Course/CompletedCourses';
 import { CourseDetails } from './Page/CourseDetails/CourseDetails';
 import { CalendarPage } from './Page/CalendarPage/Calendar';
-import { Certificate } from './Components/Certificate/Certificate'
+import { Certificate } from './Page/Certificate/Certificate'
 
 import { AdminDashboardLayout } from './Admin/Page/AdminDashboardLayout';
 import { AdminOverview } from './Admin/Page/AdminOverviewpage/AdminOverview';
@@ -41,6 +43,7 @@ import { TaskPage } from './Admin/Page/TaskPage/TaskPage';
 import { Classes } from './Admin/Page/ClassesPage/Classes';
 
 import { ProfilePage } from './Page/ProfilePage/ProfilePage';
+
 
 
 const ProtectedRoute = ({ children }) => {
@@ -68,16 +71,17 @@ function App() {
   const router = createBrowserRouter([
     { path: '/', element: <Navigate to='CWG' /> },
     { path: '/CWG', element: <CWGpage /> },
-    { path: '/Login', element: <Loginpage /> },
+    { path: '/Login', element: <LoginPage /> },
     { path: '/Admin-login', element: <AdminLogin /> },
     { path: '/new-admin/:id', element: <NewAdmin /> },
-    { path: '/Account', element: <Accountpage /> },
-    { path: '/Password', element: <Password /> },
-    { path: '/Reset', element: <Resetpage /> },
+    { path: '/Account', element: <AccountPage /> },
+    { path: '/Password', element: <PasswordPage /> },
+    { path: '/Reset', element: <ResetPage /> },
     { path: '/admin-reset', element: <AdminReset /> },
+    
     { path: '/blank', element: <BlankPage /> },
-
     { path: '/404', element: <PageNotFound /> },
+
     {
       path: '/dashboard',
       element: (
@@ -89,9 +93,9 @@ function App() {
         { path: '/dashboard', element: <Navigate to="overview" /> },
         { path: 'overview', element: <Overview /> },
         { path: 'courses', element: <Navigate to="active" /> },
-        { path: 'courses/active', element: <Course /> },
+        { path: 'courses/active', element: <ActiveCourse /> },
         { path: 'courses/completed', element: <CompletedCourse /> },
-        { path: 'courses/detail/:courseId', element: <CourseDetails /> },
+        { path: 'courses/detail/:courseID', element: <CourseDetails /> },
         { path: 'calendar', element: <CalendarPage /> },
         { path: 'certificate', element: <Certificate /> },
         { path: 'profile', element: <ProfilePage /> },
@@ -135,6 +139,7 @@ function App() {
 
   return (
     <div className={styles.App}>
+      <Toaster position="bottom-right" reverseOrder={false} />
       <RouterProvider router={router} />
     </div>
   )

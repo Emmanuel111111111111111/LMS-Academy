@@ -22,22 +22,20 @@ export const CalendarPage = () => {
 
 
     useEffect(() => {
-        console.log(sessionStorage);
-        setStudentId(sessionStorage.getItem("id"));
         fetchEvents();
     }, []);
 
     const fetchEvents = async () => {
         setIsLoading(true);
         try {
-            const result = await axios(BASE_URL + `/events/${studentId}`, {
+            const result = await axios(BASE_URL + `/events/${sessionStorage.getItem("id")}`, {
                 timeout: 25000
             });
-            setEvents(result.data);
-            console.log(result.data);
+            setEvents(result.data.filter(e => e.is_active));
             setIsLoading(false);
         } catch (err) {
             console.log(err);
+            customToast("Error fetching your classes. Please try again.")
             setIsLoading(false);
         }
     }

@@ -391,6 +391,155 @@ app.get('/courses-instructor-studentscount-lessons', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+app.get('/courses-instructor-students-lessons/:student_id', async (req, res) => {
+    
+    const id = req.params.student_id;
+    const query = `
+       SELECT 
+            c.course_id,
+            c.name AS course_name,
+            c.description,
+            c.date_added,
+            c.duration,
+            c.type,
+            c.suspended,
+            c.completed,
+            c.level,
+            c.status,
+            CASE 
+                WHEN EXISTS (
+                    SELECT 1 
+                    FROM cohort_course cc
+                    JOIN cohort co ON cc.cohort_id = co.cohort_id
+                    WHERE cc.course_id = c.course_id AND co.is_active = true
+                ) THEN true
+                WHEN EXISTS (
+                    SELECT 1
+                    FROM cohort_course cc
+                    JOIN cohort co ON cc.cohort_id = co.cohort_id
+                    WHERE cc.course_id = c.course_id AND co.is_active IS NULL
+                ) THEN NULL
+                ELSE false
+            END AS is_active,
+            (
+                SELECT COALESCE(
+                    JSON_AGG(JSON_BUILD_OBJECT(
+                        'lesson_id', l.lesson_id,
+                        'lesson_title', l.title,
+                        'number', l.number,
+                        'start_date', l.start_date,
+                        'completed', COALESCE(ls.completed, false),
+                        'assignments', COALESCE(
+                            (
+                                SELECT JSON_AGG(JSON_BUILD_OBJECT(
+                                    'assignment_id', a.assignment_id,
+                                    'assignment_name', a.assignment_name,
+                                    'due_date', a.due_date,
+                                    'completed', CASE WHEN asn.assignment_id IS NOT NULL THEN true ELSE false END
+                                ))
+                                FROM assignment a
+                                LEFT JOIN assignment_student asn 
+                                    ON a.assignment_id = asn.assignment_id 
+                                    AND asn.student_id = $1
+                                WHERE a.lesson_id = l.lesson_id
+                            ),
+                            '[]'
+                        ),
+                        'content', COALESCE(
+                            (
+                                SELECT JSON_AGG(
+                                    JSON_BUILD_OBJECT(
+                                        'file_id', lf.file_id,
+                                        'file_name', lf.file_name,
+                                        'file_type', lf.file_type,
+                                        'file_size', lf.file_size,
+                                        'file_data', encode(lf.file_data, 'base64')
+                                    )
+                                )
+                                FROM lesson_files lf
+                                WHERE lf.lesson_id = l.lesson_id
+                            ),
+                            '[]'
+                        )
+                    ) ORDER BY l.number),
+                    '[]'
+                )
+                FROM lesson l
+                LEFT JOIN lesson_student ls 
+                    ON l.lesson_id = ls.lesson_id 
+                    AND ls.student_id = $1
+                WHERE l.course_id = c.course_id
+            ) AS lessons,
+            (
+                SELECT JSON_AGG(JSON_BUILD_OBJECT(
+                    'instructor_id', instructor_id,
+                    'full_name', COALESCE(first_name || ' ' || last_name, 'NA'),
+                    'first_name', first_name,
+                    'last_name', last_name,
+                    'description', description,
+                    'role', role
+                ))
+                FROM (
+                    SELECT DISTINCT 
+                        i.instructor_id,
+                        i.first_name,
+                        i.last_name,
+                        i.description,
+                        i.role
+                    FROM instructorCourses ic
+                    JOIN instructor i ON ic.instructor_id = i.instructor_id
+                    WHERE ic.course_id = c.course_id
+                    ORDER BY i.instructor_id
+                ) sub_instructors
+            ) AS instructors,
+            (
+                SELECT JSON_AGG(JSON_BUILD_OBJECT(
+                    'student_id', student_id,
+                    'first_name', first_name,
+                    'last_name', last_name,
+                    'email', email,
+                    'enrollment_date', enrollment_date
+                ))
+                FROM (
+                    SELECT DISTINCT 
+                        s.student_id,
+                        s.first_name,
+                        s.last_name,
+                        s.email,
+                        e.enrollment_date
+                    FROM enrollment e
+                    JOIN student s ON e.student_id = s.student_id
+                    WHERE e.course_id = c.course_id
+                ) sub_students
+            ) AS students
+        FROM 
+            course c
+        WHERE 
+            c.deleted = FALSE
+            AND c.suspended = FALSE
+            AND EXISTS (
+                SELECT 1
+                FROM enrollment e
+                WHERE e.course_id = c.course_id AND e.student_id = $1
+            )
+        ORDER BY 
+            (
+                SELECT MIN(e.enrollment_date)
+                FROM enrollment e
+                WHERE e.course_id = c.course_id
+            ) DESC,
+            c.date_added DESC,
+            c.name ASC;
+    `;
+
+    try {
+        const result = await client.query(query, [id]);
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 app.get('/courses-instructor-students', async (req, res) => {
     const query = `
         SELECT 
@@ -400,7 +549,7 @@ app.get('/courses-instructor-students', async (req, res) => {
             c.date_added,
             COALESCE(
                 JSON_AGG(
-                    DISTINCT JSON_BUILD_OBJECT(
+                    JSON_BUILD_OBJECT(
                         'id', i.instructor_id,
                         'first_name', i.first_name,
                         'last_name', i.last_name,
@@ -412,7 +561,7 @@ app.get('/courses-instructor-students', async (req, res) => {
             ) AS instructors,
             COALESCE(
                 JSON_AGG(
-                    DISTINCT JSON_BUILD_OBJECT(
+                    JSON_BUILD_OBJECT(
                         'id', s.student_id,
                         'first_name', s.first_name,
                         'last_name', s.last_name,
@@ -619,11 +768,58 @@ app.post('/new-lesson', async (req, res) => {
 app.get('/lessons/:studentID', async (req, res) => {
     try {
         const id = req.params.studentID;
-        // const query = `
-        //     SELECT * FROM lesson l
-        //     LEFT JOIN lesson_student ls ON ls.student_id = ($1)
-        // `;
-        const query = "SELECT * FROM lesson_student WHERE student_id = ($1)";
+        const query = `
+            SELECT 
+                l.lesson_id,
+                l.title AS lesson_title,
+                l.number AS lesson_number,
+                c.course_id,
+                c.name AS course_name,
+                COALESCE(
+                    (
+                        SELECT JSON_AGG(
+                            JSON_BUILD_OBJECT(
+                                'assignment_id', a.assignment_id,
+                                'assignment_name', a.assignment_name,
+                                'due_date', a.due_date,
+                                'completed', CASE 
+                                    WHEN asn.assignment_id IS NOT NULL THEN true 
+                                    ELSE false 
+                                END
+                            )
+                        )
+                        FROM assignment a
+                        LEFT JOIN assignment_student asn 
+                            ON a.assignment_id = asn.assignment_id 
+                            AND asn.student_id = $1
+                        WHERE a.lesson_id = l.lesson_id
+                    ),
+                    '[]'
+                ) AS assignments,
+                COALESCE(
+                    (
+                        SELECT ls.completed
+                        FROM lesson_student ls
+                        WHERE ls.lesson_id = l.lesson_id
+                        AND ls.student_id = 2
+                    ),
+                    false
+                ) AS completed
+            FROM 
+                lesson l
+            JOIN 
+                course c ON l.course_id = c.course_id
+            WHERE 
+                EXISTS (
+                    SELECT 1 
+                    FROM enrollment e
+                    WHERE e.course_id = c.course_id 
+                    AND e.student_id = $1
+                )
+            ORDER BY 
+                c.name ASC,
+                l.number ASC;
+        `;
         
         const result = await client.query(query, [id]);
         res.send(result.rows);
@@ -857,62 +1053,117 @@ app.get("/events", async (req, res) => {
 app.get("/events/:studentId", async (req, res) => {
     try {
         const result = await client.query(`
-            SELECT 
-                'lesson' AS event_type,
-                l.lesson_id AS event_id,
-                l.title AS title,
-                c.course_id,
-                c.name AS course_name,
-                l.start_date AS start,
-                l.end_date AS end
-            FROM 
-                lesson l
-            JOIN 
-                course c ON l.course_id = c.course_id
-            JOIN 
-                enrollment e ON e.course_id = c.course_id
-            WHERE 
-                e.student_id = $1
+            SELECT * 
+                FROM (
+                    SELECT 
+                        'lesson' AS event_type,
+                        l.lesson_id AS event_id,
+                        l.title AS title,
+                        c.course_id,
+                        c.name AS course_name,
+                        l.start_date AS start,
+                        l.end_date AS end,
+                        CASE 
+                            WHEN EXISTS (
+                                SELECT 1 
+                                FROM cohort_course cc
+                                JOIN cohort co ON cc.cohort_id = co.cohort_id
+                                WHERE cc.course_id = c.course_id AND co.is_active = true
+                            ) THEN true
+                            WHEN EXISTS (
+                                SELECT 1
+                                FROM cohort_course cc
+                                JOIN cohort co ON cc.cohort_id = co.cohort_id
+                                WHERE cc.course_id = c.course_id AND co.is_active IS NULL
+                            ) THEN NULL
+                            ELSE false
+                        END AS is_active,
+                        COALESCE(ls.completed, false) AS completed
+                    FROM 
+                        lesson l
+                    JOIN 
+                        course c ON l.course_id = c.course_id
+                    JOIN 
+                        enrollment e ON e.course_id = c.course_id
+                    LEFT JOIN 
+                        lesson_student ls ON l.lesson_id = ls.lesson_id AND ls.student_id = $1
+                    WHERE 
+                        e.student_id = $1
 
-            UNION ALL
+                    UNION ALL
 
-            SELECT 
-                'assignment' AS event_type,
-                a.assignment_id AS event_id,
-                a.assignment_name AS title,
-                c.course_id,
-                c.name AS course_name,
-                a.due_date AS start,
-                NULL AS end
-            FROM 
-                assignment a
-            JOIN 
-                lesson l ON a.lesson_id = l.lesson_id
-            JOIN 
-                course c ON l.course_id = c.course_id
-            JOIN 
-                assignment_student asgn_student ON a.assignment_id = asgn_student.assignment_id
-            WHERE 
-                asgn_student.student_id = $1
+                    SELECT 
+                        'assignment' AS event_type,
+                        a.assignment_id AS event_id,
+                        a.assignment_name AS title,
+                        c.course_id,
+                        c.name AS course_name,
+                        a.due_date AS start,
+                        NULL AS end,
+                        CASE 
+                            WHEN EXISTS (
+                                SELECT 1 
+                                FROM cohort_course cc
+                                JOIN cohort co ON cc.cohort_id = co.cohort_id
+                                WHERE cc.course_id = c.course_id AND co.is_active = true
+                            ) THEN true
+                            WHEN EXISTS (
+                                SELECT 1
+                                FROM cohort_course cc
+                                JOIN cohort co ON cc.cohort_id = co.cohort_id
+                                WHERE cc.course_id = c.course_id AND co.is_active IS NULL
+                            ) THEN NULL
+                            ELSE false
+                        END AS is_active,
+                        COALESCE(asn_student.submitted, false) AS submitted
+                    FROM 
+                        assignment a
+                    JOIN 
+                        lesson l ON a.lesson_id = l.lesson_id
+                    JOIN 
+                        course c ON l.course_id = c.course_id
+                    JOIN 
+                        assignment_student asn_student ON a.assignment_id = asn_student.assignment_id AND asn_student.student_id = $1
+                    WHERE 
+                        asn_student.student_id = $1
 
-            UNION ALL
+                    UNION ALL
 
-            SELECT 
-                'exam' AS event_type,
-                e.exam_id AS event_id,
-                e.exam_name AS title,
-                c.course_id,
-                c.name AS course_name,
-                e.due_date AS start,
-                NULL AS end
-            FROM 
-                exam e
-            JOIN 
-                course c ON e.course_id = c.course_id
-            JOIN 
-                exam_student exm_student ON e.exam_id = exm_student.exam_id
-            WHERE 
-                exm_student.student_id = $1;
+                    SELECT 
+                        'exam' AS event_type,
+                        e.exam_id AS event_id,
+                        e.exam_name AS title,
+                        c.course_id,
+                        c.name AS course_name,
+                        e.due_date AS start,
+                        NULL AS end,
+                        CASE 
+                            WHEN EXISTS (
+                                SELECT 1 
+                                FROM cohort_course cc
+                                JOIN cohort co ON cc.cohort_id = co.cohort_id
+                                WHERE cc.course_id = c.course_id AND co.is_active = true
+                            ) THEN true
+                            WHEN EXISTS (
+                                SELECT 1
+                                FROM cohort_course cc
+                                JOIN cohort co ON cc.cohort_id = co.cohort_id
+                                WHERE cc.course_id = c.course_id AND co.is_active IS NULL
+                            ) THEN NULL
+                            ELSE false
+                        END AS is_active,
+                        COALESCE(exm_student.submitted, false) AS submitted
+                    FROM 
+                        exam e
+                    JOIN 
+                        course c ON e.course_id = c.course_id
+                    JOIN 
+                        exam_student exm_student ON e.exam_id = exm_student.exam_id AND exm_student.student_id = $1
+                    WHERE 
+                        exm_student.student_id = $1
+                ) AS events
+                ORDER BY 
+                    start ASC;
             `,
             [req.params.studentId]);
         res.send(result.rows);
@@ -1342,6 +1593,114 @@ app.post('/unenroll-student', async (req, res) => {
 })
 
 
+app.get("/certificates/:student_id", async (req, res) => {
+    
+    const id = req.params.student_id;
+    const query = `
+        SELECT 
+            cert.certificate_id,
+            cert.student_id,
+            cert.course_id,
+            cert.date_awarded,
+            c.name AS course_name,
+            c.description AS course_description,
+            c.date_added,
+            c.duration,
+            c.type,
+            c.suspended,
+            c.completed,
+            c.level,
+            c.status,
+            CASE 
+                WHEN EXISTS (
+                    SELECT 1 
+                    FROM cohort_course cc
+                    JOIN cohort co ON cc.cohort_id = co.cohort_id
+                    WHERE cc.course_id = c.course_id AND co.is_active = true
+                ) THEN true
+                WHEN EXISTS (
+                    SELECT 1
+                    FROM cohort_course cc
+                    JOIN cohort co ON cc.cohort_id = co.cohort_id
+                    WHERE cc.course_id = c.course_id AND co.is_active IS NULL
+                ) THEN NULL
+                ELSE false
+            END AS is_active,
+            (
+                SELECT COALESCE(
+                    JSON_AGG(JSON_BUILD_OBJECT(
+                        'lesson_id', l.lesson_id,
+                        'lesson_title', l.title,
+                        'number', l.number,
+                        'start_date', l.start_date,
+                        'completed', COALESCE(ls.completed, false),
+                        'assignments', COALESCE(
+                            (
+                                SELECT JSON_AGG(JSON_BUILD_OBJECT(
+                                    'assignment_id', a.assignment_id,
+                                    'assignment_name', a.assignment_name,
+                                    'due_date', a.due_date,
+                                    'completed', CASE WHEN asn.assignment_id IS NOT NULL THEN true ELSE false END
+                                ))
+                                FROM assignment a
+                                LEFT JOIN assignment_student asn 
+                                    ON a.assignment_id = asn.assignment_id 
+                                    AND asn.student_id = $1
+                                WHERE a.lesson_id = l.lesson_id
+                            ),
+                            '[]'
+                        )
+                    ) ORDER BY l.number),
+                    '[]'
+                )
+                FROM lesson l
+                LEFT JOIN lesson_student ls 
+                    ON l.lesson_id = ls.lesson_id 
+                    AND ls.student_id = $1
+                WHERE l.course_id = c.course_id
+            ) AS lessons,
+            (
+                SELECT JSON_AGG(JSON_BUILD_OBJECT(
+                    'instructor_id', instructor_id,
+                    'full_name', COALESCE(first_name || ' ' || last_name, 'NA'),
+                    'first_name', first_name,
+                    'last_name', last_name,
+                    'description', description,
+                    'role', role
+                ))
+                FROM (
+                    SELECT DISTINCT 
+                        i.instructor_id,
+                        i.first_name,
+                        i.last_name,
+                        i.description,
+                        i.role
+                    FROM instructorCourses ic
+                    JOIN instructor i ON ic.instructor_id = i.instructor_id
+                    WHERE ic.course_id = c.course_id
+                    ORDER BY i.instructor_id
+                ) sub_instructors
+            ) AS instructors
+        FROM 
+            certificate cert
+        JOIN 
+            course c ON cert.course_id = c.course_id
+        WHERE 
+            cert.student_id = $1
+        ORDER BY 
+            cert.date_awarded DESC, 
+            c.name ASC;
+    `
+    try {
+        const result = await client.query(query, [ id ]);
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching certificates"});
+    }
+});
+
+
 app.post('/login', async (req, res) => {
     const query = 'SELECT * FROM student WHERE email = $1';
     try {
@@ -1450,5 +1809,7 @@ const verifyPassword = async (plainPassword, hashedPassword) => {
 
 
 app.listen(port, () => {
-    console.log("Connect to backend.")
+    console.log(`Server is running on port ${port}`);
+
+    // console.log("Connect to backend.")
 })

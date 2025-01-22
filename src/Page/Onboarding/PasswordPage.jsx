@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { getImageUrl } from "../../utilis";
-import styles from "./Password.module.css";
+import styles from "./Onboarding.module.css";
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { BASE_URL, TEST_URL } from "../../../config";
 
 
-export const Password = () => {
+export const PasswordPage = () => {
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);

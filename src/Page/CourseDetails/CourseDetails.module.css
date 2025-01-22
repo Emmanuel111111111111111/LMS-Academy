@@ -33,6 +33,14 @@
     font-weight: 400;
     color: #2C2F7E;
 }
+.none {
+    width: 100%;
+    margin-top: 24px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 600;
+    color: #2C2F7E;
+}
 
 
 .split {
@@ -229,6 +237,11 @@
     font-size: 16px;
     font-weight: 600;
     color: #0F172A;
+}
+
+.noLessons {
+    padding: 14px 16px;
+    width: 100%;
 }
 
 .accordion {
