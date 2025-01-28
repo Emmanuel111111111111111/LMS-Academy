@@ -41,7 +41,7 @@ export const CourseDetail = () => {
         } catch (err) {
             console.log(err);
             setIsLoading(false);
-            // setErrorMessage(true);
+            customToast("We're having trouble getting the course details. Try again later.")
         }
     }
 
@@ -203,8 +203,8 @@ export const CourseDetail = () => {
                         {course.lessons && course.lessons.map((cla, i) => (
                             <div className={styles.section} key={i}>
                                 <div className={styles.text}>
-                                    <img src={getImageUrl('reorder.png')} alt="" />
-                                    Week {cla.week} - Beginner - {cla.title}
+                                    <button type="button"><img src={getImageUrl('reorder.png')} alt="" /></button>
+                                    Week {cla.week} - Beginner - {cla.lesson_title}
                                 </div>
                                 <div>
                                     <button type="button" className={styles.actionButton} onClick={(e) => toggleAction(e, i)}>

@@ -263,6 +263,7 @@
     justify-content: space-between;
     padding: 20px 16px;
     color: #0F172A;
+    align-items: start;
 }
 .week:hover {
     background: #2C2F7E;
@@ -277,10 +278,6 @@
     gap: 6px;
     flex: 80%;
 }
-.title h5 {
-    font-weight: 400;
-    font-size: 14px;
-}
 .title h4 {
     font-weight: 500;
     font-size: 14px;
@@ -292,4 +289,5 @@
     gap: 4px;
     font-size: 14px;
     color: #64748B;
+    text-align: right;
 }

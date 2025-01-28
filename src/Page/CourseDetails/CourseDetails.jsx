@@ -22,7 +22,6 @@ export const CourseDetails = () => {
         setIsLoading(true);
         try {
             const result = await axios(BASE_URL + `/courses-instructor-students-lessons/${sessionStorage.getItem("id")}`);
-            console.log(result.data.filter(e => e.course_id === parseInt(courseID))[0]);
             if (result.data.filter(e => e.course_id === parseInt(courseID))[0] === undefined) {
                 window.location.href = "/dashboard/courses";
                 return
@@ -41,6 +40,34 @@ export const CourseDetails = () => {
     const toggleAccordion = (id) => {
         setOpenAccId(openAccId === id ? null : id);
     }
+
+
+    const handleDownload = async (fileId) => {
+        try {
+            const response = await fetch(BASE_URL + `/file/${fileId}`);
+            if (!response.ok) {
+                throw new Error('Failed to download file');
+            }
+    
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const contentDisposition = response.headers.get('Content-Disposition');
+            console.log(response)
+            const fileName = contentDisposition
+                ? contentDisposition.split('file_name=')[1].replace(/"/g, '')
+                : 'downloaded-file';
+    
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error downloading file:', error);
+        }
+    };
 
 
     return (
@@ -71,7 +98,7 @@ export const CourseDetails = () => {
                                         <div className={styles.stud}>
                                             <div className={styles.stack}>
                                                 {course.students?.map((img, i) =>
-                                                    <img src={getImageUrl('profile.svg')} alt="" />
+                                                    <img src={getImageUrl('profile.svg')} alt="" key={i} />
                                                 )}
                                             </div>
                                             {course.students?.length} Registered student{course.students?.length != 1 && `s`}
@@ -184,16 +211,16 @@ export const CourseDetails = () => {
                                                 {lesson.content.length < 1 ? <p className={styles.noLessons}>No content for this lesson</p>
                                                 :
                                                 lesson.content.map((cont, i) => (
-                                                    <div className={styles.week} key={i}>
+                                                    <div className={styles.week} key={i} onClick={()=>handleDownload(cont.file_id)}>
+                                                        <div className={styles.title}>
+                                                            <input type="checkbox" name="check" id="check" checked={cont.completed} readOnly />                                                                    
+                                                            <h4>{cont.file_name}</h4>
+                                                        </div>
                                                         
-                                                        <label htmlFor="check" className={styles.title}>
-                                                            <input type="checkbox" name="check" id="check" />                                                                    
-                                                                <h4>{cont.file_name}</h4>
-                                                                <div className={styles.len}>
-                                                                    <img src="" alt="" />
-                                                                    File size: {cont.file_size}MB
-                                                                </div>
-                                                        </label>
+                                                        <div className={styles.len}>
+                                                            <img src="" alt="" />
+                                                            File size: {Math.floor(cont.file_size / 1000)}KB
+                                                        </div>
                                                     </div>
 
                                                 ))}

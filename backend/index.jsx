@@ -397,7 +397,7 @@ app.get('/courses-instructor-students-lessons/:student_id', async (req, res) => 
     
     const id = req.params.student_id;
     const query = `
-       SELECT 
+        SELECT 
             c.course_id,
             c.name AS course_name,
             c.description,
@@ -454,8 +454,7 @@ app.get('/courses-instructor-students-lessons/:student_id', async (req, res) => 
                                         'file_id', lf.file_id,
                                         'file_name', lf.file_name,
                                         'file_type', lf.file_type,
-                                        'file_size', lf.file_size,
-                                        'file_data', encode(lf.file_data, 'base64')
+                                        'file_size', lf.file_size
                                     )
                                 )
                                 FROM lesson_files lf
@@ -878,6 +877,32 @@ app.get('/lessons/:studentID', async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Error grabbing lesson_student info' });
+    }
+});
+
+app.get('/file/:fileId', async (req, res) => {
+    const { fileId } = req.params;
+
+    try {
+        const query = `
+            SELECT file_name, file_type, file_data 
+            FROM lesson_files 
+            WHERE file_id = $1
+        `;
+        const result = await client.query(query, [fileId]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'File not found' });
+        }
+
+        const file = result.rows[0];
+
+        res.setHeader('Content-Disposition', `attachment; filename="${file.file_name}"`);
+        res.setHeader('Content-Type', file.file_type);
+        res.send(file.file_data);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Error downloading file' });
     }
 });
 
