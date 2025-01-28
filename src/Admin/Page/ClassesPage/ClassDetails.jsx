@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { getImageUrl } from "../../../utilis";
 import styles from "./Classes.module.css";
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { BASE_URL, TEST_URL } from "../../../../config";
 import Modal from "../../Components/Modals/Modal";
 import Calendar from 'react-calendar';
 import "../../../App.css"
+import { customToast } from "../../../Components/Notifications";
+import { BASE_URL, TEST_URL } from "../../../../config";
 
 
 export const ClassDetails = () => {
@@ -16,15 +17,13 @@ export const ClassDetails = () => {
     const [ theClass, setClass ] = useState([]);
     const [ isLoading, setIsLoading ] = useState(false);
     const [ charCount, setCharCount ] = useState(theClass?.description != null ? (255 - theClass.description.length) : 255);
-
-    const [ isOpenContent, setIsOpenContent ] = useState(false);
-    const [ newLessonTitle, setNewLessonTitle ] = useState('');
-    const [ titleErrorMsg, setTitleErrorMsg ] = useState(false);
     const [ showFileName, setShowFileName ] = useState(false);
     const [ selectedFiles, setSelectedFiles ] = useState([]);
+    const [ fileNames, setFileNames ] = useState([]);
+    const [ actionsOpen, setActionsOpen ] = useState({});
 
-    const location = useLocation();
     const navigate = useNavigate();
+    const actionsRef = useRef(null);
 
     useEffect(() => {
         loadLessonDetails();
@@ -33,10 +32,11 @@ export const ClassDetails = () => {
     const loadLessonDetails = async () => {
         setIsLoading(true);
         try {
-            const result = await axios(BASE_URL + `/lessons`, {
+            const result = await axios(BASE_URL + `/lesson/${id}`, {
                 timeout: 20000
             });
             setClass(result.data.filter(e => e.lesson_id === parseInt(id))[0]);
+            console.log(result.data.filter(e => e.lesson_id === parseInt(id))[0]);
             
             if (result.data.filter(e => e.lesson_id === parseInt(id)).length != 1) {
                 navigate('/404');
@@ -45,7 +45,7 @@ export const ClassDetails = () => {
         } catch (err) {
             console.log(err);
             setIsLoading(false);
-            // setErrorMessage(true);
+            customToast("We're having trouble getting this class details. Try again later.")
         }
     }
 
@@ -56,9 +56,13 @@ export const ClassDetails = () => {
             [name]: value,
         }));
 
-        if (name === 'lesson_data') {
+        if (name === 'files') {
+            const files = Array.from(e.target.files);
             setShowFileName(true);
-            selectedFiles.push(value);
+            files.forEach((file) => {
+                fileNames.push(file.name);
+                selectedFiles.push(file);
+            });
         }
 
         if (name === 'description') {
@@ -76,10 +80,11 @@ export const ClassDetails = () => {
         formData.append('level', theClass.level);
         formData.append('status', theClass.status);
         if (selectedFiles && selectedFiles.length > 0) {
-            for (const file of selectedFiles) {
+            selectedFiles.forEach((file) => {
                 formData.append('files', file);
-            }
+            });
         }
+        console.log([...formData.entries()]);
         try {
             const response = await fetch(BASE_URL + `/lesson-info`, {
                 method: 'POST',
@@ -103,6 +108,47 @@ export const ClassDetails = () => {
         navigate('/admin-dashboard/classes');
     }
 
+    const deleteFile = async (id) => {
+        console.log(theClass.lesson_id);
+        console.log(id);
+
+        const deleteValues = {
+            lesson_id: theClass.lesson_id,
+            file_id: id,
+        }
+
+        try {
+            const result = await axios.post(BASE_URL + '/delete-lesson-file', deleteValues)
+            console.log(result);
+            loadLessonDetails();
+            setActionsOpen({});
+        } catch (error) {
+            console.log('Error deleting file', error);
+            customToast('Unable to delete file. Try again later')
+        }
+    }
+
+
+    const toggleAction = (event, index) => {
+        event.stopPropagation();
+        setActionsOpen(prevState => ({
+            ...prevState,
+            [index]: !prevState[index]
+        }));
+    };
+
+    const handleClickOutside = (event) => {
+        if (actionsRef.current && !actionsRef.current.contains(event.target)) {
+            setActionsOpen(false);
+        }
+    };
+    useEffect(() => {
+        document.addEventListener('click', handleClickOutside, true);
+        return () => {
+            document.removeEventListener('click', handleClickOutside, true);
+        };
+    }, []);
+
 
     return(
         <div className={styles.whole}>
@@ -112,7 +158,7 @@ export const ClassDetails = () => {
                 <>
                 <div className={styles.breadcrumb}><a href="/admin-dashboard/classes">Classes</a> {'>'} {theClass.title}</div>
 
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} encType="multipart/form-data">
 
 
                     <div className={styles.classTitle}>
@@ -153,14 +199,14 @@ export const ClassDetails = () => {
                                         <p>JPEG, PNG, and PDF formats, up to 50MB</p>
 
                                         {showFileName && <div className={styles.theFiles}>Selected file(s): 
-                                            {selectedFiles.map((fil, i) => (
-                                                <p key={i}>{fil.replace(/^.*[\\/]/, '')}</p>
+                                            {fileNames.map((fil, i) => (
+                                                <p key={i}>{fil}</p>
                                             ))}
                                         </div>}
 
                                         <label className={styles.uploadButton}>
                                             Browse Files
-                                            <input name="lesson_data" type="file" accept="image/png, image/jpeg, application/pdf" onChange={handleInputChange} />
+                                            <input type="file" name="files" id="files" multiple accept="image/png, image/jpeg, application/pdf" onChange={handleInputChange} />
                                         </label>
                                     </div>
                                 </div>
@@ -170,13 +216,18 @@ export const ClassDetails = () => {
                                 <div className={styles.flexHeader}>
                                     <h5>Content</h5>
                                 </div>
-                                {theClass.lessons && theClass.lessons.map((sec, i) => (
+                                {theClass.lesson_files && theClass.lesson_files.map((file, i) => (
                                     <div className={styles.section} key={i}>
                                         <div className={styles.text}>
-                                            <img src={getImageUrl('reorder.png')} alt="" />
-                                            {sec.title}
+                                            {file.file_name}
                                         </div>
-                                        <button type="button"><img src={getImageUrl('threeDots.png')} /></button>
+                                        <div>
+                                            <button  type="button" className={styles.actionsButton} onClick={(e) => toggleAction(e, i)}><img src={getImageUrl('threeDots.png')} /></button>
+                                            {actionsOpen[i] && <div className={styles.theActions} ref={actionsRef}>
+                                                <h5>ACTION</h5>
+                                                <button type="button" onClick={()=>deleteFile(file.file_id)}><img src={getImageUrl('delete.png')} />DELETE</button>
+                                            </div>}
+                                        </div>
                                     </div>
                                 ))}
                             </div>

@@ -7,6 +7,7 @@ import { BASE_URL, TEST_URL } from "../../../../config";
 import Modal from "../../Components/Modals/Modal";
 import Calendar from "react-calendar";
 import "../../../App.css";
+import { customToast } from "../../../Components/Notifications";
 
 
 export const CourseDetail = () => {
@@ -110,13 +111,13 @@ export const CourseDetail = () => {
             if (response.ok) {
                 setIsOpenClass(false);
                 loadCourseDetails();
-                alert('Lesson added successfully');
+                customToast('Lesson added successfully');
             } else {
-                alert('Failed to add lesson');
+                customToast('Failed to add lesson');
             }
         } catch (error) {
             console.error('Error adding lesson:', error);
-            alert('Error adding lesson');
+            customToast('Error adding lesson');
         }
     };
 

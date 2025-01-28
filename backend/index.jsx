@@ -3,12 +3,14 @@ const { Client } = require('pg');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
-const { id } = require('date-fns/locale');
+// const { id } = require('date-fns/locale');
 require("dotenv").config();
 
 const app = express();
-const upload = multer();
 const port = process.env.PORT || 8081;
+// const upload = multer();
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 app.use(express.json());
 app.use(cors());
 
@@ -610,6 +612,59 @@ app.get("/lessons", async (req, res) => {
         res.status(500).json({message: "Error fetching lessons"});
     }
 });
+app.get("/lesson/:lesson_id", async (req, res) => {
+    
+    const id = req.params.lesson_id;
+    const query = `
+        SELECT 
+            lesson.lesson_id,
+            lesson.title,
+            lesson.description,
+            lesson.start_date,
+            lesson.end_date,
+            lesson.number,
+            lesson.course_id,
+            lesson.level,
+            lesson.status,
+            COALESCE(course.name, 'NA') AS course_name,
+            COALESCE(
+                JSON_AGG(
+                    JSON_BUILD_OBJECT(
+                        'file_id', lesson_files.file_id,
+                        'file_name', lesson_files.file_name,
+                        'file_type', lesson_files.file_type,
+                        'file_size', lesson_files.file_size
+                    )
+                ) FILTER (WHERE lesson_files.file_id IS NOT NULL), 
+                '[]'
+            ) AS lesson_files
+        FROM 
+            lesson
+        LEFT JOIN 
+            course ON lesson.course_id = course.course_id
+        LEFT JOIN 
+            lesson_files ON lesson.lesson_id = lesson_files.lesson_id
+        WHERE 
+            lesson.lesson_id = $1
+            AND course.deleted = FALSE
+        GROUP BY 
+            lesson.lesson_id,
+            lesson.title,
+            lesson.description,
+            lesson.number,
+            course.name
+        ORDER BY 
+            lesson.lesson_id;
+    `
+
+    try {
+        const result = await client.query(query, [id]);
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching lessons"});
+    }
+});
 app.get("/lessons-course/:courseId", async (req, res) => {
 
     const id = req.params.courseId;
@@ -677,10 +732,8 @@ app.get("/lessons-info", async (req, res) => {
 });
 app.post(`/lesson-info`, upload.array('files'), async (req, res) => {
     try {
-        console.log(req.body);
         console.log(req.files);
-        console.log(req.body.files);
-        const files = req.body.files;
+        const files = req.files;
 
         const putQuery = `UPDATE lesson SET title = $1, description = $2, level = $3, status = $4 WHERE lesson_id = $5`
         const putValues = [
@@ -690,25 +743,10 @@ app.post(`/lesson-info`, upload.array('files'), async (req, res) => {
             req.body.status,
             req.body.lesson_id
         ];
-
         await client.query(putQuery, putValues);
 
-        if (files && files.length === 1) {
-            const postQuery = `INSERT INTO lesson_files (lesson_id, file_name, file_type, file_size, file_data) VALUES ($1, $2, $3, $4, $5) RETURNING *;`;
-            const postValues = [
-                req.body.lesson_id,
-                files.originalname,
-                files.mimetype,
-                files.size,
-                files.buffer
-            ];
-            console.log(files);
-            console.log(files.originalname);
-            console.log(postValues);
-            // await client.query(postQuery, postValues);
-        }
-
-        if (files && files.length > 1) {
+        
+        if (files && files.length > 0) {
             for (const file of files) {
 
                 const postQuery = `INSERT INTO lesson_files (lesson_id, file_name, file_type, file_size, file_data) VALUES ($1, $2, $3, $4, $5) RETURNING *;`;
@@ -720,9 +758,7 @@ app.post(`/lesson-info`, upload.array('files'), async (req, res) => {
                     file.buffer
                 ];
                 console.log(file);
-                console.log(file.originalname);
-                console.log(postValues);
-                // await client.query(postQuery, postValues);
+                await client.query(postQuery, postValues);
             }
         }
 
@@ -741,6 +777,22 @@ app.get("/lessons-len", async (req, res) => {
         res.status(500).json({message: "Error fetching lessons length"});
     }
 });
+app.post('/delete-lesson-file', async (req, res) => {
+
+    const values = [
+        req.body.lesson_id,
+        req.body.file_id
+    ]
+    const query = 'DELETE FROM lesson_files WHERE lesson_id = $1 AND file_id = $2';
+
+    try {
+        const result = await client.query(query, values);
+        res.json({message: "Deleted file successfully", lesson: result.rows[0]});
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({message: "Error in deleting file"});
+    }
+})
 app.post('/new-lesson', async (req, res) => {
 
     console.log(req.body);

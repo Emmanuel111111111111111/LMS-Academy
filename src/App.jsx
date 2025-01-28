@@ -49,7 +49,8 @@ import { ProfilePage } from './Page/ProfilePage/ProfilePage';
 const ProtectedRoute = ({ children }) => {
 
   const authToken = sessionStorage.getItem("type");
-  if ((!authToken) || (authToken != "student")) {
+  const lastLogged = sessionStorage.getItem("last_logged");
+  if ((!sessionStorage) || (!authToken) || (authToken != "student") || (!lastLogged) || (new Date () - new Date(lastLogged) >= 604800000)) {
     window.location.href = "/login";
   }
   return children;
@@ -59,7 +60,8 @@ const ProtectedRoute = ({ children }) => {
 const AdminProtectedRoute = ({ children }) => {
 
   const authToken = sessionStorage.getItem("type");
-  if ((!authToken) || (authToken != "teacher")) {
+  const lastLogged = sessionStorage.getItem("last_logged");
+  if ((!sessionStorage) || (!authToken) || (authToken != "teacher") || (!lastLogged) || (new Date () - new Date(lastLogged) >= 604800000)) {
     window.location.href = "/admin-login";
   }
   return children;
