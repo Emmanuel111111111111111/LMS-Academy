@@ -42,22 +42,18 @@ export const CourseDetails = () => {
     }
 
 
-    const handleDownload = async (fileId) => {
+    const handleDownload = async (file) => {
         try {
-            const response = await fetch(BASE_URL + `/file/${fileId}`);
+            const response = await fetch(BASE_URL + `/file/${file.file_id}`);
             if (!response.ok) {
                 throw new Error('Failed to download file');
             }
-    
+
             const blob = await response.blob();
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            const contentDisposition = response.headers.get('Content-Disposition');
-            console.log(response)
-            const fileName = contentDisposition
-                ? contentDisposition.split('file_name=')[1].replace(/"/g, '')
-                : 'downloaded-file';
-    
+            const fileName = file.file_name;
+            
             a.href = url;
             a.download = fileName;
             document.body.appendChild(a);
@@ -211,7 +207,7 @@ export const CourseDetails = () => {
                                                 {lesson.content.length < 1 ? <p className={styles.noLessons}>No content for this lesson</p>
                                                 :
                                                 lesson.content.map((cont, i) => (
-                                                    <div className={styles.week} key={i} onClick={()=>handleDownload(cont.file_id)}>
+                                                    <div className={styles.week} key={i} onClick={()=>handleDownload(cont)}>
                                                         <div className={styles.title}>
                                                             <input type="checkbox" name="check" id="check" checked={cont.completed} readOnly />                                                                    
                                                             <h4>{cont.file_name}</h4>

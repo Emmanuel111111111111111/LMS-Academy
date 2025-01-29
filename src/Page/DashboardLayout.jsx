@@ -16,8 +16,6 @@ export const DashboardLayout = () => {
         try {
             const result = await axios.post(BASE_URL + '/update-active');
             console.log(result.status);
-            console.log(sessionStorage)
-
         } catch (err) {
             console.log(err);
         }
