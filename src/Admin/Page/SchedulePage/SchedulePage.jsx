@@ -282,6 +282,10 @@ export const SchedulePage = () => {
                             </div>
                         </div>
 
+                        {viewType === 'dayGridMonth' && <div className={styles.monthHeader}>
+                            {/* {calendarAPI?.getDate().toLocaleString("default", { month: "long" })} */}
+                        </div>}
+
                         <FullCalendar
                             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                             ref={calendarRef}

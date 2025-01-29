@@ -17,9 +17,11 @@ export const AdminHeader = () => {
         currentPath === "/admin-dashboard/overview/"
     ) {
         PageTitle = "Home";
+        linkList= [];
     }
     else if (currentPath === "/admin-dashboard/schedule") {
         PageTitle = "Schedule";
+        linkList= [];
     }
     else if (
         currentPath === "/admin-dashboard/courses/" ||
@@ -40,22 +42,28 @@ export const AdminHeader = () => {
         ];
     }
     else if (currentPath.includes("/admin-dashboard/courses/detail")) {
-        PageTitle = "Courses";
+        PageTitle = "Course";
+        linkList= [];
     }
     else if (currentPath.includes("/admin-dashboard/cohort")) {
         PageTitle = "Cohort";
+        linkList= [];
     }
     else if (currentPath === "/admin-dashboard/classes") {
         PageTitle = "Classes";
+        linkList= [];
     }
-    else if (currentPath.includes("/admin-dashboard/clsses/detail")) {
+    else if (currentPath.includes("/admin-dashboard/classes")) {
         PageTitle = "Class";
+        linkList= [];
     }
     else if (currentPath === "/admin-dashboard/tasks") {
         PageTitle = "Tasks";
+        linkList= [];
     }
     else if (currentPath === "/admin-dashboard/teacher") {
         PageTitle = "Teacher";
+        linkList= [];
     }
     else if (
         currentPath === "/admin-dashboard/student" ||
@@ -70,9 +78,11 @@ export const AdminHeader = () => {
     }
     else if (currentPath === "/admin-dashboard/activitylog") {
         PageTitle = "Activity Log";
+        linkList= [];
     }
     else if (currentPath === "/admin-dashboard/profile") {
         PageTitle = "Profile";
+        linkList= [];
     }
 
 
