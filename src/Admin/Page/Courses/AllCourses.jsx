@@ -51,7 +51,6 @@ export const AllCourses = () => {
                 timeout: 20000
             });
             setCourses(result.data);
-            console.log(result.data);
             setIsLoading(false);
         } catch (err) {
             console.log(err);
