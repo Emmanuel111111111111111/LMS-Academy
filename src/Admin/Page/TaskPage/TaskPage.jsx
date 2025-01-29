@@ -28,7 +28,6 @@ export const TaskPage = () => {
         setIsLoading(true);
         try {
             const result = await axios(BASE_URL + `/tasks`);
-            console.log(result.data);
             setTasks(result.data);
             setIsLoading(false);
         } catch (err) {

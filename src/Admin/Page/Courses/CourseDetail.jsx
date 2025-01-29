@@ -8,6 +8,7 @@ import Modal from "../../Components/Modals/Modal";
 import Calendar from "react-calendar";
 import "../../../App.css";
 import { customToast } from "../../../Components/Notifications";
+import { ConfirmModal } from "../../Components/Modals/ConfirmModal";
 
 
 export const CourseDetail = () => {
@@ -21,6 +22,10 @@ export const CourseDetail = () => {
     const [ isOpenClass, setIsOpenClass ] = useState(false);
     const [ newLessonTitle, setNewLessonTitle ] = useState('');
     const [ titleErrorMsg, setTitleErrorMsg ] = useState(false);
+    
+    const [ selected, setSelected ] = useState({});
+    const [ confirmType, setConfirmType ] = useState('');
+    const [ isOpenConfirm, setIsOpenConfirm ] = useState(false);
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -35,7 +40,6 @@ export const CourseDetail = () => {
         setIsLoading(true);
         try {
             const result = await axios(BASE_URL + `/courses-instructor-studentscount-lessons`);
-            console.log(result.data.filter(e => e.course_id === parseInt(courseId))[0]);
             setCourse(result.data.filter(e => e.course_id === parseInt(courseId))[0]);
             setIsLoading(false);
         } catch (err) {
@@ -69,36 +73,49 @@ export const CourseDetail = () => {
             });
 
             if (response.ok) {
-                console.log('Course updated successfully');
-                loadCourseDetails();
-                // navigate('/admin-dashboard/courses');
+                customToast('Course was updated successfully')
+                // loadCourseDetails();
+                navigate('/admin-dashboard/courses');
             } else {
                 console.error("Failed to update course");
             }
         } catch (error) {
             console.log('Error updating course:', error);
+            customToast("There was an error while updating the course. Please try again.")
         }
     };
 
     const handleCancel = () => {
-        setCourse(location.state);
         navigate('/admin-dashboard/courses');
-        // loadCourseDetails();
     }
 
 
+    const [ newLesson, setNewLesson ] = useState({
+        name: null,
+        description: null,
+        course_id: null,
+        start_date: null,
+        end_date: null
+    })
+
+    const newLessonInput = (event) => {
+        setNewLesson(prev => ({ ...prev, 'course_id': course.course_id }));
+        setNewLesson(prev => ({ ...prev, [event.target.name]: event.target.value }))
+
+        if ((event.target.name === 'start_date')
+        || (event.target.name === 'end_date')) {
+            setNewLesson(prev => ({ ...prev, [event.target.name]: event.target.value.replace('T', ' ') + '+01' }))
+        }
+    }
     const handleNewLesson = async (e) => {
         e.preventDefault();
         e.stopPropagation();
     
-        if (!newLessonTitle.trim()) {
+        if (!newLesson.name.trim()) {
             setTitleErrorMsg(true);
             return;
         }
 
-        const newLesson = { newLessonTitle, course_id: course.course_id };
-        console.log(newLesson);
-    
         try {
             const response = await fetch(BASE_URL + '/new-lesson', {
                 method: 'POST',
@@ -141,6 +158,15 @@ export const CourseDetail = () => {
         };
     }, []);
 
+    const goToLesson = (id) => {
+        window.location.href = `/admin-dashboard/classes/${id}`
+    }
+    const handleDelete = (clas) => {
+        setSelected(clas);
+        setConfirmType('delete');
+        setIsOpenConfirm(true);
+    }
+
 
     return(
         <>        
@@ -176,7 +202,7 @@ export const CourseDetail = () => {
                         </div>
                     </div>
 
-                    <div className={styles.box}>
+                    {/* <div className={styles.box}>
                         <div className={styles.header}>
                             <h5>Upload files</h5>
                             <p>Select and upload the files of your choice</p>
@@ -193,7 +219,7 @@ export const CourseDetail = () => {
                                 </label>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
 
                     <div className={styles.box}>
                         <div className={styles.flexHeader}>
@@ -204,7 +230,7 @@ export const CourseDetail = () => {
                             <div className={styles.section} key={i}>
                                 <div className={styles.text}>
                                     <button type="button"><img src={getImageUrl('reorder.png')} alt="" /></button>
-                                    Week {cla.week} - Beginner - {cla.lesson_title}
+                                    Class {i + 1} - {course.level} - {cla.lesson_title}
                                 </div>
                                 <div>
                                     <button type="button" className={styles.actionButton} onClick={(e) => toggleAction(e, i)}>
@@ -212,8 +238,8 @@ export const CourseDetail = () => {
                                     </button>
                                     {actionsOpen[i] && <div className={styles.theActions} ref={actionsRef}>
                                         <h6>ACTION</h6>
-                                        <button><img src={getImageUrl('edit.png')} />EDIT</button>
-                                        <button><img src={getImageUrl('delete.png')} />DELETE</button>
+                                        <button onClick={()=>goToLesson(cla.lesson_id)}><img src={getImageUrl('edit.png')} />EDIT</button>
+                                        <button onClick={()=>handleDelete(cla)}><img src={getImageUrl('delete.png')} />DELETE</button>
                                     </div>}
                                 </div>
                             </div>
@@ -230,7 +256,7 @@ export const CourseDetail = () => {
                             <h5>Preview Course</h5>
                             <p>View how others see your course</p>
                         </div>
-                        <button type="button">Preview</button>
+                        <button type="button" onClick={()=>navigate(`/admin-dashboard/courses/preview/${course.course_id}`)}>Preview</button>
                     </div>
 
                     <div className={styles.box}>
@@ -300,30 +326,31 @@ export const CourseDetail = () => {
                     <h3>Add Class</h3>
                     <button onClick={()=>setIsOpenClass(false)} className={styles.close}><img src={getImageUrl('close.png')} /></button>
                 </div>
-                <form action={''} className={styles.contentBody}>
+                <form className={styles.contentBody}>
         
                     {titleErrorMsg && <p style={{color: 'red', fontSize: '12px'}}>Title can't be empty</p>}
                     <label htmlFor="title">Title</label>
-                    <input type="text" name="title" id="title" placeholder="Enter title"
-                        value={newLessonTitle} onChange={(e)=>setNewLessonTitle(e.target.value)}
+                    <input type="text" name="name" id="title" placeholder="Enter title" onChange={newLessonInput}
                     />
 
                     <label htmlFor="title">Description</label>
-                    <textarea type="text" name="title" id="description" placeholder="Enter description" />
+                    <input type="text" name="description" id="description" placeholder="Enter description" onChange={newLessonInput} />
+                    
+                    <h5>Start Date & Time</h5>
+                    <input type="datetime-local" name="start_date" onChange={newLessonInput} />
+                
+                    <h5>End Date & Time</h5>
+                    <input type="datetime-local" name="end_date" onChange={newLessonInput}/>
+                        
 
-                    <div className={styles.contain}>
-                        <div>
-                            <h5>Start Date & Time</h5>
-                            <input type="datetime-local" name="start_date" onChange={''} />
-                        </div>
-                        <div>
-                            <h5>End Date & Time</h5>
-                            <input type="datetime-local" name="end_date" onChange={''}/>
-                        </div>
-                    </div>
+                    <button type="submit" onClick={handleNewLesson}>Submit</button>
                 </form>
             </div>
         </Modal>
+
+
+        <ConfirmModal isOpen={isOpenConfirm} setOpen={setIsOpenConfirm} item={'Class'} cohort={'none'} selected={selected} confirmType={confirmType} reload={loadCourseDetails} />
+
         </>
     )
 }

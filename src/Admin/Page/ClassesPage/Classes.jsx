@@ -5,6 +5,7 @@ import axios from 'axios';
 import Modal from "../../Components/Modals/Modal";
 import { format } from "date-fns";
 import { BASE_URL, TEST_URL } from "../../../../config";
+import { ConfirmModal } from "../../Components/Modals/ConfirmModal";
 
 export const Classes = () => {
 
@@ -17,6 +18,10 @@ export const Classes = () => {
     const [ actionsOpen, setActionsOpen ] = useState({});
     const [ isLoading, setIsLoading ] = useState(false);
     const [ isLoading2, setIsLoading2 ] = useState(false);
+    const [ selected, setSelected ] = useState({});
+    const [ confirmType, setConfirmType ] = useState('');
+    const [ isOpenConfirm, setIsOpenConfirm ] = useState(false);
+
     const actionsRef = useRef(null);
     const createRef = useRef(null);
 
@@ -32,7 +37,6 @@ export const Classes = () => {
                 timeout: 20000
             });
             setClasses(result.data);
-            console.log(result.data);
             setIsLoading(false);
         } catch (err) {
             console.log(err);
@@ -84,21 +88,15 @@ export const Classes = () => {
         || (event.target.name === 'end_date')) {
             setNewClassValues(prev => ({ ...prev, [event.target.name]: event.target.value.replace('T', ' ') + '+01' }))
         }
-
-
-        console.log(newClassValues);
-        console.log(event.target.value)
     }
     const handleSubmitClass = async (event) => {
         event.preventDefault();
-        console.log(newClassValues);
         setIsLoading2(true);
         try {
 
             const response = await axios.post(BASE_URL + '/new-lesson', newClassValues);
             setIsLoading2(false);
             handleSuccess();
-            console.log(response);
             handleClose();
             
         } catch (err) {
@@ -111,6 +109,13 @@ export const Classes = () => {
         setOpenSuccess(true);
         setTimeout(() => setOpenSuccess(false), 3000);
         setTimeout(() => fetchClasses(), 3000);
+    }
+
+    const handleDelete = (e, clas) => {
+        e.preventDefault();
+        setSelected(clas);
+        setConfirmType('delete');
+        setIsOpenConfirm(true);
     }
 
 
@@ -175,7 +180,7 @@ export const Classes = () => {
                                             <h5>ACTION</h5>
                                             <button onClick={(e)=>handleToDetails(e, clas)}><img src={getImageUrl('edit.png')} />EDIT</button>
                                             {/* <button><img src={getImageUrl('approve.png')} />SUSPEND</button> */}
-                                            <button><img src={getImageUrl('delete.png')} />DELETE</button>
+                                            <button onClick={(e)=>handleDelete(e, clas)}><img src={getImageUrl('delete.png')} />DELETE</button>
                                         </div>}
                                     </div>
                                 </div>
@@ -247,6 +252,8 @@ export const Classes = () => {
                 Class ADDED!
             </div>
         </Modal>
+
+        <ConfirmModal isOpen={isOpenConfirm} setOpen={setIsOpenConfirm} item={'Class'} cohort={'none'} selected={selected} confirmType={confirmType} reload={fetchClasses} />
 
         </>
     )

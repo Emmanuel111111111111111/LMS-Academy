@@ -51,7 +51,6 @@ export const AllCourses = () => {
                 timeout: 20000
             });
             setCourses(result.data);
-            console.log(result.data[0]);
             setIsLoading(false);
         } catch (err) {
             console.log(err);
@@ -67,7 +66,6 @@ export const AllCourses = () => {
                 timeout: 20000
             });
             setSelectedStudents(result.data);
-            console.log(result.data);
             setIsLoadingCourse(false);
         } catch (err) {
             console.log(err);
@@ -144,19 +142,15 @@ export const AllCourses = () => {
     }
     const handleSubmitCourse = async (event) => {
         event.preventDefault();
-        console.log(newEventValues);
         setIsLoading2(true);
         try {
             const response = await axios.post(BASE_URL + '/new-course', newEventValues, {
                 timeout: 20000,
             });
-            console.log(response);
 
             setOpenCreate(false);
             handleSuccess('course');
             setIsLoading2(false);
-            console.log("added.")
-            
         } catch (err) {
             console.log(err);
             setIsLoading2(false);
@@ -179,7 +173,6 @@ export const AllCourses = () => {
     const handleOpenCourse = (event, course) => {
         setSelected(course);
         fetchStudentsForCourse(course.course_id);
-        console.log(course)
         setOpenCourseInfo(true);
     };
     const handleCloseCourseInfo = (index) => {
@@ -203,11 +196,9 @@ export const AllCourses = () => {
             date: new Date().toISOString().slice(0, 19).replace('T', ' '),
             user: sessionStorage.getItem('full_name'),
         })
-        console.log(submitValues);
         try {
             
             const response = await axios.post(BASE_URL + '/unenroll-student', submitValues);
-            console.log(response);
 
             fetchStudentsForCourse(selected.course_id);
             fetchCoursesTeachersStudents();

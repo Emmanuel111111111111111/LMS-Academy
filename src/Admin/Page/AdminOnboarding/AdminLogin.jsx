@@ -24,7 +24,7 @@ export const AdminLogin = () => {
       const response = await axios.post(BASE_URL + '/adminlogin', { email, password });
       
       setIsLoading(false);
-      console.log("signed in");
+      console.log(response.status);
       sessionStorage.setItem("id", response.data.student_id);
       sessionStorage.setItem("first_name", response.data.first_name);
       sessionStorage.setItem("last_name", response.data.last_name);

@@ -127,7 +127,6 @@
 .infoHeader {
     display: flex;
     justify-content: space-between;
-    /* margin-top: 12px; */
     gap: 8px;
 }
 .infoHeader h3 {
@@ -211,7 +210,7 @@
 .classData {
     display: flex;
     align-items: center;
-    margin-top: 12px;
+    margin-top: auto;
     gap: 8px;
 }
 .classData .timeData {

@@ -32,14 +32,13 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
         try {
             if (item.toLowerCase() === "course") {
                 const result = await axios.post(BASE_URL + '/suspend-course', courseValues)
-                console.log(result);
+                console.log(result.status);
                 handleSuccess();
             }
 
             if (item.toLowerCase() === "teacher") {
-                console.log('here')
                 const result = await axios.put(BASE_URL + '/suspend-teacher', teacherValues)
-                console.log(result);
+                console.log(result.status);
                 handleSuccess();
             }
             
@@ -71,7 +70,7 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
         try {
             if (item.toLowerCase() === "course") {
                 const result = await axios.post(BASE_URL + '/resume-course', courseValues)
-                console.log(result);
+                .log(result);
                 handleSuccess();
             }
 
@@ -100,10 +99,9 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
             date: new Date().toISOString().slice(0, 19).replace('T', ' '),
             user: sessionStorage.getItem('full_name'),
         }
-        console.log(values);
         try {
             const result = await axios.post(BASE_URL + '/remove-course', values)
-            console.log(result);
+            console.log(result.status);
             
             setOpen(false);
             setIsLoading(false);
@@ -131,16 +129,28 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
             user: sessionStorage.getItem('full_name'),
         }
 
+        const lessonValues = {
+            lesson_id:  selected.lesson_id,
+            date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+            user: sessionStorage.getItem('full_name'),
+        }
+
         try {
             if (item.toLowerCase() === "course") {
                 const result = await axios.put(BASE_URL + '/delete-course', courseValues)
-                console.log(result);
+                console.log(result.status);
                 handleSuccess();
             }
 
             if (item.toLowerCase() === "teacher") {
                 const result = await axios.put(BASE_URL + '/delete-teacher', teacherValues)
-                console.log(result);
+                console.log(result.status);
+                handleSuccess();
+            }
+
+            if (item.toLowerCase() === "class") {
+                const result = await axios.put(BASE_URL + '/delete-lesson', lessonValues)
+                console.log(result.status);
                 handleSuccess();
             }
             
@@ -177,6 +187,7 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
                 <div className={styles.contentBody}>
                     <p>Are you sure you want to <b>{confirmType}</b> the {item}: {item.toLowerCase() === "course" ? (selected.course_name ? selected.course_name : selected.name)
                                                                                 : item.toLowerCase() === 'teacher' ? selected.first_name + (selected.last_name != null ? ' ' + selected.last_name : '')
+                                                                                : item.toLowerCase() === 'class' ? (selected.lesson_title ? selected.lesson_title : selected.title)
                                                                                 : ''}
                     </p>
                     
@@ -192,13 +203,24 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
 
         <Modal isOpen={openSuccess}>
             <div className={styles.confirmMod}>
-                {item} <b>{selected.course_name}</b> {
-                    confirmType === 'suspend' ? 'suspended'
-                    : confirmType === 'remove' ? 'removed'
-                    : confirmType === 'delete' ? 'deleted'
-                    : confirmType === 'resume' ? 'resumed'
-                    : ''
-                }
+                <p>
+                    {item}
+
+                    <b style={{marginLeft: '6px', marginRight: '6px'}}>{
+                        item.toLowerCase() === "course" ? (selected.course_name ? selected.course_name : selected.name)
+                        : item.toLowerCase() === 'teacher' ? selected.first_name + (selected.last_name != null ? ' ' + selected.last_name : '')
+                        : item.toLowerCase() === 'class' ? (selected.lesson_title ? selected.lesson_title : selected.title)
+                        : ''
+                    }</b>
+                    
+                    {
+                        confirmType === 'suspend' ? 'suspended'
+                        : confirmType === 'remove' ? 'removed'
+                        : confirmType === 'delete' ? 'deleted'
+                        : confirmType === 'resume' ? 'resumed'
+                        : ''
+                    }
+                </p>
             </div>
         </Modal>
 

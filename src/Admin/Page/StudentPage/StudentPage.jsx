@@ -84,14 +84,12 @@ export const StudentPage = () => {
         setSelected(student);
         setType('Add');
         fetchAllNotCourses(student.student_id);
-        console.log(student);
         setIsOpenCourse(true);
     }
     const handleRemove = (student) => {
         setSelected(student);
         setType('Remove');
         fetchAllCourses(student.student_id);
-        console.log(student);
         setIsOpenCourse(true);
     }
 
@@ -106,19 +104,16 @@ export const StudentPage = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         setIsLoading3(true);
-        console.log(submitValues);
         try {
             var response;
             if (type === 'Add') {
                 response = await axios.post(BASE_URL + '/enroll-student', submitValues);
-                console.log(response);
 
                 setIsOpenCourse(false);
                 // handleSuccess();
 
             } else if (type === 'Remove') {
                 response = await axios.post(BASE_URL + '/unenroll-student', submitValues);
-                console.log(response);
 
                 setIsOpenCourse(false);
                 // handleSuccess();

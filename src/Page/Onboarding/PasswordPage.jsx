@@ -14,7 +14,6 @@ export const PasswordPage = () => {
     const navigate = useNavigate();
 
     const [ values, setValues ] = useState(location.state);
-    // console.log(values);
 
     const handleInput = (event) => {
         setValues(prev => ({ ...prev, [event.target.name]: event.target.value }))
@@ -27,10 +26,8 @@ export const PasswordPage = () => {
             axios.post(BASE_URL + '/signup', values)
             .then(res => console.log(res))
             
-            console.log("signed up");
             sessionStorage.setItem("first_name", values.first_name);
             sessionStorage.setItem("email", values.email);
-            console.log(values.first_name);
 
             // window.location.href = "/dashboard";
             window.location.href = "/login";

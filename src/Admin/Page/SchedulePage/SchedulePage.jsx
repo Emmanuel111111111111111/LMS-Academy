@@ -9,6 +9,7 @@ import Modal from "../../Components/Modals/Modal";
 import { format } from 'date-fns';
 import axios from 'axios';
 import { BASE_URL, TEST_URL } from "../../../../config";
+import { customToast } from "../../../Components/Notifications";
 
 
 export const SchedulePage = () => {
@@ -38,11 +39,11 @@ export const SchedulePage = () => {
                 timeout: 25000
             });
             setEvents(result.data);
-            console.log(result.data);
             setIsLoading(false);
         } catch (err) {
             console.log(err);
             setIsLoading(false);
+            customToast("We're having trouble getting your events. Please try again later")
         }
     }
 
@@ -59,7 +60,6 @@ export const SchedulePage = () => {
         try {
             const result = await axios(BASE_URL + `/lessons-course/${Id}`);
             setAllLessons(result.data)
-            console.log(result.data)
         } catch (err) {
             console.log(err);
         }
@@ -132,18 +132,16 @@ export const SchedulePage = () => {
         if (event.target.name === 'course_id' && newEventValues.type === 'Assignment') {
             fetchAllLessons(event.target.value);
         }
-        console.log(newEventValues);
     }
     const handleSubmitEvent = async (event) => {
         event.preventDefault();
-        console.log(newEventValues);
         setIsLoading2(true);
         try {
 
             var response = '';
 
             if (newEventValues.type === 'Class') {
-                response = await axios.post(BASE_URL + '/new-lesson-date', newEventValues);
+                response = await axios.post(BASE_URL + '/new-lesson', newEventValues);
                 setIsLoading2(false);
                 handleSuccess('Class');
             }
@@ -157,8 +155,6 @@ export const SchedulePage = () => {
                 setIsLoading2(false);
                 handleSuccess('Exam');
             }
-            
-            console.log(response);
             setOpen(false);
             
         } catch (err) {

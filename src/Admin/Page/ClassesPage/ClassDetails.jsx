@@ -36,7 +36,6 @@ export const ClassDetails = () => {
                 timeout: 20000
             });
             setClass(result.data.filter(e => e.lesson_id === parseInt(id))[0]);
-            console.log(result.data.filter(e => e.lesson_id === parseInt(id))[0]);
             
             if (result.data.filter(e => e.lesson_id === parseInt(id)).length != 1) {
                 navigate('/404');
@@ -84,7 +83,6 @@ export const ClassDetails = () => {
                 formData.append('files', file);
             });
         }
-        console.log([...formData.entries()]);
         try {
             const response = await fetch(BASE_URL + `/lesson-info`, {
                 method: 'POST',
@@ -92,14 +90,16 @@ export const ClassDetails = () => {
             });
 
             if (response.ok) {
-                console.log('Class updated successfully');
+                customToast('Class updated successfully');
                 // loadLessonDetails();
                 navigate('/admin-dashboard/classes');
             } else {
                 console.error("Failed to update class");
+                customToast('Error updating class. Please try again');
             }
         } catch (error) {
             console.log('Error updating class:', error);
+            customToast('Error updating class. Please try again');
         }
     };
 
@@ -109,9 +109,6 @@ export const ClassDetails = () => {
     }
 
     const deleteFile = async (id) => {
-        console.log(theClass.lesson_id);
-        console.log(id);
-
         const deleteValues = {
             lesson_id: theClass.lesson_id,
             file_id: id,
@@ -119,7 +116,6 @@ export const ClassDetails = () => {
 
         try {
             const result = await axios.post(BASE_URL + '/delete-lesson-file', deleteValues)
-            console.log(result);
             loadLessonDetails();
             setActionsOpen({});
         } catch (error) {

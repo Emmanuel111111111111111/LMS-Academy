@@ -23,7 +23,6 @@ export const Certificate = () => {
             const result = await axios(BASE_URL + `/certificates/${sessionStorage.getItem("id")}`, {
                 timeout: 25000
             });
-            console.log(result.data);
             setCertificates(result.data);
             setIsLoading(false);
         } catch (err) {

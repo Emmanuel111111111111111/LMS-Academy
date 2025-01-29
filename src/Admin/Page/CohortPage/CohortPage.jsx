@@ -5,6 +5,7 @@ import axios from 'axios';
 import { format } from "date-fns";
 import Modal from "../../Components/Modals/Modal";
 import { BASE_URL, TEST_URL } from "../../../../config";
+import { customToast } from "../../../Components/Notifications";
 
 export const CohortPage = () => {
 
@@ -25,11 +26,11 @@ export const CohortPage = () => {
                 timeout: 20000
             });
             setCohorts(result.data);
-            console.log(result);
             setIsLoading(false);
         } catch (err) {
             console.log(err);
             setIsLoading(false);
+            customToast("We're having trouble loading the cohorts. Please try again later.")
             // setErrorMessage(true);
         }
     }
@@ -60,7 +61,6 @@ export const CohortPage = () => {
         try {
             axios.post(BASE_URL + '/new-cohort', newCohortValues)
             .then(res => {
-                console.log(res);
                 setIsOpenCohort(false);
                 handleSuccess();
                 fetchCohorts();

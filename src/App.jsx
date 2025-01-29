@@ -14,6 +14,8 @@ import { PasswordPage } from './Page/Onboarding/PasswordPage';
 import { NewAdmin } from './Admin/Page/AdminOnboarding/NewAdmin';
 
 import { DashboardLayout } from './Page/DashboardLayout'
+import { AdminDashboardLayout } from './Admin/Page/AdminDashboardLayout';
+import { ProfilePage } from './Page/ProfilePage/ProfilePage';
 import { BlankPage } from './Page/BlankPage'
 import { PageNotFound } from './Page/404';
 
@@ -24,7 +26,6 @@ import { CourseDetails } from './Page/CourseDetails/CourseDetails';
 import { CalendarPage } from './Page/CalendarPage/Calendar';
 import { Certificate } from './Page/Certificate/Certificate'
 
-import { AdminDashboardLayout } from './Admin/Page/AdminDashboardLayout';
 import { AdminOverview } from './Admin/Page/AdminOverviewpage/AdminOverview';
 import { AllCourses } from './Admin/Page/Courses/AllCourses';
 import { ActiveCourses } from './Admin/Page/Courses/ActiveCourses';
@@ -36,14 +37,12 @@ import { StudentPage } from './Admin/Page/StudentPage/StudentPage';
 import { PendingStudentPage } from './Admin/Page/StudentPage/PendingStudentPage';
 import { ActivityLogPage } from './Admin/Page/ActivityLogPage/ActivityLogPage';
 import { CourseDetail } from './Admin/Page/Courses/CourseDetail';
+import { CoursePreview } from './Admin/Page/Courses/CoursePreview';
 import { CohortPage } from './Admin/Page/CohortPage/CohortPage';
 import { CohortDetails } from './Admin/Page/CohortPage/CohortDetails';
+import { Classes } from './Admin/Page/ClassesPage/Classes';
 import { ClassDetails } from './Admin/Page/ClassesPage/ClassDetails';
 import { TaskPage } from './Admin/Page/TaskPage/TaskPage';
-import { Classes } from './Admin/Page/ClassesPage/Classes';
-
-import { ProfilePage } from './Page/ProfilePage/ProfilePage';
-
 
 
 const ProtectedRoute = ({ children }) => {
@@ -123,6 +122,7 @@ function App() {
         { path: 'courses/completed', element: <CompletedCourses /> },
         { path: 'courses/detail', element: <CourseDetail /> },
         { path: 'courses/detail/:courseId', element: <CourseDetail /> },
+        { path: 'courses/preview/:courseID', element: <CoursePreview /> },
         { path: 'cohort', element: <CohortPage /> },
         { path: 'cohort/:id', element: <CohortDetails /> },
         { path: 'classes', element: <Classes /> },

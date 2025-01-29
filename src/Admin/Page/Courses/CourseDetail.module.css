@@ -371,7 +371,9 @@ label.checkbox {
 .addContent {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: fit-content;
+    max-height: 80vh;
+    /* height: 100%; */
     width: 350px;
     border-radius: 10px;
     padding: 16px;
@@ -394,6 +396,7 @@ label.checkbox {
     display: flex;
     flex-direction: column;
     margin-top: 12px;
+    overflow: auto;
 }
 .contentBody label {
     margin-bottom: 4px;
@@ -408,6 +411,10 @@ label.checkbox {
     border: 1.5px solid #CBD0DC;
     color: #5C5C5C;
     outline: none;
+    margin-bottom: 12px;
+}
+.contentBody textarea {
+    height: 50px;
 }
 .contentBody button {
     width: 100%;

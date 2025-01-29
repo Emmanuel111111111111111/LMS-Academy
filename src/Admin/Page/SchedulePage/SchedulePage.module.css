@@ -194,13 +194,13 @@
     gap:8 ;
     border: 1px solid #BDD9FF;
     box-shadow: 0px 3px 5px 0px #00000017;
-    background-color: #Fff;
+    background-color: #FFFFFF;
     height: fit-content;
     min-width: 460px;
     max-height: 80vh;
 }
 .close{
-    background: #fff;
+    background: transparent;
     border: none;
 }
 .submit{
@@ -216,7 +216,6 @@
     outline: none;
 }
 .head {
-    /* margin-top: 10px; */
     display: flex;
     justify-content: space-between;
     padding-bottom: 8px;
@@ -227,8 +226,6 @@
     margin-top: 25px;
     display: flex;
     flex-direction: column;
-    width: Fill (458px);
-    height: Fixed (81px);
     border-radius: 8px 0px 0px 0px;
     border: 1px 0px 0px 0px;
     justify-content: space-between;

@@ -86,7 +86,6 @@ export const CohortDetails = () => {
         setDateError(false);
         if ((event.target.name === 'end_date' && event.target.value < cohort.start_date)
             || (event.target.name === 'end_date' && event.target.value > cohort.end_date)) {
-            console.log('before');
             setDateError(true);
             return
         }
@@ -107,13 +106,11 @@ export const CohortDetails = () => {
         setIsLoading2(true);
         try {
             const response = await axios.post(BASE_URL + '/new-cohort-course', addedCourseValues);
-            console.log(response);
 
             setIsOpenCourse(false);
             // handleSuccess();
             fetchCohortData();
             setIsLoading2(false);
-            console.log("added.")
             
         } catch (err) {
             console.log(err);

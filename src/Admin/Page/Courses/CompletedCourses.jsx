@@ -58,7 +58,6 @@ export const CompletedCourses = () => {
                 timeout: 20000
             });
             setSelectedStudents(result.data);
-            console.log(result.data);
             setIsLoadingCourse(false);
         } catch (err) {
             console.log(err);
@@ -124,7 +123,6 @@ export const CompletedCourses = () => {
     const handleOpenCourse = (event, course) => {
         setSelected(course);
         fetchStudentsForCourse(course.course_id);
-        console.log(course)
         setOpenCourseInfo(true);
     };
     const handleCloseCourseInfo = (index) => {
@@ -147,11 +145,9 @@ export const CompletedCourses = () => {
             date: new Date().toISOString().slice(0, 19).replace('T', ' '),
             user: sessionStorage.getItem('full_name'),
         })
-        console.log(submitValues);
         try {
             
             const response = await axios.post(BASE_URL + '/unenroll-student', submitValues);
-            console.log(response);
 
             fetchStudentsForCourse(selected.course_id);
             fetchCoursesTeachersStudents();
@@ -199,7 +195,6 @@ export const CompletedCourses = () => {
     };
 
     const toggleAction = (event, index) => {
-        console.log('hereeee')
         event.stopPropagation();
         setActionsOpen(prevState => ({
             ...prevState,

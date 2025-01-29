@@ -343,26 +343,68 @@ app.get('/courses-instructor-studentscount-lessons', async (req, res) => {
                 ) THEN NULL
                 ELSE false
             END AS is_active,
-            COALESCE(
-                JSON_AGG(
-                    JSON_BUILD_OBJECT(
-                        'instructor_id', i.instructor_id,
-                        'full_name', COALESCE(i.first_name || '' || ' ' || i.last_name, 'NA'),
-                        'first_name', i.first_name,
-                        'last_name', i.last_name
-                    )
-                ) FILTER (WHERE i.instructor_id IS NOT NULL), 
-                '[]'::JSON
+            (
+                SELECT JSON_AGG(JSON_BUILD_OBJECT(
+                    'instructor_id', instructor_id,
+                    'full_name', COALESCE(first_name || ' ' || last_name, 'NA'),
+                    'first_name', first_name,
+                    'last_name', last_name,
+                    'description', description,
+                    'role', role
+                ))
+                FROM (
+                    SELECT DISTINCT 
+                        i.instructor_id,
+                        i.first_name,
+                        i.last_name,
+                        i.description,
+                        i.role
+                    FROM instructorCourses ic
+                    JOIN instructor i ON ic.instructor_id = i.instructor_id
+                    WHERE ic.course_id = c.course_id
+                    ORDER BY i.instructor_id
+                ) sub_instructors
             ) AS instructors,
             COUNT(DISTINCT s.student_id) AS student_count,
-            COALESCE(
-                JSON_AGG(
-                    JSON_BUILD_OBJECT(
+            (
+                SELECT COALESCE(
+                    JSON_AGG(JSON_BUILD_OBJECT(
                         'lesson_id', l.lesson_id,
-                        'lesson_title', l.title
-                    )
-                ) FILTER (WHERE l.lesson_id IS NOT NULL), 
-                '[]'::JSON
+                        'lesson_title', l.title,
+                        'number', l.number,
+                        'start_date', l.start_date,
+                        'assignments', COALESCE(
+                            (
+                                SELECT JSON_AGG(JSON_BUILD_OBJECT(
+                                    'assignment_id', a.assignment_id,
+                                    'assignment_name', a.assignment_name,
+                                    'due_date', a.due_date
+                                ))
+                                FROM assignment a
+                                WHERE a.lesson_id = l.lesson_id
+                            ),
+                            '[]'
+                        ),
+                        'content', COALESCE(
+                            (
+                                SELECT JSON_AGG(
+                                    JSON_BUILD_OBJECT(
+                                        'file_id', lf.file_id,
+                                        'file_name', lf.file_name,
+                                        'file_type', lf.file_type,
+                                        'file_size', lf.file_size
+                                    )
+                                )
+                                FROM lesson_files lf
+                                WHERE lf.lesson_id = l.lesson_id
+                            ),
+                            '[]'
+                        )
+                    ) ORDER BY l.number),
+                    '[]'
+                )
+                FROM lesson l
+                WHERE l.course_id = c.course_id
             ) AS lessons
         FROM 
             course c
@@ -776,6 +818,21 @@ app.get("/lessons-len", async (req, res) => {
         res.status(500).json({message: "Error fetching lessons length"});
     }
 });
+app.put('/delete-lesson', async (req, res) => {
+
+    const values = [
+        req.body.lesson_id
+    ]
+    const query = 'DELETE FROM lesson WHERE lesson_id = $1';
+
+    try {
+        const result = await client.query(query, values);
+        res.json({message: "Deleted lesson successfully", lesson: result.rows[0]});
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({message: "Error in deleting lesson"});
+    }
+})
 app.post('/delete-lesson-file', async (req, res) => {
 
     const values = [
@@ -796,7 +853,7 @@ app.post('/new-lesson', async (req, res) => {
 
     console.log(req.body);
     
-    const { name, course_id, start_date, end_date } = req.body;
+    const { name, course_id, start_date, end_date, description } = req.body;
 
     if (!name || !course_id) {
         console.log('No id or title')
@@ -804,8 +861,8 @@ app.post('/new-lesson', async (req, res) => {
     }
 
     try {
-        const insertQuery = `INSERT INTO lesson (title, course_id, start_date, end_date) VALUES ($1, $2, $3, $4) RETURNING *;`;
-        const values = [name, course_id, start_date, end_date];
+        const insertQuery = `INSERT INTO lesson (title, course_id, start_date, end_date, description) VALUES ($1, $2, $3, $4, $5) RETURNING *;`;
+        const values = [name, course_id, start_date, end_date, description];
         const result = await client.query(insertQuery, values);
 
         res.status(201).json(result.rows[0]);

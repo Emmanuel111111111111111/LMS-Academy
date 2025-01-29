@@ -10,6 +10,7 @@ import axios from 'axios';
 import { format } from 'date-fns';
 import { BASE_URL, TEST_URL } from "../../../../config";
 import { ConfirmModal } from "../../Components/Modals/ConfirmModal";
+import { customToast } from "../../../Components/Notifications";
 
 
 export const TeachersPage = () => {
@@ -75,7 +76,6 @@ export const TeachersPage = () => {
 
     const handleInput = (event) => {
         if (event.target.name === 'course_name') {
-            console.log(event.target.value)
             const [ course_id, course_name ] = event.target.value.split('|')
             setNewTeacherValues(prev => ({ ...prev, 'course_id': course_id }))
             setNewTeacherValues(prev => ({ ...prev, 'course_name': course_name }))
@@ -83,15 +83,12 @@ export const TeachersPage = () => {
         else {
             setNewTeacherValues(prev => ({ ...prev, [event.target.name]: event.target.value }))
         }
-
-        console.log(newTeacherValues);
     }
     const handleSubmit = async (event) => {
         event.preventDefault();
         setOpen(false);
-        console.log(newTeacherValues);
         axios.post(BASE_URL + '/new-teacher', newTeacherValues)
-            .then(res => console.log(res))
+            .then(res => customToast('Teacher added successfully'))
             .catch(err => console.log(err));
         fetchTeachers();
         

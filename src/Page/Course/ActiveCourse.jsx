@@ -20,7 +20,6 @@ export const ActiveCourse = () => {
         setIsLoading(true);
         try {
             const result = await axios(BASE_URL + `/courses-instructor-students-lessons/${sessionStorage.getItem("id")}`);
-            console.log(result.data);
             setCourses(result.data.filter(e => e.is_active === true));
             setIsLoading(false);
         } catch (err) {

@@ -33,7 +33,6 @@ export const NewAdmin = () => {
           window.location.href = "/CWG";
       } else {
           setTeacher(result.data[0]);
-          console.log(result.data[0]);
           setIsLoading(false);
       }
     } catch (err) {
@@ -48,9 +47,9 @@ export const NewAdmin = () => {
     setIsLoading(true);
     try {
       const response = await axios.post(BASE_URL + '/admin-signup', { password, id });
-      console.log(response)
+      console.log(response.status)
       setIsLoading(false);
-      // window.location.href = "/admin-login";
+      window.location.href = "/admin-login";
     } catch (err) {
       setIsLoading(false);
       // if (err.response) {

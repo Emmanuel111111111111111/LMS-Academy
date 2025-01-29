@@ -48,7 +48,6 @@ export const Overview = () => {
             const result = await axios(BASE_URL + `/lessons/${sessionStorage.getItem("id")}`, {
                 timeout: 10000
             });
-            console.log(result.data);
             setAllLess(result.data);
 
             setCompletedLess(result.data.filter(e => e.completed === true));
@@ -88,7 +87,6 @@ export const Overview = () => {
             const result = await axios(BASE_URL + `/events/${sessionStorage.getItem("id")}`, {
                 timeout: 25000
             });
-            console.log(result.data);
             setEvents(result.data.filter(e => e.completed === false));
             setLoadingEvents(false);
         } catch (err) {

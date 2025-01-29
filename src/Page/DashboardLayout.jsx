@@ -15,7 +15,6 @@ export const DashboardLayout = () => {
     const updateActiveCohort = async () => {
         try {
             const result = await axios.post(BASE_URL + '/update-active');
-            console.log(result.status);
         } catch (err) {
             console.log(err);
         }
