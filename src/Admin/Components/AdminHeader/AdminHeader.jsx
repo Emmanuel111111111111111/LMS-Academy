@@ -74,73 +74,12 @@ export const AdminHeader = () => {
     else if (currentPath === "/admin-dashboard/profile") {
         PageTitle = "Profile";
     }
+
+
+    const toProfilePage = () => {
+        window.location.href = "/admin-dashboard/profile";
+    }
     
-
-
-
-    // switch (currentPath) {
-
-    //     case "/":
-    //     case "/admin-dashboard":
-    //     case "/admin-dashboard/overview":
-    //         PageTitle = "Home";
-    //         break;
-        
-    //     case "/admin-dashboard/schedule":
-    //         PageTitle = "Schedule";
-    //         break;
-        
-    //     case "/admin-dashboard/courses":
-    //     case "/admin-dashboard/courses/active":
-    //     case "/admin-dashboard/courses/upcoming":
-    //     case "/admin-dashboard/courses/completed":
-    //         PageTitle = "Courses";
-    //         linkList = [
-    //             {title: "All", link: "/admin-dashboard/courses"},
-    //             {title: "Active", link: "/admin-dashboard/courses/active"},
-    //             {title: "Upcoming", link: "/admin-dashboard/courses/upcoming"},
-    //             {title: "Completed", link: "/admin-dashboard/courses/completed"},
-    //         ];
-    //         break;
-    //     case "/admin-dashboard/courses/detail":
-    //         PageTitle = "Courses";
-    //         break;
-        
-    //     // if (currentPath.includes("/admin-dashboard/cohort"))
-    //     case "/admin-dashboard/cohort":
-    //     case "/admin-dashboard/cohort/:id":
-    //         PageTitle = "Cohort";
-    //         break;
-
-    //     case "/admin-dashboard/class":
-    //         PageTitle = "Class";
-    //         break;
-        
-    //     case "/admin-dashboard/tasks":
-    //         PageTitle = "Tasks";
-    //         break;
-        
-    //     case "/admin-dashboard/teacher":
-    //         PageTitle = "Teacher";
-    //         break;
-        
-    //     case "/admin-dashboard/student":
-    //     case "/admin-dashboard/student/pending":
-    //         PageTitle = "Student";
-    //         linkList = [
-    //             {title: "All", link: "/admin-dashboard/student"},
-    //             {title: "Pending", link: "/admin-dashboard/student/pending"}
-    //         ];
-    //         break;
-
-    //     case "/admin-dashboard/activitylog":
-    //         PageTitle = "Activity Log";
-    //         break;
-
-    //     case "/admin-dashboard/profile":
-    //         PageTitle = "Profile";
-    //         break;
-    // }
 
     return (
         <div className={styles.header}>
@@ -165,7 +104,7 @@ export const AdminHeader = () => {
                 <div className={styles.buttons}>
                     <button><img src={getImageUrl('bell.png')} /></button>
                     <button><img src={getImageUrl('settings.png')} /></button>
-                    <button className={styles.profile}><img src={getImageUrl('profile.svg')} /></button>
+                    <button onClick={toProfilePage} className={styles.profile}><img src={getImageUrl('profile.svg')} /></button>
                 </div>
             </div>
         </div>

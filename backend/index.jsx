@@ -1835,6 +1835,40 @@ app.get("/certificates/:student_id", async (req, res) => {
 });
 
 
+app.post('/student-profile/:id', async (req, res) => {
+    const query = 'UPDATE student SET first_name = $1, last_name = $2 WHERE student_id = $3';
+    const values = [
+        req.body.first_name,
+        req.body.last_name,
+        req.params.id
+    ]
+    try {
+        const result = await client.query(query, values);
+        res.json({message: "Student info updated successfully", student: result.rows[0]});
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({message: "Update failed"});
+    }
+});
+app.post('/teacher-profile/:id', async (req, res) => {
+    const query = 'UPDATE instructor SET first_name = $1, last_name = $2, role = $3 WHERE instructor_id = $4';
+    const values = [
+        req.body.first_name,
+        req.body.last_name,
+        req.body.role,
+        req.params.id
+    ]
+    try {
+        const result = await client.query(query, values);
+        res.json({message: "Teacher info updated successfully", student: result.rows[0]});
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({message: "Update failed"});
+    }
+});
+
+
+
 app.post('/login', async (req, res) => {
     const query = 'SELECT * FROM student WHERE email = $1';
     try {

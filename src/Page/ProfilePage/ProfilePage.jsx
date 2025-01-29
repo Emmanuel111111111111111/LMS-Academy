@@ -1,22 +1,84 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from './ProfilePage.module.css';
 import { getImageUrl } from "../../utilis";
-import { useNavigate } from "react-router-dom";
-import { format } from 'date-fns';
+import { BASE_URL, TEST_URL } from "../../../config";
+import axios from 'axios';
+import { customToast } from "../../Components/Notifications";
+
 
 
 export const ProfilePage = () => {
 
-    const [ firstName, setFirstName ] = useState("");
-    const [ lastName, setLastName ] = useState("");
     const [ email, setEmail ] = useState("");
-    const navigate = useNavigate();
+    const [ type, setType ] = useState("");
+    const [ newInfo, setNewInfo ] = useState({});
 
     useEffect(() => {
-        setFirstName(sessionStorage.getItem("first_name"));
-        setLastName(sessionStorage.getItem("last_name"));
-        setEmail(sessionStorage.getItem("email"));
+        setEmail(sessionStorage.getItem("email") != 'null' ? sessionStorage.getItem("email"):"");
+        setType(sessionStorage.getItem("type")!= 'null' ? sessionStorage.getItem("type"):"");
+        
+        setNewInfo({
+            first_name: sessionStorage.getItem("first_name") != 'null' ? sessionStorage.getItem("first_name"):"",
+            last_name: sessionStorage.getItem("last_name") != 'null' ? sessionStorage.getItem("last_name"):"",
+            role: sessionStorage.getItem("role") != 'null' ? sessionStorage.getItem("role"):"",
+        })
     }, []);
+
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setNewInfo((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        console.log(newInfo)
+        
+        try {
+
+            if (type === 'student') {
+                const response = await fetch(BASE_URL + `/student-profile/${sessionStorage.getItem("id")}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(newInfo),
+                });
+    
+                if (response.ok) {
+                    customToast('Your information was updated successfully')
+                } else {
+                    console.error("Failed to update info");
+                }
+            }
+
+            if (type === 'teacher') {
+                const response = await fetch(BASE_URL + `/teacher-profile/${sessionStorage.getItem("id")}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(newInfo),
+                });
+    
+                if (response.ok) {
+                    customToast('Your information was updated successfully')
+                } else {
+                    console.error("Failed to update info");
+                }
+            }
+
+            sessionStorage.setItem("first_name", newInfo.first_name);
+            sessionStorage.setItem("last_name", newInfo.last_name);
+            sessionStorage.setItem("full_name", newInfo.first_name + (newInfo.last_name != '' ? ' ' + newInfo.last_name : ''));
+            sessionStorage.setItem("role", newInfo.role);
+        } catch (error) {
+            console.log('Error updating info:', error);
+            customToast("There was an error while updating your information. Please try again.")
+        }
+    };
 
 
 
@@ -40,29 +102,35 @@ export const ProfilePage = () => {
                     <div className={styles.formFlex}>
                         <div className={styles.formGroup}>
                             <label htmlFor="">First Name</label>
-                            <input type="text" value={firstName} />
+                            <input type="text" name="first_name" value={newInfo.first_name} onChange={handleInputChange} />
                         </div>
 
                         <div className={styles.formGroup}>
                             <label htmlFor="">Last Name</label>
-                            <input type="text" value={lastName} />
+                            <input type="text" name="last_name" value={newInfo.last_name} onChange={handleInputChange} />
                         </div>
                     </div>
 
                     <div className={styles.formFlex}>
                         <div className={styles.formGroup}>
                             <label htmlFor="">Email</label>
-                            <input type="text" value={email} />
+                            <input type="text" name="email" value={email} disabled />
                         </div>
 
-                        <div className={styles.formGroup}>
-                        </div>
+                        {type === 'teacher' ?
+                            <div className={styles.formGroup}>
+                                <label htmlFor="">Role</label>
+                                <input type="text" name="role" value={newInfo.role} onChange={handleInputChange} />
+                            </div>
+                        :
+                            <div className={styles.formGroup}></div>
+                        }
                     </div>
 
 
                     <div className={styles.buttons}>
-                        <button className={styles.buttonOne}>Save</button>
-                        <button className={styles.buttonTwo}>Reset</button>
+                        <button className={styles.buttonOne} type="submit" onClick={handleSubmit}>Save</button>
+                        <button className={styles.buttonTwo} type="button" onClick={"handleReset"}>Reset</button>
                     </div>
                     
                 </form>
