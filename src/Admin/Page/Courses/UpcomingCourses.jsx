@@ -269,7 +269,7 @@ export const UpcomingCourses = () => {
                                             </div>}
                                         </div>
                                         <div className={styles.crumb}>
-                                            {cour.instructors.length > 0 && <div className={styles.profile}><img src={getImageUrl('profile.svg')} alt="" />{cour.instructors[0].full_name}</div>}
+                                            {cour.instructors?.length > 0 && <div className={styles.profile}><img src={getImageUrl('profile.svg')} alt="" />{cour.instructors[0].full_name}</div>}
                                             <div className={styles.students}><img src={getImageUrl('frame5.png')} alt="" />{cour.student_count} {cour.student_count === 1 ? 'Student' : 'Students'}</div>
                                         </div>
                                     </div>
