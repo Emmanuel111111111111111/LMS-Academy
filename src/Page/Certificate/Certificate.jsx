@@ -4,7 +4,7 @@ import styles from "./Certificate.module.css";
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { customToast } from "../../Components/Notifications";
-import { TEST_URL } from "../../../config";
+import { BASE_URL, TEST_URL } from "../../../config";
 
 export const Certificate = () => {
 

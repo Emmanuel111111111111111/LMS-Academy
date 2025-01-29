@@ -84,11 +84,13 @@
     font-weight: 600;
     color: #333333;
 }
-.formGroup input {
+.formGroup input,
+.formGroup textarea {
     border: 1.5px solid #B4BCDD;
     border-radius: 10px;
     padding: 10px 16px;
     margin-top: 8px;
+    outline: none;
 }
 
 

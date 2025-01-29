@@ -30,7 +30,6 @@ export const AdminLogin = () => {
       sessionStorage.setItem("last_name", response.data.last_name);
       sessionStorage.setItem("email", response.data.email);
       sessionStorage.setItem("full_name", response.data.first_name + (response.data.last_name != null ? ' ' + response.data.last_name : ''));
-      sessionStorage.setItem("role", response.data.role);
       sessionStorage.setItem("type", 'teacher');
       sessionStorage.setItem("last_logged", new Date());
       console.log(response.data.first_name);

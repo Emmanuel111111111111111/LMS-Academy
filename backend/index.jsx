@@ -1835,6 +1835,17 @@ app.get("/certificates/:student_id", async (req, res) => {
 });
 
 
+app.get('/student-profile/:id', async (req, res) => {
+    const id = req.params.id;
+    const query = "SELECT * FROM student WHERE student_id = ($1)"
+    try {
+        const result = await client.query(query, [id]);
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching student/email"});
+    }
+});
 app.post('/student-profile/:id', async (req, res) => {
     const query = 'UPDATE student SET first_name = $1, last_name = $2 WHERE student_id = $3';
     const values = [
@@ -1850,12 +1861,24 @@ app.post('/student-profile/:id', async (req, res) => {
         return res.status(500).json({message: "Update failed"});
     }
 });
+app.get('/teacher-profile/:id', async (req, res) => {
+    const id = req.params.id;
+    const query = "SELECT * FROM instructor WHERE instructor_id = ($1)"
+    try {
+        const result = await client.query(query, [id]);
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching student/email"});
+    }
+});
 app.post('/teacher-profile/:id', async (req, res) => {
-    const query = 'UPDATE instructor SET first_name = $1, last_name = $2, role = $3 WHERE instructor_id = $4';
+    const query = 'UPDATE instructor SET first_name = $1, last_name = $2, role = $3, description = $4 WHERE instructor_id = $5';
     const values = [
         req.body.first_name,
         req.body.last_name,
         req.body.role,
+        req.body.description,
         req.params.id
     ]
     try {

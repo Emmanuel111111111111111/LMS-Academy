@@ -11,20 +11,45 @@ export const ProfilePage = () => {
 
     const [ email, setEmail ] = useState("");
     const [ type, setType ] = useState("");
+    const [ userInfo, setUserInfo ] = useState({});
     const [ newInfo, setNewInfo ] = useState({});
 
     useEffect(() => {
-        setEmail(sessionStorage.getItem("email") != 'null' ? sessionStorage.getItem("email"):"");
+        getUserInfo();
         setType(sessionStorage.getItem("type")!= 'null' ? sessionStorage.getItem("type"):"");
-        
-        setNewInfo({
-            first_name: sessionStorage.getItem("first_name") != 'null' ? sessionStorage.getItem("first_name"):"",
-            last_name: sessionStorage.getItem("last_name") != 'null' ? sessionStorage.getItem("last_name"):"",
-            role: sessionStorage.getItem("role") != 'null' ? sessionStorage.getItem("role"):"",
-        })
     }, []);
 
 
+    const getUserInfo = async () => {
+        try {
+            if (sessionStorage.getItem("type") === 'student') {
+                const response = await axios.get(TEST_URL + `/student-profile/${sessionStorage.getItem("id")}`)
+                setUserInfo(response.data[0]);
+                setNewInfo({
+                    first_name: response.data[0].first_name,
+                    last_name: response.data[0].last_name,
+                    email: response.data[0].email,
+                });
+            }
+
+            if (sessionStorage.getItem("type") === 'teacher') {
+                const response = await axios.get(TEST_URL + `/teacher-profile/${sessionStorage.getItem("id")}`)
+                setUserInfo(response.data[0]);
+                setNewInfo({
+                    first_name: response.data[0].first_name,
+                    last_name: response.data[0].last_name,
+                    email: response.data[0].email,
+                    role: response.data[0].role,
+                    description: response.data[0].description,
+                });
+            }
+        } catch (error) {
+            console.error('Error getting your information:', error);
+            customToast('Error getting your information.');
+        }
+    }
+    
+    
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setNewInfo((prev) => ({
@@ -55,7 +80,7 @@ export const ProfilePage = () => {
             }
 
             if (type === 'teacher') {
-                const response = await fetch(BASE_URL + `/teacher-profile/${sessionStorage.getItem("id")}`, {
+                const response = await fetch(TEST_URL + `/teacher-profile/${sessionStorage.getItem("id")}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -70,10 +95,7 @@ export const ProfilePage = () => {
                 }
             }
 
-            sessionStorage.setItem("first_name", newInfo.first_name);
-            sessionStorage.setItem("last_name", newInfo.last_name);
-            sessionStorage.setItem("full_name", newInfo.first_name + (newInfo.last_name != '' ? ' ' + newInfo.last_name : ''));
-            sessionStorage.setItem("role", newInfo.role);
+            getUserInfo();
         } catch (error) {
             console.log('Error updating info:', error);
             customToast("There was an error while updating your information. Please try again.")
@@ -114,7 +136,7 @@ export const ProfilePage = () => {
                     <div className={styles.formFlex}>
                         <div className={styles.formGroup}>
                             <label htmlFor="">Email</label>
-                            <input type="text" name="email" value={email} disabled />
+                            <input type="text" name="email" value={newInfo.email} disabled />
                         </div>
 
                         {type === 'teacher' ?
@@ -126,6 +148,13 @@ export const ProfilePage = () => {
                             <div className={styles.formGroup}></div>
                         }
                     </div>
+
+                    {type === 'teacher' &&
+                        <div className={styles.formGroup}>
+                            <label htmlFor="">Description</label>
+                            <textarea type="text" name="description" value={newInfo.description} onChange={handleInputChange} />
+                        </div>
+                    }
 
 
                     <div className={styles.buttons}>
