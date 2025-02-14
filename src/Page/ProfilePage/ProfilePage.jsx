@@ -23,7 +23,7 @@ export const ProfilePage = () => {
     const getUserInfo = async () => {
         try {
             if (sessionStorage.getItem("type") === 'student') {
-                const response = await axios.get(TEST_URL + `/student-profile/${sessionStorage.getItem("id")}`)
+                const response = await axios.get(BASE_URL + `/student-profile/${sessionStorage.getItem("id")}`)
                 setUserInfo(response.data[0]);
                 setNewInfo({
                     first_name: response.data[0].first_name,
@@ -33,7 +33,7 @@ export const ProfilePage = () => {
             }
 
             if (sessionStorage.getItem("type") === 'teacher') {
-                const response = await axios.get(TEST_URL + `/teacher-profile/${sessionStorage.getItem("id")}`)
+                const response = await axios.get(BASE_URL + `/teacher-profile/${sessionStorage.getItem("id")}`)
                 setUserInfo(response.data[0]);
                 setNewInfo({
                     first_name: response.data[0].first_name,
@@ -80,7 +80,7 @@ export const ProfilePage = () => {
             }
 
             if (type === 'teacher') {
-                const response = await fetch(TEST_URL + `/teacher-profile/${sessionStorage.getItem("id")}`, {
+                const response = await fetch(BASE_URL + `/teacher-profile/${sessionStorage.getItem("id")}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

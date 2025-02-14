@@ -12,3 +12,16 @@ export const customToast = (message) =>
             },
         }
     );
+
+export const customToastError = (message) =>
+        toast(
+            message,
+            {
+                style: {
+                    border: "1px solid red",
+                    padding: "10px",
+                    color: "red",
+                    // width: 'fit-content'
+                },
+            }
+        );

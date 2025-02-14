@@ -29,7 +29,7 @@ export const CWG = () => {
         <Modal isOpen={isOpen}>
             <div className={styles.wholeModal}>
                 <div className={styles.modalHeader}>
-                    <h3>Create your account</h3>
+                    <h3>Log In or Sign Up</h3>
                     <p>Let's help you get started on the CWG Academy</p>
                 </div>
                 <div className={styles.modalBody}>

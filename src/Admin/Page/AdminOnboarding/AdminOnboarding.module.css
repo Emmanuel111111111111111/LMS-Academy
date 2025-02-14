@@ -185,6 +185,9 @@ form a {
     font-weight: 500;
     line-height: 29.57px;
 }
+.butt:disabled {
+    pointer-events: none;
+}
 
 .home p {
     width: fit-content;

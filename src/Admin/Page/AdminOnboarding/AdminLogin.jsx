@@ -3,6 +3,7 @@ import { getImageUrl } from "../../../utilis";
 import styles from "./AdminOnboarding.module.css";
 import axios from 'axios';
 import { BASE_URL, TEST_URL } from "../../../../config";
+import { customToast, customToastError } from "../../../Components/Notifications";
 
 
 export const AdminLogin = () => {
@@ -21,7 +22,10 @@ export const AdminLogin = () => {
     event.preventDefault();
     setIsLoading(true);
     try {
-      const response = await axios.post(BASE_URL + '/adminlogin', { email, password });
+      const response = await axios.post(BASE_URL + '/adminlogin',
+        { email, password },
+        {timeout: 10000}
+      );
       
       setIsLoading(false);
       console.log(response.status);
@@ -38,10 +42,17 @@ export const AdminLogin = () => {
       setIsLoading(false);
       if (err.response) {
         console.error(err.response.data.message);
-        if (err.response.data.message === 'No records') setErrorMesage(true);
-        else if (err.response.data.message === 'Invalid credentials') setErrorMesage(true);
+        if (err.response.data.message === 'No records') {
+          setErrorMesage(true);
+          customToastError("Invalid username or password. Please try again.")
+        }
+        else if (err.response.data.message === 'Invalid credentials') {
+          setErrorMesage(true);
+          customToastError("Invalid username or password. Please try again.")
+        }
       } else {
         console.error('Error', err.message);
+        customToast("We're having trouble logging you in. Please try again.")
       }
     }
   }
@@ -89,7 +100,7 @@ export const AdminLogin = () => {
 
             <p>Forgot password? <a href="/admin-reset">Reset Password</a></p>
 
-            <button className={styles.butt}>{isLoading ? '...' : 'Log In'}</button>
+            <button className={styles.butt} disabled={isLoading}>{isLoading ? 'Logging in...' : 'Log In'}</button>
 
           </form>
 

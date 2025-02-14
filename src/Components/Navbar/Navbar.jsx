@@ -18,7 +18,7 @@ export const Navbar = () => {
             </div>
 
             <div className={styles.linkList} >
-                <a href="/dashboard/overview" className={(currentPath === "/dashboard/overview" || currentPath === "/dashboard/") ? styles.active : ""}>
+                <a href="/dashboard/overview" className={(currentPath.includes("/dashboard/overview") || currentPath === "/dashboard") ? styles.active : ""}>
                     <img src={getImageUrl("homeIcon.png")} />
                     Home
                 </a>

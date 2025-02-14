@@ -5,7 +5,7 @@ import styles from "./Onboarding.module.css";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { BASE_URL, TEST_URL } from "../../../config";
-import { customToast } from "../../Components/Notifications";
+import { customToast, customToastError } from "../../Components/Notifications";
 
 
 export const LoginPage = () => {
@@ -25,9 +25,10 @@ export const LoginPage = () => {
     event.preventDefault();
     setIsLoading(true);
     try {
-      const response = await axios.post(BASE_URL + '/login', { email, password }, {
-        timeout: 10000,
-      });
+      const response = await axios.post(BASE_URL + '/login',
+        { email, password }, 
+        { timeout: 10000, }
+      );
 
       setIsLoading(false);
       sessionStorage.setItem("id", response.data.student_id);
@@ -44,11 +45,11 @@ export const LoginPage = () => {
         console.error(err.response.data.message);
         if (err.response.data.message === 'No records') {
           setErrorMesage(true);
-          customToast("Invalid username or password. Please try again.")
+          customToastError("Invalid username or password. Please try again.")
         }
         else if (err.response.data.message === 'Invalid credentials') {
           setErrorMesage(true);
-          customToast("Invalid username or password. Please try again.")
+          customToastError("Invalid username or password. Please try again.")
         }
       } else {
         console.error('Error', err.message);
@@ -101,7 +102,7 @@ export const LoginPage = () => {
             <p>Forgot password? <a href="/Reset">Reset Password</a></p>
 
             <div className={styles.home}>
-              <button className={styles.butt}>{isLoading ? '...' : 'Log In'}</button>
+              <button className={styles.butt} disabled={isLoading}>{isLoading ? 'Logging in...' : 'Log In'}</button>
               <p>Don't Have An Account? <a href="/Account">Create An Account</a></p>
             </div>
 

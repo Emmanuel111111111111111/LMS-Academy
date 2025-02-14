@@ -70,7 +70,7 @@ const AdminProtectedRoute = ({ children }) => {
 function App() {
 
   const router = createBrowserRouter([
-    { path: '/', element: <Navigate to='CWG' /> },
+    { path: '/', element: <CWGpage /> },
     { path: '/CWG', element: <CWGpage /> },
     { path: '/Login', element: <LoginPage /> },
     { path: '/Admin-login', element: <AdminLogin /> },
@@ -141,7 +141,7 @@ function App() {
 
   return (
     <div className={styles.App}>
-      <Toaster position="bottom-right" reverseOrder={false} />
+      <Toaster position="top-right" reverseOrder={false} />
       <RouterProvider router={router} />
     </div>
   )
