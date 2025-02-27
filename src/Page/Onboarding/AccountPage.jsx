@@ -29,6 +29,7 @@ export const AccountPage = () => {
     }
 
     const handleSubmit = async (event) => {
+        console.log(values);
         event.preventDefault();
         setIsLoading(true);
         try {
@@ -75,12 +76,12 @@ export const AccountPage = () => {
                         </div>
                         <div className={styles.formgroup}>
                             <label htmlFor="last_name">Last Name</label>
-                            <input placeholder="Enter your last name" name="last_name" onChange={handleInput} required />
+                            <input placeholder="Enter your last name" name="last_name" onChange={handleInput} />
                         </div>
                     </div>
                     <div className={styles.formgroup}>
                         <label htmlFor="phone_number">Phone Number</label>
-                        <input placeholder="Enter your phone number" type="number" name="phone_number" onChange={handleInput} onWheel={(e) => e.currentTarget.blur()} />
+                        <input placeholder="Enter your phone number" type="number" name="phone_number" onChange={handleInput} onWheel={(e) => e.currentTarget.blur()} required />
                     </div>
                     <div className={styles.formgroup}>
                         <label htmlFor="email">Email address</label>
@@ -96,14 +97,14 @@ export const AccountPage = () => {
                         </select>
                     </div>
 
-                    <div className={styles.check}>
+                    <label className={styles.check}>
                         <input type="checkbox" name="agree" required />
                         <p>I agree to CWG'S <span>Terms of Use</span> and consent to CWG's <span>Privacy policy</span></p>
-                    </div>
-                    <div className={styles.check}>
+                    </label>
+                    <label className={styles.check}>
                         <input type="checkbox" name="subscribe" />
                         <p>Receive marketing emails and communications about our products.</p>
-                    </div>
+                    </label>
 
                     <div className={styles.home}>
                         <button className={styles.butt}>{isLoading ? "..." : "Next"}</button>
