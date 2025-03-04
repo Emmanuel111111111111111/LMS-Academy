@@ -131,6 +131,7 @@ function App() {
         { path: 'teacher', element: <TeachersPage /> },
         { path: 'student', element: <StudentPage /> },
         { path: 'student/pending', element: <PendingStudentPage /> },
+        { path: 'roles', element: <BlankPage /> },
         { path: 'activitylog', element: <ActivityLogPage /> },
         { path: 'profile', element: <ProfilePage /> },
         { path: 'profile/:id', element: <ProfilePage /> },

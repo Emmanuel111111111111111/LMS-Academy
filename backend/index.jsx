@@ -32,7 +32,7 @@ app.get("/", (req, res) => {
 
 app.get("/students", async (req, res) => {
     try {
-        const result = await client.query("SELECT * FROM student");
+        const result = await client.query("SELECT * FROM student ORDER BY first_name ASC");
         res.send(result.rows);
     } catch(err) {
         console.log(err);
@@ -46,6 +46,23 @@ app.get("/students-len", async (req, res) => {
     } catch(err) {
         console.log(err);
         res.status(500).json({message: "Error fetching students length"});
+    }
+});
+app.get("/students-len/:instructor_id", async (req, res) => {
+    try {
+        const { instructor_id } = req.params;
+
+        const result = await client.query(`
+            SELECT COUNT(DISTINCT e.student_id) AS total_students
+            FROM enrollment e
+            JOIN instructorcourses ic ON e.course_id = ic.course_id
+            WHERE ic.instructor_id = $1
+        `, [instructor_id]);
+
+        res.send(result.rows[0].total_students);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Error fetching student count" });
     }
 });
 app.get("/getStudentWithEmail/:email", async (req, res) => {
@@ -64,7 +81,7 @@ app.get("/getStudentWithEmail/:email", async (req, res) => {
 
 app.get("/teachers", async (req, res) => {
     try {
-        const result = await client.query("SELECT * FROM instructor");
+        const result = await client.query("SELECT * FROM instructor ORDER BY first_name ASC");
         res.send(result.rows);
     } catch(err) {
         console.log(err);
@@ -181,12 +198,47 @@ app.put('/delete-teacher', async (req, res) => {
         return res.status(500).json({message: "Error in deleting instructor or logging"});
     }
 });
+app.put('/change-teacher-role', async (req, res) => {
+    const query = "UPDATE instructor SET role = $1 WHERE instructor_id = $2";
+    const values = [
+        req.body.role,
+        req.body.instructor_id
+    ]
+    console.log(values);
+    try {
+        const result = await client.query(query, values);
+        res.json({message: "Instructor role changed successfully", instructor: result.rows[0]});
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({message: "Error in changing instructor role"});
+    }
+});
 
 
 
 app.get("/courses", async (req, res) => {
     try {
         const result = await client.query("SELECT * FROM course WHERE deleted = FALSE ORDER BY date_added DESC");
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching courses"});
+    }
+});
+app.get("/courses-teacher/:id", async (req, res) => {
+    const { id } = req.params;
+    try {
+        const result = await client.query(`
+            SELECT * 
+                FROM course
+                WHERE deleted = FALSE 
+                AND course_id IN (
+                    SELECT course_id FROM instructorCourses WHERE instructor_id = $1
+                )
+                ORDER BY date_added DESC;
+            `,
+        [id]);
         res.send(result.rows);
     } catch(err) {
         console.log(err);
@@ -254,6 +306,36 @@ app.get("/courses/:student_id", async (req, res) => {
         res.status(500).json({message: "Error fetching courses/studentId"});
     }
 });
+app.get("/coursesss/:student_id/:instructor_id", async (req, res) => {
+    
+    const { student_id, instructor_id } = req.params;
+    console.log(student_id);
+    console.log(instructor_id);
+    
+    const query = `
+        SELECT * FROM course 
+        INNER JOIN enrollment ON course.course_id = enrollment.course_id
+        WHERE 
+            enrollment.student_id = $1
+            AND course.deleted = FALSE
+            AND course.suspended = FALSE
+            AND EXISTS (
+                SELECT 1 
+                FROM instructorcourses ic
+                WHERE ic.course_id = course.course_id 
+                AND ic.instructor_id = $2
+            );
+
+    `
+    try {
+        const result = await client.query(query, [student_id, instructor_id]);
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching courses/studentId"});
+    }
+});
+
 app.get("/courses-not/:student_id", async (req, res) => {
     const id = req.params.student_id;
     const query = `
@@ -277,6 +359,40 @@ app.get("/courses-not/:student_id", async (req, res) => {
         res.status(500).json({message: "Error fetching courses/studentId"});
     }
 });
+app.get("/courses-not/:student_id/:instructor_id", async (req, res) => {
+    const { student_id, instructor_id } = req.params;
+
+    console.log(student_id);
+    console.log(instructor_id);
+
+    const query = `
+        SELECT * FROM course c
+        WHERE 
+            c.deleted = FALSE
+            AND c.suspended = FALSE
+            AND c.course_id NOT IN (
+                SELECT e.course_id
+                FROM enrollment e
+                WHERE e.student_id = $1
+            )
+            AND EXISTS (
+                SELECT 1 
+                FROM instructorcourses ic
+                WHERE ic.course_id = c.course_id 
+                AND ic.instructor_id = $2
+            )
+        ORDER BY 
+            c.name ASC;
+    `
+    try {
+        const result = await client.query(query, [student_id, instructor_id]);
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching courses/studentId"});
+    }
+});
+
 app.get("/courses/detail/:course_id", async (req, res) => {
     const id = req.params.course_id;
     const query = "SELECT * FROM course WHERE course_id = ($1) AND course.deleted = FALSE"
@@ -350,7 +466,7 @@ app.get('/courses-instructor-studentscount-lessons', async (req, res) => {
                     'first_name', first_name,
                     'last_name', last_name,
                     'description', description,
-                    'role', role
+                    'title', title
                 ))
                 FROM (
                     SELECT DISTINCT 
@@ -358,7 +474,7 @@ app.get('/courses-instructor-studentscount-lessons', async (req, res) => {
                         i.first_name,
                         i.last_name,
                         i.description,
-                        i.role
+                        i.title
                     FROM instructorCourses ic
                     JOIN instructor i ON ic.instructor_id = i.instructor_id
                     WHERE ic.course_id = c.course_id
@@ -429,6 +545,131 @@ app.get('/courses-instructor-studentscount-lessons', async (req, res) => {
 
     try {
         const result = await client.query(query);
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+app.get('/courses-instructor-studentscount-lessons/:instructor_id', async (req, res) => {
+    const { instructor_id } = req.params;
+    
+    const query = `
+        SELECT 
+            c.course_id,
+            c.name AS course_name,
+            c.description,
+            c.date_added,
+            c.duration,
+            c.type,
+            c.suspended,
+            c.completed,
+            c.level,
+            c.status,
+            CASE 
+                WHEN EXISTS (
+                    SELECT 1 
+                    FROM cohort_course cc
+                    JOIN cohort co ON cc.cohort_id = co.cohort_id
+                    WHERE cc.course_id = c.course_id AND co.is_active = true
+                ) THEN true
+                WHEN EXISTS (
+                    SELECT 1
+                    FROM cohort_course cc
+                    JOIN cohort co ON cc.cohort_id = co.cohort_id
+                    WHERE cc.course_id = c.course_id AND co.is_active IS NULL
+                ) THEN NULL
+                ELSE false
+            END AS is_active,
+            (
+                SELECT JSON_AGG(JSON_BUILD_OBJECT(
+                    'instructor_id', instructor_id,
+                    'full_name', COALESCE(first_name || ' ' || last_name, 'NA'),
+                    'first_name', first_name,
+                    'last_name', last_name,
+                    'description', description,
+                    'title', title
+                ))
+                FROM (
+                    SELECT DISTINCT 
+                        i.instructor_id,
+                        i.first_name,
+                        i.last_name,
+                        i.description,
+                        i.title
+                    FROM instructorCourses ic
+                    JOIN instructor i ON ic.instructor_id = i.instructor_id
+                    WHERE ic.course_id = c.course_id
+                    ORDER BY i.instructor_id
+                ) sub_instructors
+            ) AS instructors,
+            COUNT(DISTINCT s.student_id) AS student_count,
+            (
+                SELECT COALESCE(
+                    JSON_AGG(JSON_BUILD_OBJECT(
+                        'lesson_id', l.lesson_id,
+                        'lesson_title', l.title,
+                        'number', l.number,
+                        'start_date', l.start_date,
+                        'assignments', COALESCE(
+                            (
+                                SELECT JSON_AGG(JSON_BUILD_OBJECT(
+                                    'assignment_id', a.assignment_id,
+                                    'assignment_name', a.assignment_name,
+                                    'due_date', a.due_date
+                                ))
+                                FROM assignment a
+                                WHERE a.lesson_id = l.lesson_id
+                            ),
+                            '[]'
+                        ),
+                        'content', COALESCE(
+                            (
+                                SELECT JSON_AGG(
+                                    JSON_BUILD_OBJECT(
+                                        'file_id', lf.file_id,
+                                        'file_name', lf.file_name,
+                                        'file_type', lf.file_type,
+                                        'file_size', lf.file_size
+                                    )
+                                )
+                                FROM lesson_files lf
+                                WHERE lf.lesson_id = l.lesson_id
+                            ),
+                            '[]'
+                        )
+                    ) ORDER BY l.number),
+                    '[]'
+                )
+                FROM lesson l
+                WHERE l.course_id = c.course_id
+            ) AS lessons
+        FROM 
+            course c
+        LEFT JOIN 
+            instructorCourses ic ON c.course_id = ic.course_id
+        LEFT JOIN 
+            instructor i ON ic.instructor_id = i.instructor_id
+        LEFT JOIN 
+            enrollment e ON c.course_id = e.course_id
+        LEFT JOIN 
+            student s ON e.student_id = s.student_id
+        LEFT JOIN 
+            lesson l ON c.course_id = l.course_id
+        WHERE 
+            c.deleted = FALSE
+            AND c.course_id IN (
+                SELECT ic.course_id FROM instructorCourses ic WHERE ic.instructor_id = $1
+            )
+        GROUP BY 
+            c.course_id
+        ORDER BY 
+            c.date_added DESC,
+            c.name ASC;
+    `;
+
+    try {
+        const result = await client.query(query, [instructor_id]);
         res.json(result.rows);
     } catch (err) {
         console.error(err);
@@ -520,7 +761,7 @@ app.get('/courses-instructor-students-lessons/:student_id', async (req, res) => 
                     'first_name', first_name,
                     'last_name', last_name,
                     'description', description,
-                    'role', role
+                    'title', title
                 ))
                 FROM (
                     SELECT DISTINCT 
@@ -528,7 +769,7 @@ app.get('/courses-instructor-students-lessons/:student_id', async (req, res) => 
                         i.first_name,
                         i.last_name,
                         i.description,
-                        i.role
+                        i.title
                     FROM instructorCourses ic
                     JOIN instructor i ON ic.instructor_id = i.instructor_id
                     WHERE ic.course_id = c.course_id
@@ -771,6 +1012,60 @@ app.get("/lessons-info", async (req, res) => {
         res.status(500).json({ error: `Error grabbing cohorts` });
     }
 });
+app.get("/lessons-info/:instructor_id", async (req, res) => {
+    const { instructor_id } = req.params;
+    const query = `
+        SELECT 
+            lesson.lesson_id,
+            lesson.title,
+            lesson.description,
+            lesson.start_date,
+            lesson.end_date,
+            lesson.number,
+            lesson.course_id,
+            COALESCE(course.name, 'NA') AS course_name,
+            COALESCE(instructor.first_name || '' || ' ' || instructor.last_name, 'NA') AS instructor_name,
+            COALESCE(student_counts.student_count, 0) AS student_count
+        FROM 
+            lesson
+        LEFT JOIN 
+            course ON lesson.course_id = course.course_id
+		LEFT JOIN 
+            instructorcourses ON course.course_id = instructorcourses.course_id
+        LEFT JOIN 
+            instructor ON instructorcourses.instructor_id = instructor.instructor_id
+		LEFT JOIN (
+            SELECT 
+                course_id,
+                COUNT(student_id) AS student_count
+            FROM 
+                enrollment
+            GROUP BY 
+                course_id
+        ) student_counts ON course.course_id = student_counts.course_id
+        WHERE course.deleted = FALSE
+        AND course.suspended = FALSE
+        AND instructor.instructor_id = $1
+        GROUP BY 
+            lesson.lesson_id,
+			lesson.title,
+			lesson.description,
+			lesson.number,
+			course.name,
+			instructor.first_name,
+			instructor.last_name,
+			student_counts.student_count
+        ORDER BY 
+            lesson.lesson_id;
+        `
+    try {
+        const result = await client.query(query, [instructor_id]);
+        res.send(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: `Error grabbing cohorts` });
+    }
+});
 app.post(`/lesson-info`, upload.array('files'), async (req, res) => {
     try {
         console.log(req.files);
@@ -816,6 +1111,23 @@ app.get("/lessons-len", async (req, res) => {
     } catch(err) {
         console.log(err);
         res.status(500).json({message: "Error fetching lessons length"});
+    }
+});
+app.get("/lessons-len/:instructor_id", async (req, res) => {
+    try {
+        const { instructor_id } = req.params;
+
+        const result = await client.query(`
+            SELECT COUNT(*) AS total_lessons
+            FROM lesson l
+            JOIN instructorcourses ic ON l.course_id = ic.course_id
+            WHERE ic.instructor_id = $1
+        `, [instructor_id]);
+
+        res.send(result.rows[0].total_lessons);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Error fetching student count" });
     }
 });
 app.put('/delete-lesson', async (req, res) => {
@@ -1120,6 +1432,74 @@ app.get("/tasks", async (req, res) => {
         res.status(500).json({message: "Error fetching assignments"});
     }
 });
+app.get("/tasks/:instructor_id", async (req, res) => {
+    try {
+        const { instructor_id } = req.params;
+
+        const result = await client.query(`
+            SELECT 
+                'assignment' AS type,
+                a.assignment_id AS id,
+                a.assignment_name AS name,
+                c.name AS course_name,
+                a.due_date AS due_date,
+                asgn_student.student_id AS student_id,
+                CONCAT(s.first_name, ' ', s.last_name) AS student_name,
+                asgn_student.graded AS graded,
+                asgn_student.submitted AS submitted,
+                asgn_student.submitted_date AS submitted_date
+            FROM 
+                assignment_student asgn_student
+            JOIN 
+                assignment a ON asgn_student.assignment_id = a.assignment_id
+            JOIN 
+                lesson l ON a.lesson_id = l.lesson_id
+            JOIN 
+                course c ON l.course_id = c.course_id
+            JOIN 
+                student s ON asgn_student.student_id = s.student_id
+            WHERE 
+                c.deleted = FALSE
+                AND c.suspended = FALSE
+                AND c.course_id IN (
+                    SELECT ic.course_id FROM instructorCourses ic WHERE ic.instructor_id = $1
+                )
+
+            UNION ALL
+
+            SELECT 
+                'exam' AS type,
+                e.exam_id AS id,
+                e.exam_name AS name,
+                c.name AS course_name,
+                e.due_date AS due_date,
+                exam_student.student_id AS student_id,
+                CONCAT(s.first_name, ' ', s.last_name) AS student_name,
+                exam_student.graded AS graded,
+                exam_student.submitted AS submitted,
+                exam_student.submitted_date AS submitted_date
+            FROM 
+                exam_student
+            JOIN 
+                exam e ON exam_student.exam_id = e.exam_id
+            JOIN 
+                course c ON e.course_id = c.course_id
+            JOIN 
+                student s ON exam_student.student_id = s.student_id
+            WHERE 
+                c.deleted = FALSE
+                AND c.suspended = FALSE
+                AND c.course_id IN (
+                    SELECT ic.course_id FROM instructorCourses ic WHERE ic.instructor_id = $1
+                );
+        `, [instructor_id]);
+
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Error fetching tasks" });
+    }
+});
 
 app.get("/events", async (req, res) => {
     try {
@@ -1304,6 +1684,79 @@ app.get("/events/:studentId", async (req, res) => {
     } catch(err) {
         console.log(err);
         res.status(500).json({message: "Error fetching assignments"});
+    }
+});
+app.get("/events-teacher/:instructor_id", async (req, res) => {
+    try {
+        const { instructor_id } = req.params;
+        const result = await client.query(`
+            SELECT 
+                'lesson' AS event_type,
+                l.lesson_id AS event_id,
+                l.title AS title,
+                c.course_id,
+                c.name AS course_name,
+                l.start_date AS start,
+                l.end_date AS end
+            FROM 
+                lesson l
+            JOIN 
+                course c ON l.course_id = c.course_id
+            WHERE 
+                c.deleted = FALSE
+                AND c.suspended = FALSE
+                AND c.course_id IN (
+                    SELECT ic.course_id FROM instructorCourses ic WHERE ic.instructor_id = $1
+                )
+
+            UNION ALL
+
+            SELECT 
+                'assignment' AS event_type,
+                a.assignment_id AS event_id,
+                a.assignment_name AS title,
+                c.course_id,
+                c.name AS course_name,
+                a.due_date AS start,
+                NULL AS end
+            FROM 
+                assignment a
+            JOIN 
+                lesson l ON a.lesson_id = l.lesson_id
+            JOIN 
+                course c ON l.course_id = c.course_id
+            WHERE 
+                c.deleted = FALSE
+                AND c.suspended = FALSE
+                AND c.course_id IN (
+                    SELECT ic.course_id FROM instructorCourses ic WHERE ic.instructor_id = $1
+                )
+
+            UNION ALL
+
+            SELECT 
+                'exam' AS event_type,
+                e.exam_id AS event_id,
+                e.exam_name AS title,
+                c.course_id,
+                c.name AS course_name,
+                e.due_date AS start,
+                NULL AS end
+            FROM 
+                exam e
+            JOIN 
+                course c ON e.course_id = c.course_id
+            WHERE 
+                c.deleted = FALSE
+                AND c.suspended = FALSE
+                AND c.course_id IN (
+                    SELECT ic.course_id FROM instructorCourses ic WHERE ic.instructor_id = $1
+                );
+            `, [instructor_id]);
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching events"});
     }
 });
 
@@ -1800,7 +2253,7 @@ app.get("/certificates/:student_id", async (req, res) => {
                     'first_name', first_name,
                     'last_name', last_name,
                     'description', description,
-                    'role', role
+                    'title', title
                 ))
                 FROM (
                     SELECT DISTINCT 
@@ -1808,7 +2261,7 @@ app.get("/certificates/:student_id", async (req, res) => {
                         i.first_name,
                         i.last_name,
                         i.description,
-                        i.role
+                        i.title
                     FROM instructorCourses ic
                     JOIN instructor i ON ic.instructor_id = i.instructor_id
                     WHERE ic.course_id = c.course_id
@@ -1873,11 +2326,11 @@ app.get('/teacher-profile/:id', async (req, res) => {
     }
 });
 app.post('/teacher-profile/:id', async (req, res) => {
-    const query = 'UPDATE instructor SET first_name = $1, last_name = $2, role = $3, description = $4 WHERE instructor_id = $5';
+    const query = 'UPDATE instructor SET first_name = $1, last_name = $2, title = $3, description = $4 WHERE instructor_id = $5';
     const values = [
         req.body.first_name,
         req.body.last_name,
-        req.body.role,
+        req.body.title,
         req.body.description,
         req.params.id
     ]

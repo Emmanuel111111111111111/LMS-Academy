@@ -148,7 +148,7 @@ export const CourseDetails = () => {
 
                                         <div className={styles.details}>
                                             <h4>{inst.full_name}</h4>
-                                            <h5>{inst.role}</h5>
+                                            <h5>{inst.title}</h5>
 
                                             <div className={styles.flex}>
                                                 <img className={styles.teachPic} src={getImageUrl('teach.svg')} alt="" />

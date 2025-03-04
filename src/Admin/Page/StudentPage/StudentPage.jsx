@@ -55,10 +55,19 @@ export const StudentPage = () => {
     const fetchAllNotCourses = async (student_id) => {
         setIsLoading2(true);
         try {
-            const result = await axios(BASE_URL + `/courses-not/${student_id}`, {
-                timeout: 10000
-            });
-            setAllCourses(result.data);
+            if (sessionStorage.getItem('role') === 'Adminn') {
+                const result = await axios(BASE_URL + `/courses-not/${student_id}`, {
+                    timeout: 20000
+                });
+                setAllNotCourses(result.data);
+            }
+            else if (sessionStorage.getItem('role') === 'Admin') {
+                // const result = await axios(BASE_URL + `/courses-not/${student_id}/32`, {
+                const result = await axios(TEST_URL + `/courses-not/${student_id}/32`, {
+                    timeout: 20000
+                });
+                setAllNotCourses(result.data);
+            }
             setIsLoading2(false);
         } catch (err) {
             setIsLoading2(false);
@@ -68,10 +77,19 @@ export const StudentPage = () => {
     const fetchAllCourses = async (student_id) => {
         setIsLoading2(true);
         try {
-            const result = await axios(BASE_URL + `/courses/${student_id}`, {
-                timeout: 10000
-            });
-            setAllCourses(result.data);
+            if (sessionStorage.getItem('role') === 'Adminn') {
+                const result = await axios(BASE_URL + `/courses/${student_id}`, {
+                    timeout: 20000
+                });
+                setAllCourses(result.data);
+            }
+            else if (sessionStorage.getItem('role') === 'Admin') {
+                // const result = await axios(BASE_URL + `/coursesss/${student_id}/32`, {
+                const result = await axios(TEST_URL + `/coursesss/${student_id}/32`, {
+                    timeout: 20000
+                });
+                setAllCourses(result.data);
+            }
             setIsLoading2(false);
         } catch (err) {
             setIsLoading2(false);

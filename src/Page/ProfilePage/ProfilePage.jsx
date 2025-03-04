@@ -39,7 +39,7 @@ export const ProfilePage = () => {
                     first_name: response.data[0].first_name,
                     last_name: response.data[0].last_name,
                     email: response.data[0].email,
-                    role: response.data[0].role,
+                    title: response.data[0].title,
                     description: response.data[0].description,
                 });
             }
@@ -142,7 +142,7 @@ export const ProfilePage = () => {
                         {type === 'teacher' ?
                             <div className={styles.formGroup}>
                                 <label htmlFor="">Role</label>
-                                <input type="text" name="role" value={newInfo.role} onChange={handleInputChange} />
+                                <input type="text" name="title" value={newInfo.title} onChange={handleInputChange} />
                             </div>
                         :
                             <div className={styles.formGroup}></div>

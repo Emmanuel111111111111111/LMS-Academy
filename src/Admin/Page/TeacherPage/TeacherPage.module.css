@@ -124,6 +124,14 @@
     height: 20px;
 }
 
+.teacherTable select {
+    padding: 6px;
+    border-radius: 8px;
+    border: 1.5px solid #CBD0DC;
+    color: #5C5C5C;
+    font-size: 12px;
+    outline: none;
+}
 
 .actionsClosed {
     display: none;

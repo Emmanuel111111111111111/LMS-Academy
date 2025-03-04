@@ -23,7 +23,12 @@ export const AdminOverview = () => {
     const [ isStudLoading, setIsStudLoading ] = useState(false);
     const [ isLessLoading, setIsLessLoading ] = useState(false);
     const [ isActivityLoading, setIsActivityLoading ] = useState(false);
+
+    const [ actionsOpen, setActionsOpen ] = useState({});
+    
     const scroll = useRef(null);
+    const actionsRef = useRef(null);
+    
 
     useEffect(() => {
         fetchTeachersLength();
@@ -37,7 +42,7 @@ export const AdminOverview = () => {
         setIsTeachLoading(true);
         try {
             const result = await axios(BASE_URL + "/teachers-len", {
-                timeout: 25000
+                timeout: 20000
             });
             setTeachersLen(result.data);
             setIsTeachLoading(false);
@@ -49,10 +54,18 @@ export const AdminOverview = () => {
     const fetchStudentsLength = async () => {
         setIsStudLoading(true);
         try {
-            const result = await axios(BASE_URL + "/students-len", {
-                timeout: 25000
-            });
-            setStudentsLen(result.data);
+            if (sessionStorage.getItem('role') === 'Admin') {
+                const result = await axios(BASE_URL + "/students-len", {
+                    timeout: 20000
+                });
+                setStudentsLen(result.data);
+            }
+            else if (sessionStorage.getItem('role') === 'Teacher') {
+                const result = await axios(BASE_URL + `/students-len/${sessionStorage.getItem('id')}`, {
+                    timeout: 20000
+                });
+                setStudentsLen(result.data);
+            }
             setIsStudLoading(false);
         } catch (err) {
             console.log(err);
@@ -62,10 +75,18 @@ export const AdminOverview = () => {
     const fetchLessonsLength = async () => {
         setIsLessLoading(true);
         try {
-            const result = await axios(BASE_URL + "/lessons-len", {
-                timeout: 25000
-            });
-            setLessonsLen(result.data);
+            if (sessionStorage.getItem('role') === 'Admin') {
+                const result = await axios(BASE_URL + "/lessons-len", {
+                    timeout: 20000
+                });
+                setLessonsLen(result.data);
+            }
+            else if (sessionStorage.getItem('role') === 'Teacher') {
+                const result = await axios(BASE_URL + `/students-len/${sessionStorage.getItem('id')}`, {
+                    timeout: 20000
+                });
+                setLessonsLen(result.data);
+            }
             setIsLessLoading(false);
         } catch (err) {
             console.log(err);
@@ -76,10 +97,18 @@ export const AdminOverview = () => {
     const fetchThreeCoursesTeachersStudents = async () => {
         setIsCourseLoading(true);
         try {
-            const result = await axios(BASE_URL + "/courses-instructor-studentscount-lessons", {
-                timeout: 30000
-            });
-            setCourses(result.data.filter(e => e.is_active === true).slice(0,3));
+            if (sessionStorage.getItem('role') === 'Admin') {
+                const result = await axios(BASE_URL + "/courses-instructor-studentscount-lessons", {
+                    timeout: 20000
+                });
+                setCourses(result.data.filter(e => e.is_active === true).slice(0,3));
+            }
+            else if (sessionStorage.getItem('role') === 'Teacher') {
+                const result = await axios(BASE_URL + `/courses-instructor-studentscount-lessons/${sessionStorage.getItem('id')}`, {
+                    timeout: 20000
+                });
+                setCourses(result.data.filter(e => e.is_active === true).slice(0,3));
+            }
             setIsCourseLoading(false);
         } catch (err) {
             setIsCourseLoading(false);
@@ -90,16 +119,43 @@ export const AdminOverview = () => {
     const fetchActivityLog = async () => {
         setIsActivityLoading(true);
         try {
-            const result = await axios(BASE_URL + "/activity-log", {
-                timeout: 30000
-            });
-            setActivities(result.data.sort((a,b) => new Date(b.date) - new Date(a.date)));
+            if (sessionStorage.getItem('role') === 'Admin') {
+                const result = await axios(BASE_URL + "/activity-log", {
+                    timeout: 20000
+                });
+                setActivities(result.data);
+            }
+            else if (sessionStorage.getItem('role') === 'Teacher') {
+                const result = await axios(BASE_URL + `/tasks/${sessionStorage.getItem('id')}`, {
+                    timeout: 20000
+                });
+                setActivities(result.data);
+            }
             setIsActivityLoading(false);
         } catch (err) {
             setIsActivityLoading(false);
             console.log(err);
         }
     }
+
+    const toggleAction = (event, index) => {
+        event.stopPropagation();
+        setActionsOpen(prevState => ({
+            ...prevState,
+            [index]: !prevState[index]
+        }));
+    };
+    const handleClickOutside = (event) => {
+        if (actionsRef.current && !actionsRef.current.contains(event.target)) {
+            setActionsOpen(false);
+        }
+    };
+    useEffect(() => {
+        document.addEventListener('click', handleClickOutside, true);
+        return () => {
+            document.removeEventListener('click', handleClickOutside, true);
+        };
+    }, []);
 
 
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -162,7 +218,7 @@ export const AdminOverview = () => {
                         </div>
                     </div>
 
-                    <div className={styles.eachOverview}>
+                    {sessionStorage.getItem('role') === 'Admin' && <div className={styles.eachOverview}>
                         <div className={styles.overviewText}>
                             Total <br />Teachers
                             <div className={styles.whiteBox}><img src={getImageUrl('teachersIcon.png')} /></div>
@@ -170,7 +226,7 @@ export const AdminOverview = () => {
                         <div className={styles.loader}>
                             {isTeachLoading ? '...' : teachersLen}
                          </div>
-                    </div>
+                    </div>}
                 </div>
 
             </div>
@@ -225,7 +281,7 @@ export const AdminOverview = () => {
                     }
             </div>
 
-            <div className={styles.events}>
+            {sessionStorage.getItem('role') === 'Admin' && <div className={styles.events}>
                 <div className={styles.eventsHeader}>
                     Recent Activities
                     <a href="/admin-dashboard/activitylog"><button>View All<img src={getImageUrl('greyRightAngle.png')} /></button></a>
@@ -281,7 +337,85 @@ export const AdminOverview = () => {
                 }
                 
                 
-            </div>
+            </div>}
+
+
+            {sessionStorage.getItem('role') === 'Teacher' && <div className={styles.events}>
+                <div className={styles.eventsHeader}>
+                    Recent Tasks
+                    <a href="/admin-dashboard/tasks"><button>View All<img src={getImageUrl('greyRightAngle.png')} /></button></a>
+                </div>
+
+                {isActivityLoading ? <h5 className={styles.loading}>Loading...</h5> :
+                
+                    currentActivities.length === 0 ?
+                        
+                        <p className={styles.none}>No Tasks Found</p>
+                        :
+                        <>
+                        <table className={styles.eventsTable} ref={scroll}>
+                            <thead>
+                                <th className={styles.checkbox}><input type="checkbox" /></th>
+                                <th>Student Name</th>
+                                <th>Course</th>
+                                <th>Task Title</th>
+                                <th>Submission Date</th>
+                                <th>Status</th>
+                                <th className={styles.action}>Action</th>
+                            </thead>
+                            <tbody>
+                                {currentActivities.map((task, index) => (
+                                    <tr key={index}>
+                                        <td><input type="checkbox" /></td>
+                                        <td>{task.student_name}</td>
+                                        <td>{task.course_name}</td>
+                                        <td>{task.name}</td>
+                                        <td>{format(new Date(task.submitted_date), 'MMMM d, yyyy hh:mm:ss a')}</td>
+                                        <td>
+                                            <div className={task.graded === true ? styles.graded : styles.pending}>
+                                                <div></div>
+                                                {task.graded === true ? 'Graded' : 'Pending'}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button className={styles.actionsButton} onClick={(e) => toggleAction(e, index)}>
+                                                <img src={getImageUrl('threeDots.png')} alt="" />
+                                            </button>
+                                            {actionsOpen[index]&& <div className={styles.theActions} ref={actionsRef}>
+                                                <h5>ACTION</h5>
+                                                <button><img src={getImageUrl('edit.png')} />VIEW TASK</button>
+                                                <button><img src={getImageUrl('approve.png')} />GRADE TASK</button>
+                                                <button><img src={getImageUrl('approve.png')} />DOWNLOAD</button>
+                                            </div>}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+
+                        <div style={{ w:'100%', display:"flex", alignItems:'center' }}>
+                            <div className={styles.showRows}>
+                                Show
+                                <select onChange={(e) => handlePageNumber(e.target.value)} >
+                                    <option value={5}>5</option>
+                                    <option value={10}>10</option>
+                                    <option value={15}>15</option>
+                                </select>
+                                Rows
+                            </div>
+                            <Pagination className={styles.pag}
+                                currentData={activities}
+                                currentPage={currentPage}
+                                itemsPerPage={itemsPerPage}
+                                onPageChange={handlePageChange}
+                            />
+
+                        </div>
+                        </>
+                }
+                
+                
+            </div>}
         </div>
         </>
     )

@@ -6,6 +6,7 @@ import Pagination from "../../../Components/Pagination/Pagination";
 import { format } from 'date-fns';
 import axios from 'axios';
 import { BASE_URL, TEST_URL } from "../../../../config";
+import { customToast } from "../../../Components/Notifications";
 
 
 export const TaskPage = () => {
@@ -27,13 +28,23 @@ export const TaskPage = () => {
     const getTasks = async () => {
         setIsLoading(true);
         try {
-            const result = await axios(BASE_URL + `/tasks`);
-            setTasks(result.data);
+            if (sessionStorage.getItem('role') === 'Admin') {
+                const result = await axios(BASE_URL + "/tasks", {
+                    timeout: 20000
+                });
+                setTasks(result.data);
+            }
+            else if (sessionStorage.getItem('role') === 'Teacher') {
+                const result = await axios(BASE_URL + `/tasks/${sessionStorage.getItem('id')}`, {
+                    timeout: 20000
+                });
+                setTasks(result.data);
+            }
             setIsLoading(false);
         } catch (err) {
             console.log(err);
             setIsLoading(false);
-            // setErrorMessage(true);
+            customToast("We're having trouble fetching your tasks. Please try again later.")
         }
     }
 

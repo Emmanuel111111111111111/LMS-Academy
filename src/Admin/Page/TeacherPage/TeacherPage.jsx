@@ -43,7 +43,8 @@ export const TeachersPage = () => {
             const result = await axios(BASE_URL + "/teachers", {
                 timeout: 10000
             });
-            setTeachers(result.data.sort((a,b) => new Date(b.date_added) - new Date(a.date_added)));
+            setTeachers(result.data);
+            console.log(result.data);
             setIsLoading(false);
         } catch (err) {
             console.log(err);
@@ -93,6 +94,22 @@ export const TeachersPage = () => {
         fetchTeachers();
         
     }
+    const handleRoleChange = async (event, id) => {
+        const values = {
+            role: event.target.value,
+            instructor_id: id
+        };
+        try {
+            const response = await axios.put(BASE_URL + '/change-teacher-role', values);
+            console.log(response.status);
+            customToast('Teacher role changed');
+            fetchTeachers();
+        } catch (err) {
+            console.log(err);
+        }
+        
+    }
+    
 
 
     const handleDelete = (event, teach) => {
@@ -221,17 +238,24 @@ export const TeachersPage = () => {
                                 <th>Date Added</th>
                                 <th>Email</th>
                                 <th>Phone Number</th>
+                                {sessionStorage.getItem('role') === 'Admin' && <th>Role</th>}
                                 <th>Action</th>
                             </thead>
                             <tbody>
                                 {currentTeachers.map((teacher, index) => (
-                                    <tr>
+                                    <tr key={index}>
                                         <td><input type="checkbox" /></td>
                                         <td>{teacher.first_name} {teacher.last_name}</td>
                                         <td>{teacher.course}</td>
                                         <td>{format(new Date (teacher.date_added), 'MMMM dd, yyyy')}</td>
                                         <td>{teacher.email}</td>
                                         <td>{teacher.phone_number}</td>
+                                        {sessionStorage.getItem('role') === 'Admin' && <td>
+                                            <select name="role" id="role" value={teacher.role} onChange={(e)=>handleRoleChange(e, teacher.instructor_id)}>
+                                                <option value="Teacher">Teacher</option>
+                                                <option value="Admin">Admin</option>
+                                            </select>
+                                        </td>}
                                         <td>
                                             <div>
                                                 <button className={styles.actionsButton} onClick={() => toggleAction(index)}><img src={getImageUrl('threeDots.png')} /></button>

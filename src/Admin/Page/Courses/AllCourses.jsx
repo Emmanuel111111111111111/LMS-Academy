@@ -47,10 +47,18 @@ export const AllCourses = () => {
     const fetchCoursesTeachersStudents = async () => {
         setIsLoading(true);
         try {
-            const result = await axios(BASE_URL + "/courses-instructor-studentscount-lessons", {
-                timeout: 20000
-            });
-            setCourses(result.data);
+            if (sessionStorage.getItem('role') === 'Admin') {
+                const result = await axios(BASE_URL + "/courses-instructor-studentscount-lessons", {
+                    timeout: 20000
+                });
+                setCourses(result.data);
+            }
+            else if (sessionStorage.getItem('role') === 'Teacher') {
+                const result = await axios(BASE_URL + `/courses-instructor-studentscount-lessons/${sessionStorage.getItem('id')}`, {
+                    timeout: 20000
+                });
+                setCourses(result.data);
+            }
             setIsLoading(false);
         } catch (err) {
             console.log(err);
@@ -282,8 +290,7 @@ export const AllCourses = () => {
                     <h1>All Courses</h1>
                     <div className={styles.buttons}>
                         <button className={styles.buttonOne}>Sort By<img src={getImageUrl('sortIcon.png')} /></button>
-                        {/* <button className={styles.buttonTwo} onClick={toggleDropdown} ><img src={getImageUrl('whitePlus.png')} />Create Event</button> */}
-                        <button className={styles.buttonTwo} onClick={() => handleOpenCreate()} ><img src={getImageUrl('whitePlus.png')} />Create Course</button>
+                        {sessionStorage.getItem('role') === 'Admin' && <button className={styles.buttonTwo} onClick={() => handleOpenCreate()} ><img src={getImageUrl('whitePlus.png')} />Create Course</button>}
                     </div>
                     <Modal isOpen={openCreate}>
                         <>

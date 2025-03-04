@@ -37,18 +37,22 @@ export const AdminNavbar = () => {
                     <img src={getImageUrl("taskIcon.png")} />
                     Tasks
                 </a>
-                <a href="/admin-dashboard/teacher" className={currentPath.includes("/admin-dashboard/teacher") ? styles.active : ""}>
+                {sessionStorage.getItem('role') === 'Admin' && <a href="/admin-dashboard/teacher" className={currentPath.includes("/admin-dashboard/teacher") ? styles.active : ""}>
                     <img src={getImageUrl("teacherIcon.png")} />
                     Teacher
-                </a>
+                </a>}
                 <a href="/admin-dashboard/student" className={currentPath.includes("/admin-dashboard/student") ? styles.active : ""}>
                     <img src={getImageUrl("studentIcon.png")} />
                     Student
                 </a>
-                <a href="/admin-dashboard/activitylog" className={currentPath.includes("/admin-dashboard/activitylog") ? styles.active : ""}>
+                {sessionStorage.getItem('role') === 'Admin' && <a href="/admin-dashboard/roles" className={currentPath.includes("/admin-dashboard/roles") ? styles.active : ""}>
+                    <img src={getImageUrl("activityIcon.png")} />
+                    Roles
+                </a>}
+                {sessionStorage.getItem('role') === 'Admin' && <a href="/admin-dashboard/activitylog" className={currentPath.includes("/admin-dashboard/activitylog") ? styles.active : ""}>
                     <img src={getImageUrl("activityIcon.png")} />
                     Activity Log
-                </a>
+                </a>}
             </div>
 
             <div className={styles.logout}>

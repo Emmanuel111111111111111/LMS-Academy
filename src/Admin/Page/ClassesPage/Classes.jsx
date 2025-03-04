@@ -6,6 +6,7 @@ import Modal from "../../Components/Modals/Modal";
 import { format } from "date-fns";
 import { BASE_URL, TEST_URL } from "../../../../config";
 import { ConfirmModal } from "../../Components/Modals/ConfirmModal";
+import { customToast, customToastError } from "../../../Components/Notifications";
 
 export const Classes = () => {
 
@@ -33,18 +34,41 @@ export const Classes = () => {
     const fetchClasses = async () => {
         setIsLoading(true);
         try {
-            const result = await axios(BASE_URL + "/lessons-info", {
-                timeout: 20000
-            });
-            setClasses(result.data);
+            if (sessionStorage.getItem('role') === 'Admin') {
+                const result = await axios(BASE_URL + "/lessons-info", {
+                    timeout: 20000
+                });
+                setClasses(result.data);
+            }
+            else if (sessionStorage.getItem('role') === 'Teacher') {
+                const result = await axios(BASE_URL + `/lessons-info/${sessionStorage.getItem('id')}`, {
+                    timeout: 20000
+                });
+                setClasses(result.data);
+            }
             setIsLoading(false);
         } catch (err) {
             console.log(err);
             setIsLoading(false);
-            // setErrorMessage(true);
+            customToast('We are having trouble getting the classes. Please try again later.')
         }
     }
     const fetchAllCourses = async () => {
+        try {
+            if (sessionStorage.getItem('role') === 'Admin') {
+                const result = await axios(BASE_URL + `/courses`);
+                setAllCourses(result.data);
+            }
+            else if (sessionStorage.getItem('role') === 'Teacher') {
+                const result = await axios(BASE_URL + `/courses-teacher/${sessionStorage.getItem('id')}`);
+                setAllCourses(result.data);
+                console.log(result.data);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+    const fetchAllCoursess = async () => {
         try {
             const result = await axios(BASE_URL + `/courses`);
             setAllCourses(result.data)
@@ -82,7 +106,6 @@ export const Classes = () => {
     const handleInput = (event) => {
 
         setNewClassValues(prev => ({ ...prev, [event.target.name]: event.target.value }))
-
 
         if ((event.target.name === 'start_date')
         || (event.target.name === 'end_date')) {

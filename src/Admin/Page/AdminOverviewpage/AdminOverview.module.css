@@ -339,6 +339,100 @@
 }
 
 
+.eventsTable .graded {
+    padding: 4px 10px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #ECFDF3;
+    color: #037847;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 18px;
+    width: fit-content;
+}
+.eventsTable .graded div {
+    width: 6px;
+    height: 6px;
+    border-radius: 50px;
+    background: #14BA6D;
+}
+.eventsTable .pending {
+    padding: 4px 10px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #FDFAEC;
+    color: #D5C008;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 18px;
+    width: fit-content;
+}
+.eventsTable .pending div {
+    width: 6px;
+    height: 6px;
+    border-radius: 50px;
+    background: #D5C008;
+}
+
+.actionsButton {
+    border: 1px solid #A1B2D1;
+    outline: none;
+    padding: 4px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    background: transparent;
+    height: fit-content;
+}
+.actionsButton img {
+    width: 20px;
+    height: 20px;
+}
+
+.theActions {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    box-shadow: 0px 4px 12px 0px #9CA3AF33;
+    border-radius: 10px;
+    padding: 8px;
+    position: absolute;
+    z-index: 5;
+    width: 220px;
+    margin-top: 3px;
+    margin-left: -110px;
+}
+.theActions h5 {
+    font-size: 12px;
+    font-weight: 600;
+    color: #4B5563;
+}
+.theActions button {
+    border: none;
+    outline: none;
+    background: #FFFFFF;
+    color: #4B5563;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+}
+.theActions button:hover {
+    background: #4b55632a;
+}
+.theActions button img {
+    width: 24px;
+    height: 24px;
+}
+
+
 .showRows {
     flex: 70%;
     display: flex;

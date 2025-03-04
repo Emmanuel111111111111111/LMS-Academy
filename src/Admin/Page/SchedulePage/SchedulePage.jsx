@@ -35,10 +35,18 @@ export const SchedulePage = () => {
     const fetchEvents = async () => {
         setIsLoading(true);
         try {
-            const result = await axios(BASE_URL + "/events", {
-                timeout: 25000
-            });
-            setEvents(result.data);
+            if (sessionStorage.getItem('role') === 'Admin') {
+                const result = await axios(BASE_URL + "/events", {
+                    timeout: 20000
+                });
+                setEvents(result.data);
+            }
+            else if (sessionStorage.getItem('role') === 'Teacher') {
+                const result = await axios(BASE_URL + `/events-teacher/${sessionStorage.getItem('id')}`, {
+                    timeout: 20000
+                });
+                setEvents(result.data);
+            }
             setIsLoading(false);
         } catch (err) {
             console.log(err);
@@ -49,8 +57,15 @@ export const SchedulePage = () => {
 
     const fetchAllCourses = async () => {
         try {
-            const result = await axios(BASE_URL + `/courses`);
-            setAllCourses(result.data)
+            if (sessionStorage.getItem('role') === 'Admin') {
+                const result = await axios(BASE_URL + `/courses`);
+                setAllCourses(result.data);
+            }
+            else if (sessionStorage.getItem('role') === 'Teacher') {
+                const result = await axios(BASE_URL + `/courses-teacher/${sessionStorage.getItem('id')}`);
+                setAllCourses(result.data);
+                console.log(result.data);
+            }
         } catch (err) {
             console.log(err);
         }

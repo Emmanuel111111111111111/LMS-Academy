@@ -179,11 +179,10 @@ export const CohortDetails = () => {
                     <div className={styles.title}>
                         <h3>{cohort.cohort_name} Details</h3>
                         <div className={styles.buttons}>
-                            {/* <button className={styles.buttonOne}>Sort By<img src={getImageUrl('sortIcon.png')} alt="" /></button> */}
-                            <button className={styles.buttonTwo} onClick={()=>setIsOpenCourse(true)}>
+                            {sessionStorage.getItem('role') === 'Admin' && <button className={styles.buttonTwo} onClick={()=>setIsOpenCourse(true)}>
                                 <img src={getImageUrl('whitePlus.png')} alt="" />
                                 Add Course
-                            </button>
+                            </button>}
                         </div>
                     </div>
 
@@ -222,7 +221,7 @@ export const CohortDetails = () => {
                                         <th>Course Title</th>
                                         <th>No. Of Students</th>
                                         <th>No. of Classes</th>
-                                        <th>Action</th>
+                                        {sessionStorage.getItem('role') === 'Admin' && <th>Action</th>}
                                     </thead>
                                     <tbody>
                                         {currentCourses.map((cour, index) => (
@@ -231,7 +230,7 @@ export const CohortDetails = () => {
                                                 <td>{cour.course_name}</td>
                                                 <td>{cour.student_count}</td>
                                                 <td>{cour.lesson_count}</td>
-                                                <td>
+                                                {sessionStorage.getItem('role') === 'Admin' && <td>
                                                     <button className={styles.actionsButton} onClick={()=>toggleAction(index)}><img src={getImageUrl('threeDots.png')} /></button>
                                                     {actionsOpen[index] && <div className={styles.theActions} ref={actionsRef}>
                                                         <h5>ACTION</h5>
@@ -239,7 +238,7 @@ export const CohortDetails = () => {
                                                         <button onClick={()=>handleOpenConfirm(cour, 'suspend')}><img src={getImageUrl('approve.png')} />SUSPEND</button>
                                                         <button onClick={()=>handleOpenConfirm(cour, 'remove')}><img src={getImageUrl('delete.png')} />REMOVE</button>
                                                     </div>}
-                                                </td>
+                                                </td>}
                                             </tr>
                                         ))}
                                     </tbody>

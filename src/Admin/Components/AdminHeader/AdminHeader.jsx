@@ -76,6 +76,10 @@ export const AdminHeader = () => {
             { title: "Pending", link: "/admin-dashboard/student/pending" },
         ];
     }
+    else if (currentPath === "/admin-dashboard/roles") {
+        PageTitle = "Roles";
+        linkList= [];
+    }
     else if (currentPath === "/admin-dashboard/activitylog") {
         PageTitle = "Activity Log";
         linkList= [];

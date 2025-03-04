@@ -39,10 +39,18 @@ export const CompletedCourses = () => {
     const fetchCoursesTeachersStudents = async () => {
         setIsLoading(true);
         try {
-            const result = await axios(BASE_URL + "/courses-instructor-studentscount-lessons", {
-                timeout: 20000
-            });
-            setCourses(result.data.filter(e => e.completed === true));
+            if (sessionStorage.getItem('role') === 'Admin') {
+                const result = await axios(BASE_URL + "/courses-instructor-studentscount-lessons", {
+                    timeout: 20000
+                });
+                setCourses(result.data.filter(e => e.completed === true));
+            }
+            else if (sessionStorage.getItem('role') === 'Teacher') {
+                const result = await axios(BASE_URL + `/courses-instructor-studentscount-lessons/${sessionStorage.getItem('id')}`, {
+                    timeout: 20000
+                });
+                setCourses(result.data.filter(e => e.completed === true));
+            }
             setIsLoading(false);
         } catch (err) {
             console.log(err);

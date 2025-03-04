@@ -39,10 +39,18 @@ export const UpcomingCourses = () => {
     const fetchCoursesTeachersStudents = async () => {
         setIsLoading(true);
         try {
-            const result = await axios(BASE_URL + "/courses-instructor-studentscount-lessons", {
-                timeout: 20000
-            });
-            setCourses(result.data.filter(e => e.is_active === null));
+            if (sessionStorage.getItem('role') === 'Admin') {
+                const result = await axios(BASE_URL + "/courses-instructor-studentscount-lessons", {
+                    timeout: 20000
+                });
+                setCourses(result.data.filter(e => e.is_active === null));
+            }
+            else if (sessionStorage.getItem('role') === 'Teacher') {
+                const result = await axios(BASE_URL + `/courses-instructor-studentscount-lessons/${sessionStorage.getItem('id')}`, {
+                    timeout: 20000
+                });
+                setCourses(result.data.filter(e => e.is_active === null));
+            }
             setIsLoading(false);
         } catch (err) {
             console.log(err);

@@ -62,19 +62,13 @@ export const CohortPage = () => {
             axios.post(BASE_URL + '/new-cohort', newCohortValues)
             .then(res => {
                 setIsOpenCohort(false);
-                handleSuccess();
+                customToast('Cohort added')
                 fetchCohorts();
             })
         } catch (err) {
             console.log(err);
             setIsLoading2(true);
         }
-    }
-
-    const handleSuccess = () => {
-        // setOpenSuccess(true);
-        // setTimeout(() => setOpenSuccess(false), 3000);
-        // setTimeout(() => fetchCoursesTeachersStudents(), 3000);
     }
 
     function handleViewCohort(id) {
@@ -94,14 +88,14 @@ export const CohortPage = () => {
                     <h3>All Cohorts</h3>
                     <div className={styles.buttons}>
                         <button className={styles.buttonOne}>Sort By<img src={getImageUrl('sortIcon.png')} alt="" /></button>
-                        <button
+                        {sessionStorage.getItem('role') === 'Admin' && <button
                             className={styles.buttonTwo}
                             onClick={()=>setIsOpenCohort(true)}
                             // disabled={cohorts?.length >= 3 ? true : false}
                         >
                             <img src={getImageUrl('whitePlus.png')} alt="" />
                             Add New Cohort
-                        </button>
+                        </button>}
                     </div>
                 </div>
 
