@@ -201,7 +201,7 @@ export const TeachersPage = () => {
                             <div className={styles.formFlex}>
                                 <div>
                                 <h5>First Name</h5>
-                                <input type="text" placeholder="Instructor's First Name" name="first_name" onChange={handleInput}></input>
+                                <input type="text" placeholder="Instructor's First Name" name="first_name" onChange={handleInput} required></input>
                                 </div>
 
                                 <div>
@@ -219,7 +219,7 @@ export const TeachersPage = () => {
                             </select>
                             
                             <h5>Email Address</h5>
-                            <input type="email" placeholder="Enter Email Address" name="email" onChange={handleInput}></input>
+                            <input type="email" placeholder="Enter Email Address" name="email" onChange={handleInput} required ></input>
                             
                             <h5>Phone Number</h5>
                             <input type="tel" placeholder="Enter Phone Number" name="phone_number" onChange={handleInput}></input>
