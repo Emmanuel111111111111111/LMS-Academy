@@ -222,7 +222,7 @@ export const TeachersPage = () => {
                             <input type="email" placeholder="Enter Email Address" name="email" onChange={handleInput} required ></input>
                             
                             <h5>Phone Number</h5>
-                            <input type="tel" placeholder="Enter Phone Number" name="phone_number" onChange={handleInput}></input>
+                            <input type="tel" placeholder="Enter Phone Number" name="phone_number" onChange={handleInput} required ></input>
                             
                             <button className={styles.submit}>Submit</button>
                         </form>
