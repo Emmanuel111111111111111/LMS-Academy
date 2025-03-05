@@ -29,12 +29,11 @@ export const NewAdmin = () => {
           timeout: 30000,
         }
       );
-      if (result.data[0] === undefined || result.data[0] === null) {
-          window.location.href = "/CWG";
+      if (result.data[0] === undefined || result.data[0] === null || result.data[0].password != null) {
+        window.location.href = "/CWG";
       } else {
-          setTeacher(result.data[0]);
-          console.log(result)
-          setIsLoading(false);
+        setTeacher(result.data[0]);
+        setIsLoading(false);
       }
     } catch (err) {
       console.log(err);
