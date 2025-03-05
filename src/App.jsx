@@ -7,10 +7,12 @@ import { Toaster } from "react-hot-toast";
 import { CWGpage } from './Page/CWGpage/CWGpage'
 import { LoginPage } from './Page/Onboarding/LoginPage';
 import { AdminLogin } from './Admin/Page/AdminOnboarding/AdminLogin';
+import { ConfirmationPage } from './Page/Onboarding/ConfirmationPage';
 import { AdminReset } from './Admin/Page/AdminOnboarding/AdminReset';
 import { ResetPage } from './Page/Onboarding/ResetPage';
 import { AccountPage } from './Page/Onboarding/AccountPage';
 import { PasswordPage } from './Page/Onboarding/PasswordPage';
+import { SetTeacher } from './Admin/Page/AdminOnboarding/SetTeacher';
 import { NewAdmin } from './Admin/Page/AdminOnboarding/NewAdmin';
 
 import { DashboardLayout } from './Page/DashboardLayout'
@@ -73,7 +75,9 @@ function App() {
     { path: '/', element: <CWGpage /> },
     { path: '/CWG', element: <CWGpage /> },
     { path: '/Login', element: <LoginPage /> },
+    { path: '/confirm-email/:id', element: <ConfirmationPage /> },
     { path: '/Admin-login', element: <AdminLogin /> },
+    // { path: '/new-admin', element: <SetTeacher /> },
     { path: '/new-admin/:id', element: <NewAdmin /> },
     { path: '/Account', element: <AccountPage /> },
     { path: '/Password', element: <PasswordPage /> },
@@ -131,7 +135,6 @@ function App() {
         { path: 'teacher', element: <TeachersPage /> },
         { path: 'student', element: <StudentPage /> },
         { path: 'student/pending', element: <PendingStudentPage /> },
-        { path: 'roles', element: <BlankPage /> },
         { path: 'activitylog', element: <ActivityLogPage /> },
         { path: 'profile', element: <ProfilePage /> },
         { path: 'profile/:id', element: <ProfilePage /> },

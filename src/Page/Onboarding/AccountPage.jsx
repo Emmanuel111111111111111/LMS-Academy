@@ -4,6 +4,7 @@ import styles from "./Onboarding.module.css";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { BASE_URL, TEST_URL } from "../../../config";
+import { customToastError } from "../../Components/Notifications";
 
 
 export const AccountPage = () => {
@@ -33,7 +34,9 @@ export const AccountPage = () => {
         event.preventDefault();
         setIsLoading(true);
         try {
-            const result = await axios(BASE_URL + `/getStudentWithEmail/${values.email}`);
+            const result = await axios(BASE_URL + `/getStudentWithEmail/${values.email}`,
+                {  timeout: 20000 }
+            );
             if (result.data.length > 0) {
                 setErrorMessage("Email already exists");
                 setIsLoading(false);
@@ -45,6 +48,7 @@ export const AccountPage = () => {
         } catch (err) {
             err => console.log(err);
             setIsLoading(false);
+            customToastError('We ran into some issues. Please try creating you account again.')
         }
     }
 

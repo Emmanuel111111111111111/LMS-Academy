@@ -77,7 +77,7 @@ export const LoginPage = () => {
 
         <div className={styles.crumbs}>
           <h1>Log in to your account</h1>
-          <p>Lets help you get started on CWG Academy</p>
+          <p>Let's help you get started on CWG Academy</p>
         </div>
 
           <form className={styles.form} onSubmit={handleSubmit}>

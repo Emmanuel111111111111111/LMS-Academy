@@ -4,6 +4,7 @@ import styles from "./Onboarding.module.css";
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { BASE_URL, TEST_URL } from "../../../config";
+import { customToast } from "../../Components/Notifications";
 
 
 export const PasswordPage = () => {
@@ -25,18 +26,18 @@ export const PasswordPage = () => {
         console.log(values);
         setLoading(true);
         try {
-            const response = await axios.post(BASE_URL + '/signup',
+            const response = await axios.post(TEST_URL + '/signup',
                 values,
                 {timeout: 10000}
             );
-
             console.log(response.status);
+
             setLoading(false);
             sessionStorage.setItem("first_name", values.first_name);
             sessionStorage.setItem("email", values.email);
 
-            // window.location.href = "/dashboard";
-            window.location.href = "/login";
+            customToast('We sent a confirmation email to your account. Please confirm your email address.');
+            setTimeout(() => window.location.href = "/login", 5000);
 
         } catch (err) {
             err => console.log(err);

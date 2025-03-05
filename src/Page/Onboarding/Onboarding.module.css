@@ -130,11 +130,15 @@
     font-weight: 500;
 }
 
+.formgroup .password {
+    padding: 0;
+}
+
 
 .password input {
     border: none;
     outline: none;
-    padding: 0;
+    padding: 14px 18px;
     margin: 0;
     width: 100%;
     line-height: 26.8px;
@@ -228,6 +232,16 @@
     color: #232665;
     font-weight: 600;
     text-decoration: underline;
+}
+
+.success {
+    align-self: center;
+    width: 30%;
+}
+.crumb .loading {
+    font-size: 20px;
+    font-weight: 400;
+    color: #2C2F7E;
 }
 
 

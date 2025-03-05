@@ -165,7 +165,7 @@ export const Overview = () => {
                     <div className={styles.eachOverview}>
                         <div className={styles.overviewText}>
                             Total Completed Lessons
-                            <div className={styles.blueBox}><img src={getImageUrl('completed.png')} /></div>
+                            <div className={styles.blueBox}><img src={getImageUrl('completed.svg')} /></div>
                         </div>
                         <div className={styles.loader}>
                             {loadingCL ? '...' :

@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const multer = require('multer');
 // const { id } = require('date-fns/locale');
 require("dotenv").config();
+const nodemailer = require("nodemailer");
 
 const app = express();
 const port = process.env.PORT || 8081;
@@ -37,6 +38,28 @@ app.get("/students", async (req, res) => {
     } catch(err) {
         console.log(err);
         res.status(500).json({message: "Error fetching students"});
+    }
+});
+app.get("/students/:id", async (req, res) => {
+    const id = req.params.id;
+    const query = "SELECT * FROM student WHERE student_id = ($1)"
+    try {
+        const result = await client.query(query, [id]);
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching student with id"});
+    }
+});
+app.get("/confirm-student/:id", async (req, res) => {
+    const id = req.params.id;
+    const query = "UPDATE student SET confirmed = true WHERE student_id = $1"
+    try {
+        const result = await client.query(query, [id]);
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching student with id"});
     }
 });
 app.get("/students-len", async (req, res) => {
@@ -2386,7 +2409,7 @@ app.post("/signup", async (req, res) => {
 
     const hashedPassword = await hashPassword(req.body.password);
 
-    const query = "INSERT INTO student (first_name, last_name, email, phone_number, learning_mode, password, last_logged, date_added) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)";
+    const query = "INSERT INTO student (first_name, last_name, email, phone_number, learning_mode, password, last_logged, date_added) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING student_id";
     const values = [
         req.body.first_name,
         req.body.last_name,
@@ -2399,8 +2422,10 @@ app.post("/signup", async (req, res) => {
     ]
     try {
         const result = await client.query(query, values);
-        console.log(req.body);
-        console.log(result);
+
+        const confirmationLink = `https://localhost:5173/confirm-email/${result.rows[0].student_id}`;
+        await sendConfirmationEmail(req.body.email, confirmationLink);
+
         return res.status(201).json({ message: "User created successfully", result });
     } catch (err) {
         console.error(err);
@@ -2434,7 +2459,6 @@ const hashPassword = async (plainPassword) => {
     try {
         const saltRounds = 12;
         const hashedPassword = await bcrypt.hash(plainPassword, saltRounds);
-        console.log(hashedPassword)
         return hashedPassword;
     } catch (error) {
         console.error("Error hashing password:", error);
@@ -2450,6 +2474,40 @@ const verifyPassword = async (plainPassword, hashedPassword) => {
         throw error;
     }
 };
+
+
+
+
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS, // App password (not your actual password)
+    },
+});
+
+const sendConfirmationEmail = async (userEmail, confirmationLink) => {
+    try {
+        const mailOptions = {
+            from: `"CWG Academy" <your-email@gmail.com>`, 
+            to: userEmail,
+            subject: "Confirm Your Email",
+            html: `
+                <h2>Welcome to CWG Academy!</h2>
+                <p>Click the link below to confirm your email and finish your registration:</p>
+                <a href="${confirmationLink}" target="_blank">Complete Registration</a>
+                <p>If you didn't sign up, please ignore this email.</p>
+            `,
+        };
+
+        await transporter.sendMail(mailOptions);
+        console.log("Confirmation email sent to:", userEmail);
+    } catch (error) {
+        console.error("Error sending email:", error);
+    }
+};
+
+module.exports = { sendConfirmationEmail };
 
 
 app.listen(port, () => {

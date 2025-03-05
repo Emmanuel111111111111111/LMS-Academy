@@ -33,6 +33,13 @@ export const TeachersPage = () => {
 
 
     useEffect(() => {
+        
+        const authToken = sessionStorage.getItem("role");
+        const lastLogged = sessionStorage.getItem("last_logged");
+        if ((!sessionStorage) || (!authToken) || (authToken != "Admin") || (!lastLogged) || (new Date() - new Date(lastLogged) >= 604800000)) {
+            window.location.href = "/admin-dashboard";
+        }
+
         fetchTeachers();
         fetchCourses();
     }, []);
@@ -179,7 +186,7 @@ export const TeachersPage = () => {
 
                     <div className={styles.buttons}>
                         <button className={styles.buttonOne}>Sort By<img src={getImageUrl('sortIcon.png')} /></button>
-                        <button className={styles.buttonTwo} onClick={handleOpen}><img src={getImageUrl('whitePlus.png')} />Add New Teacher</button>
+                        {sessionStorage.getItem('role') === 'Admin' && <button className={styles.buttonTwo} onClick={handleOpen}><img src={getImageUrl('whitePlus.png')} />Add New Teacher</button>}
                     </div>
                 </div>
                 <Modal isOpen={open} >

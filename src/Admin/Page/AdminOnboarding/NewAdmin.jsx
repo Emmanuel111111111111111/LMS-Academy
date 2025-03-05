@@ -12,7 +12,6 @@ export const NewAdmin = () => {
   const { id } = useParams();
 
   const [ teacher, setTeacher ] = useState({});
-  const [ email, setEmail ] = useState('');
   const [ password, setPassword ] = useState('');
   const [ errorMessage, setErrorMesage ] = useState(false);
   const [ isLoading, setIsLoading ] = useState(false);
@@ -52,13 +51,6 @@ export const NewAdmin = () => {
       window.location.href = "/admin-login";
     } catch (err) {
       setIsLoading(false);
-      // if (err.response) {
-      //   console.error(err.response.data.message);
-      //   if (err.response.data.message === 'No records') setErrorMesage(true);
-      //   else if (err.response.data.message === 'Invalid credentials') setErrorMesage(true);
-      // } else {
-      //   console.error('Error', err.message);
-      // }
     }
   }
 
@@ -74,14 +66,9 @@ export const NewAdmin = () => {
 
       <div className={styles.crumb}>
 
-        {/* <a href="/CWG" className={styles.pan}>
-          <img src={getImageUrl("arrow.png")} alt="" />
-          Back to <p>Home</p>
-        </a> */}
-
         <div className={styles.crumbs}>
           <h1>Welcome to LMS</h1>
-          <p>Lets help you get started on CWG Academy</p>
+          <p>Let's help you get started on CWG Academy</p>
         </div>
 
           <form className={styles.form} onSubmit={handleSubmit}>

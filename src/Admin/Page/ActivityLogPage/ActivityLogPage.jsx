@@ -19,6 +19,13 @@ export const ActivityLogPage = () => {
     const actionsRef = useRef(null);
 
     useEffect(() => {
+
+        const authToken = sessionStorage.getItem("role");
+        const lastLogged = sessionStorage.getItem("last_logged");
+        if ((!sessionStorage) || (!authToken) || (authToken != "Admin") || (!lastLogged) || (new Date() - new Date(lastLogged) >= 604800000)) {
+        window.location.href = "/admin-dashboard";
+        }
+
         fetchActivityLog();
     }, []);
 

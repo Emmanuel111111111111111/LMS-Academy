@@ -45,10 +45,6 @@ export const AdminNavbar = () => {
                     <img src={getImageUrl("studentIcon.png")} />
                     Student
                 </a>
-                {sessionStorage.getItem('role') === 'Admin' && <a href="/admin-dashboard/roles" className={currentPath.includes("/admin-dashboard/roles") ? styles.active : ""}>
-                    <img src={getImageUrl("activityIcon.png")} />
-                    Roles
-                </a>}
                 {sessionStorage.getItem('role') === 'Admin' && <a href="/admin-dashboard/activitylog" className={currentPath.includes("/admin-dashboard/activitylog") ? styles.active : ""}>
                     <img src={getImageUrl("activityIcon.png")} />
                     Activity Log
