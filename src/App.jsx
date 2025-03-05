@@ -12,7 +12,6 @@ import { AdminReset } from './Admin/Page/AdminOnboarding/AdminReset';
 import { ResetPage } from './Page/Onboarding/ResetPage';
 import { AccountPage } from './Page/Onboarding/AccountPage';
 import { PasswordPage } from './Page/Onboarding/PasswordPage';
-import { SetTeacher } from './Admin/Page/AdminOnboarding/SetTeacher';
 import { NewAdmin } from './Admin/Page/AdminOnboarding/NewAdmin';
 
 import { DashboardLayout } from './Page/DashboardLayout'
@@ -77,7 +76,6 @@ function App() {
     { path: '/Login', element: <LoginPage /> },
     { path: '/confirm-email/:id', element: <ConfirmationPage /> },
     { path: '/Admin-login', element: <AdminLogin /> },
-    // { path: '/new-admin', element: <SetTeacher /> },
     { path: '/new-admin/:id', element: <NewAdmin /> },
     { path: '/Account', element: <AccountPage /> },
     { path: '/Password', element: <PasswordPage /> },

@@ -241,7 +241,7 @@ export const AdminOverview = () => {
                     
                     courses.length === 0 ?
                     
-                        <p className={styles.none}>No Courses Found</p>
+                        <p className={styles.none}>No Active Courses</p>
                         :
                         <div className={styles.flow}>
                     

@@ -3,7 +3,6 @@ const { Client } = require('pg');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
-// const { id } = require('date-fns/locale');
 require("dotenv").config();
 const nodemailer = require("nodemailer");
 
@@ -152,8 +151,11 @@ app.post('/new-teacher', async (req, res) => {
         ];
 
         const assignResult = await client.query(assignQuery, assignValues);
-        console.log(assignResult.rows[0])
+        console.log(assignResult.rows[0]);
 
+
+        const confirmationLink = `https://cwg-academy.vercel.app/new-admin/${instructor_id}`;
+        await sendConfirmationEmail(req.body.email, confirmationLink);
 
 
         const activity = req.body.course_name === ""
@@ -2423,7 +2425,7 @@ app.post("/signup", async (req, res) => {
     try {
         const result = await client.query(query, values);
 
-        const confirmationLink = `https://localhost:5173/confirm-email/${result.rows[0].student_id}`;
+        const confirmationLink = `https://cwg-academy.vercel.app/confirm-email/${result.rows[0].student_id}`;
         await sendConfirmationEmail(req.body.email, confirmationLink);
 
         return res.status(201).json({ message: "User created successfully", result });
@@ -2502,6 +2504,26 @@ const sendConfirmationEmail = async (userEmail, confirmationLink) => {
 
         await transporter.sendMail(mailOptions);
         console.log("Confirmation email sent to:", userEmail);
+    } catch (error) {
+        console.error("Error sending email:", error);
+    }
+};
+const sendNewTeacherEmail = async (userEmail, confirmationLink) => {
+    try {
+        const mailOptions = {
+            from: `"CWG Academy" <your-email@gmail.com>`, 
+            to: userEmail,
+            subject: "Welcome to CWG Academy",
+            html: `
+                <h2>You have been added as a teacher on the Academy!</h2>
+                <p>Click the link below to confirm your email and set a password:</p>
+                <a href="${confirmationLink}" target="_blank">Complete Registration</a>
+                <p>If you think there's been an error, please contact us.</p>
+            `,
+        };
+
+        await transporter.sendMail(mailOptions);
+        console.log("New teacher email sent to:", userEmail);
     } catch (error) {
         console.error("Error sending email:", error);
     }

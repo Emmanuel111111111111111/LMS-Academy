@@ -4,6 +4,7 @@ import styles from "./AdminOnboarding.module.css";
 import axios from 'axios';
 import { BASE_URL, TEST_URL } from "../../../../config";
 import { useParams } from "react-router-dom";
+import { customToastError } from "../../../Components/Notifications";
 
 
 
@@ -32,11 +33,13 @@ export const NewAdmin = () => {
           window.location.href = "/CWG";
       } else {
           setTeacher(result.data[0]);
+          console.log(result)
           setIsLoading(false);
       }
     } catch (err) {
       console.log(err);
       setIsLoading(false);
+      customToastError('We ran into some issues. Please try again in a few minutes.')
     }
   }
 
@@ -68,31 +71,30 @@ export const NewAdmin = () => {
 
         <div className={styles.crumbs}>
           <h1>Welcome to LMS</h1>
-          <p>Let's help you get started on CWG Academy</p>
+          <p>Let's help you finish registering on CWG Academy</p>
         </div>
 
-          <form className={styles.form} onSubmit={handleSubmit}>
 
-            {errorMessage && <p style={{ color: 'red' }}>Wrong username or password. Try again</p>}
+        <form className={styles.form} onSubmit={handleSubmit}>
 
-            <div className={styles.formgroup}>
-              <label for="name">Email Address</label>
-              <input value={isLoading ? '...' : teacher.email} name="email" disabled />
+          <div className={styles.formgroup}>
+            <label for="name">Email Address</label>
+            <input value={isLoading ? '...' : teacher.email} name="email" disabled />
+          </div>
+
+          <div className={styles.formgroup}>
+            <label for="Password">Set Your Password</label>
+            <div className={styles.password}>
+
+              <input type={showPassword ? 'text' : 'password'} placeholder="Enter your password" name="password" onChange={e => setPassword(e.target.value)} />
+              <button type="button" onClick={() => setShowPassword((showPassword) => !showPassword)}><img src={getImageUrl("visibility_off.png")} alt="y" /></button>
+
             </div>
+          </div>
 
-            <div className={styles.formgroup}>
-              <label for="Password">Set Your Password</label>
-              <div className={styles.password}>
+          <button className={styles.butt}>{isLoading ? '...' : 'Set Up'}</button>
 
-                <input type={showPassword ? 'text' : 'password'} placeholder="Enter your password" name="password" onChange={e => setPassword(e.target.value)} />
-                <button type="button" onClick={() => setShowPassword((showPassword) => !showPassword)}><img src={getImageUrl("visibility_off.png")} alt="y" /></button>
-
-              </div>
-            </div>
-
-            <button className={styles.butt}>{isLoading ? '...' : 'Set Up'}</button>
-
-          </form>
+        </form>
 
       </div>
 
