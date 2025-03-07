@@ -10,7 +10,7 @@ import axios from 'axios';
 import { format } from 'date-fns';
 import { BASE_URL, TEST_URL } from "../../../../config";
 import { ConfirmModal } from "../../Components/Modals/ConfirmModal";
-import { customToast } from "../../../Components/Notifications";
+import { customToast, customToastError } from "../../../Components/Notifications";
 
 
 export const TeachersPage = () => {
@@ -25,7 +25,6 @@ export const TeachersPage = () => {
     const [ selected, setSelected ] = useState({});
     const [ confirmType, setConfirmType ] = useState('');
     const [ isOpenConfirm, setIsOpenConfirm ] = useState(false);
-    const [ errorMessage, setErrorMessage ] = useState(false);
     const scroll = useRef(null);
     const actionsRef = useRef(null);
 
@@ -51,12 +50,11 @@ export const TeachersPage = () => {
                 timeout: 10000
             });
             setTeachers(result.data);
-            console.log(result.data);
             setIsLoading(false);
         } catch (err) {
             console.log(err);
             setIsLoading(false);
-            setErrorMessage(true);
+            customToast("We're having trouble getting the teachers. Please try again.")
         }
     }
 
@@ -94,11 +92,19 @@ export const TeachersPage = () => {
     }
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setOpen(false);
-        axios.post(BASE_URL + '/new-teacher', newTeacherValues)
-            .then(res => customToast('Teacher added successfully'))
-            .catch(err => console.log(err));
-        fetchTeachers();
+        const validEndingsRegex = /@thefifthlab.com$|@cwg-plc.com$/g;
+        if (newTeacherValues.email.match(validEndingsRegex)) {
+            console.log(newTeacherValues)
+                axios.post(BASE_URL + '/new-teacher', newTeacherValues)
+                .then(res => customToast('Teacher added successfully'))
+                .catch(err => console.log(err));
+            setOpen(false);
+            fetchTeachers();
+        }
+        else {
+            customToastError('Email must be a CWG or Fifthlab email.')
+        }
+        
         
     }
     const handleRoleChange = async (event, id) => {
@@ -125,7 +131,6 @@ export const TeachersPage = () => {
         setConfirmType('delete');
         setIsOpenConfirm(true);
     }
-
     const handleSuspend = (event, teach) => {
         event.stopPropagation();
         setSelected(teach);

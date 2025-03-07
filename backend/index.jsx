@@ -103,7 +103,7 @@ app.get("/getStudentWithEmail/:email", async (req, res) => {
 
 app.get("/teachers", async (req, res) => {
     try {
-        const result = await client.query("SELECT * FROM instructor ORDER BY first_name ASC");
+        const result = await client.query("SELECT * FROM instructor WHERE deleted = FALSE ORDER BY first_name ASC");
         res.send(result.rows);
     } catch(err) {
         console.log(err);
@@ -144,23 +144,25 @@ app.post('/new-teacher', async (req, res) => {
         console.log(result.rows[0]);
         const instructor_id = result.rows[0].instructor_id;
 
-        const assignQuery = "INSERT INTO instructorcourses (instructor_id, course_id) VALUES ($1, $2)";
-        const assignValues = [
-            instructor_id,
-            req.body.course_id
-        ];
-
-        const assignResult = await client.query(assignQuery, assignValues);
-        console.log(assignResult.rows[0]);
+        if (req.body.course_id != null) {
+            const assignQuery = "INSERT INTO instructorcourses (instructor_id, course_id) VALUES ($1, $2)";
+            const assignValues = [
+                instructor_id,
+                req.body.course_id
+            ];
+    
+            const assignResult = await client.query(assignQuery, assignValues);
+        }
+        
 
 
         const confirmationLink = `https://cwg-academy.vercel.app/new-admin/${instructor_id}`;
-        await sendConfirmationEmail(req.body.email, confirmationLink);
+        await sendNewTeacherEmail(req.body.email, confirmationLink);
 
 
-        const activity = req.body.course_name === ""
-            ? 'New instructor, ' + req.body.name + ' added.'
-            : 'New instructor, ' + req.body.name + ' added to ' + req.body.course_name + '.';
+        const activity = req.body.course_name === null
+            ? 'New instructor, ' + req.body.first_name + (req.body.last_name != '' && ' ' + req.body.last_name) + ' added.'
+            : 'New instructor, ' + req.body.first_name + (req.body.last_name != '' && ' ' + req.body.last_name) + ' added to ' + req.body.course_name + '.';
 
         const logQuery = "INSERT INTO activity_log (activity, actor, date) VALUES ($1, $2, $3) RETURNING *";
         const logValues = [
