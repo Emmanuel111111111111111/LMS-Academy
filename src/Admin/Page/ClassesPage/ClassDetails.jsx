@@ -21,6 +21,14 @@ export const ClassDetails = () => {
     const [ selectedFiles, setSelectedFiles ] = useState([]);
     const [ fileNames, setFileNames ] = useState([]);
     const [ actionsOpen, setActionsOpen ] = useState({});
+    const [ isOpenAssignment, setIsOpenAssignment ] = useState(false);
+    const [ isEditAssignment, setIsEditAssignment ] = useState(false);
+    const [ item, setItem ] = useState('');
+    const [ selected, setSelected ] = useState({});
+    const [ confirmType, setConfirmType ] = useState('');
+    const [ isOpenConfirm, setIsOpenConfirm ] = useState(false);
+    const [ fileName, setFileName ] = useState('');
+    const [ titleErrorMsg, setTitleErrorMsg ] = useState(false);
 
     const navigate = useNavigate();
     const actionsRef = useRef(null);
@@ -32,19 +40,29 @@ export const ClassDetails = () => {
     const loadLessonDetails = async () => {
         setIsLoading(true);
         try {
-            const result = await axios(BASE_URL + `/lesson/${id}`, {
-                timeout: 20000
-            });
-            setClass(result.data.filter(e => e.lesson_id === parseInt(id))[0]);
-            
-            if (result.data.filter(e => e.lesson_id === parseInt(id)).length != 1) {
-                navigate('/404');
+            if (sessionStorage.getItem("role") === 'Teacher') {
+                const result = await axios(TEST_URL + `/all-lesson-info/${sessionStorage.getItem("id")}`);
+                if (result.data.filter(e => e.lesson_id === parseInt(id)).length === 0) {
+                    window.location.href = "/admin-dashboard/classes"
+                }
+                else { setClass(result.data.filter(e => e.lesson_id === parseInt(id))[0]); }
             }
+            else if (sessionStorage.getItem("role") === 'Admin') {
+                const result = await axios(TEST_URL + `/all-lesson-info`);
+                if (result.data.filter(e => e.lesson_id === parseInt(id)).length === 0) {
+                    window.location.href = "/admin-dashboard/classes"
+                }
+                else {
+                    setClass(result.data.filter(e => e.lesson_id === parseInt(id))[0]);
+                    console.log(result.data.filter(e => e.lesson_id === parseInt(id))[0]);
+                }
+            }
+            
             setIsLoading(false);
         } catch (err) {
             console.log(err);
             setIsLoading(false);
-            customToast("We're having trouble getting this class details. Try again later.")
+            customToast("We're having trouble getting the class details. Try again later.")
         }
     }
 
@@ -123,6 +141,127 @@ export const ClassDetails = () => {
             customToast('Unable to delete file. Try again later')
         }
     }
+
+
+    const [ newAssignment, setNewAssignment ] = useState({
+        name: null,
+        lesson_id: null,
+        due_date: null,
+        total_score: null,
+        file: null
+    })
+    const newAssignmentInput = (event) => {
+        setNewAssignment(prev => ({ ...prev, 'lesson_id': theClass.lesson_id }));
+        setNewAssignment(prev => ({ ...prev, [event.target.name]: event.target.value }))
+
+        if (event.target.name === 'due_date') {
+            setNewAssignment(prev => ({ ...prev, [event.target.name]: event.target.value.replace('T', ' ') + '+01' }))
+        }
+
+        if (event.target.name === 'file') {
+            setNewAssignment(prev => ({ ...prev, [event.target.name]: event.target.files }))
+            setShowFileName(true);
+            setFileName(event.target.files[0].name);
+        }
+    }
+    const handleNewAssignment = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    
+        if (!newAssignment.name.trim()) {
+            setTitleErrorMsg(true);
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('lesson_id', newAssignment.lesson_id);
+        formData.append('name', newAssignment.name);
+        formData.append('due_date', newAssignment.due_date);
+        formData.append('total_score', newAssignment.total_score);
+        newAssignment.file !== null && formData.append('file', newAssignment.file[0]);
+
+        try {
+            const response = await fetch(BASE_URL + '/new-assignment', {
+                method: 'POST',
+                body: formData,
+            });
+            if (response.ok) {
+                customToast('Assignment added successfully');
+                loadCourseDetails();
+            } else {
+                console.error("Failed to add assignment");
+                customToast('Error adding assignment. Please try again');
+            }
+        } catch (error) {
+            console.error('Error adding assignment:', error);
+            customToast('Error adding assignment');
+        }
+        setIsOpenAssignment(false);
+        setShowFileName(false);
+        setFileName('');
+        setNewAssignment({
+            name: null,
+            course_id: null,
+            start_date: null,
+            end_date: null,
+            total_score: null,
+            file: null
+        });
+    };
+
+    const editAssignmentInput = (event) => {
+        setSelected(prev => ({ ...prev, [event.target.name]: event.target.value }))
+
+        if ((event.target.name === 'start_date')
+        || (event.target.name === 'end_date')) {
+            setSelected(prev => ({ ...prev, [event.target.name]: event.target.value.replace('T', ' ') + '+01' }))
+        }
+
+        if (event.target.name === 'file') {
+            console.log('here we are')
+            setSelected(prev => ({ ...prev, [event.target.name]: event.target.files }))
+            setShowFileName(true);
+            setFileName(event.target.files[0].name);
+            console.log(event.target.files);
+        }
+    }
+    const handleEditAssignment = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    
+        if (!selected.assignment_name.trim()) {
+            setTitleErrorMsg(true);
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('assignment_name', selected.assignment_name);
+        formData.append('due_date', selected.due_date);
+        formData.append('total_score', selected.total_score);
+        formData.append('assignment_id', selected.assignment_id);
+        selected.file !== null && formData.append('file', selected.file[0]);
+
+        try {
+            const response = await fetch(BASE_URL + '/update-assignment', {
+                method: 'POST',
+                body: formData,
+            });
+            if (response.ok) {
+                loadCourseDetails();
+                customToast('Assignmnet updated successfully');
+            } else {
+                console.error("Failed to add assignment");
+                customToast('Error adding assignment. Please try again');
+            }
+        } catch (error) {
+            console.error('Error while updating assignment:', error);
+            customToast('Error while updating assignment');
+        }
+        setIsEditAssignment(false);
+        setShowFileName(false);
+        setFileName('');
+        setSelected({});
+    };
 
 
     const toggleAction = (event, index) => {
@@ -211,6 +350,7 @@ export const ClassDetails = () => {
                             <div className={styles.box}>
                                 <div className={styles.flexHeader}>
                                     <h5>Content</h5>
+                                    <button type="button" onClick={()=>setIsOpenAssignment(true)}>+ Add new assignment</button>
                                 </div>
                                 {theClass.lesson_files && theClass.lesson_files.map((file, i) => (
                                     <div className={styles.section} key={i}>
@@ -285,6 +425,67 @@ export const ClassDetails = () => {
                 </form>
                 </>
             }
+
+            <Modal isOpen={isOpenAssignment}>
+                <div className={styles.addContent}>
+                    <div className={styles.head}>
+                        <h3>Add Assignment</h3>
+                        <button onClick={()=>setIsOpenAssignment(false)} className={styles.close}><img src={getImageUrl('close.png')} /></button>
+                    </div>
+                    <form className={styles.contentBody}>
+            
+                        {titleErrorMsg && <p style={{color: 'red', fontSize: '12px'}}>Title can't be empty</p>}
+                        <label htmlFor="title">Title</label>
+                        <input type="text" name="name" id="title" placeholder="Enter title" onChange={newAssignmentInput} />
+
+                        <label>Total Marks</label>
+                        <input type="number" name="total_scores" placeholder="Enter total possible marks" onChange={newAssignmentInput} />
+
+                        <label>Due Date</label>
+                        <input type="datetime-local" name="due_date" onChange={newAssignmentInput} />
+
+                        <label className={styles.uploadButton}>
+                            {fileName !== '' ? 'Change file' : 'Select file'}
+                            <input type="file" name="file" id="file" accept="image/png, image/jpeg" onChange={newAssignmentInput} />
+                        </label>
+
+                        {fileName !== '' && fileName}
+
+                        <button type="submit" onClick={handleNewAssignment}>Submit</button>
+                    </form>
+                </div>
+            </Modal>
+
+            <Modal isOpen={isEditAssignment}>
+                <div className={styles.addContent}>
+                    <div className={styles.head}>
+                        <h3>Edit Assignment</h3>
+                        <button onClick={()=>setIsEditAssignment(false)} className={styles.close}><img src={getImageUrl('close.png')} /></button>
+                    </div>
+                    <form className={styles.contentBody}>
+            
+                        {titleErrorMsg && <p style={{color: 'red', fontSize: '12px'}}>Title can't be empty</p>}
+                        <label htmlFor="title">Title</label>
+                        <input type="text" name="assignment_name" id="title" placeholder="Enter title" value={selected?.assignment_name} onChange={editAssignmentInput} />
+
+                        <label>Total Marks</label>
+                        <input type="text" name="total_scores" placeholder="Enter total possible marks" value={selected?.total_score} onChange={editAssignmentInput} />
+                        
+                        <label>Due Date</label>
+                        <input type="datetime-local" name="due_date" value={selected.end_date ? new Date(selected.end_date).toISOString().slice(0, 16) : ''} onChange={editAssignmentInput} />
+
+                        
+                        <label className={styles.uploadButton}>
+                            {selected.file === null ? 'Select file' : 'Change file'}
+                            <input type="file" name="file" id="file" accept="image/png, image/jpeg" onChange={editAssignmentInput} />
+                        </label>
+                        {showFileName && fileName}
+
+
+                        <button type="submit" onClick={handleEditAssignment}>Submit</button>
+                    </form>
+                </div>
+            </Modal>
         </div>
     )
 }

@@ -115,6 +115,7 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
 
     const handleDelete = async () => {
         setIsLoading(true);
+
         const courseValues = {
             course_id:  selected.course_id,
             course_name:  selected.name,
@@ -135,6 +136,20 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
             user: sessionStorage.getItem('full_name'),
         }
 
+        const examValues = {
+            exam_id: selected.exam_id,
+            exam_name:  selected.exam_name,
+            date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+            user: sessionStorage.getItem('full_name'),
+        }
+
+        const assignmentValues = {
+            assignment_id: selected.assignment_id,
+            assignment_name:  selected.assignment_name,
+            date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+            user: sessionStorage.getItem('full_name'),
+        }
+
         try {
             if (item.toLowerCase() === "course") {
                 const result = await axios.put(BASE_URL + '/delete-course', courseValues)
@@ -150,6 +165,18 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
 
             if (item.toLowerCase() === "class") {
                 const result = await axios.put(BASE_URL + '/delete-lesson', lessonValues)
+                console.log(result.status);
+                handleSuccess();
+            }
+
+            if (item.toLowerCase() === "exam") {
+                const result = await axios.put(TEST_URL + '/delete-exam', examValues)
+                console.log(result.status);
+                handleSuccess();
+            }
+
+            if (item.toLowerCase() === "assignment") {
+                const result = await axios.put(TEST_URL + '/delete-assignment', assignmentValues)
                 console.log(result.status);
                 handleSuccess();
             }
@@ -188,6 +215,8 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
                     <p>Are you sure you want to <b>{confirmType}</b> the {item}: {item.toLowerCase() === "course" ? (selected.course_name ? selected.course_name : selected.name)
                                                                                 : item.toLowerCase() === 'teacher' ? selected.first_name + (selected.last_name != null ? ' ' + selected.last_name : '')
                                                                                 : item.toLowerCase() === 'class' ? (selected.lesson_title ? selected.lesson_title : selected.title)
+                                                                                : item.toLowerCase() === 'exam' ? (selected.exam_name ? selected.exam_name : selected.name)
+                                                                                : item.toLowerCase() === 'assignment' ? (selected.assignment_name ? selected.assignment_name : selected.name)
                                                                                 : ''}
                     </p>
                     
@@ -210,6 +239,8 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
                         item.toLowerCase() === "course" ? (selected.course_name ? selected.course_name : selected.name)
                         : item.toLowerCase() === 'teacher' ? selected.first_name + (selected.last_name != null ? ' ' + selected.last_name : '')
                         : item.toLowerCase() === 'class' ? (selected.lesson_title ? selected.lesson_title : selected.title)
+                        : item.toLowerCase() === 'exam' ? (selected.exam_name ? selected.exam_name : selected.name)
+                        : item.toLowerCase() === 'assignment' ? (selected.assignment_name ? selected.assignment_name : selected.name)
                         : ''
                     }</b>
                     

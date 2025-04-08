@@ -117,7 +117,7 @@ export const AdminHeader = () => {
                 </div>
                 <div className={styles.buttons}>
                     <button><img src={getImageUrl('bell.png')} /></button>
-                    <button><img src={getImageUrl('settings.png')} /></button>
+                    {/* <button><img src={getImageUrl('settings.png')} /></button> */}
                     <button onClick={toProfilePage} className={styles.profile}><img src={getImageUrl('profile.svg')} /></button>
                 </div>
             </div>

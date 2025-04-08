@@ -548,7 +548,21 @@ app.get('/courses-instructor-studentscount-lessons', async (req, res) => {
                 )
                 FROM lesson l
                 WHERE l.course_id = c.course_id
-            ) AS lessons
+            ) AS lessons,
+            (
+                SELECT COALESCE(
+                    JSON_AGG(JSON_BUILD_OBJECT(
+                        'exam_id', e.exam_id,
+                        'exam_name', e.exam_name,
+                        'start_date', e.start_date,
+                        'end_date', e.end_date,
+                        'total_score', e.total_score
+                    )),
+                    '[]'
+                )
+                FROM exam e
+                WHERE e.course_id = c.course_id
+            ) AS exams
         FROM 
             course c
         LEFT JOIN 
@@ -568,6 +582,7 @@ app.get('/courses-instructor-studentscount-lessons', async (req, res) => {
         ORDER BY 
             c.date_added DESC,
             c.name ASC;
+
     `;
 
     try {
@@ -670,7 +685,22 @@ app.get('/courses-instructor-studentscount-lessons/:instructor_id', async (req, 
                 )
                 FROM lesson l
                 WHERE l.course_id = c.course_id
-            ) AS lessons
+            ) AS lessons,
+            (
+                SELECT COALESCE(
+                    JSON_AGG(JSON_BUILD_OBJECT(
+                        'exam_id', e.exam_id,
+                        'exam_name', e.exam_name,
+                        'start_date', e.start_date,
+                        'end_date', e.end_date,
+                        'total_score', e.total_score,
+                        'file', e.file
+                    )),
+                    '[]'
+                )
+                FROM exam e
+                WHERE e.course_id = c.course_id
+            ) AS exams
         FROM 
             course c
         LEFT JOIN 
@@ -1093,6 +1123,113 @@ app.get("/lessons-info/:instructor_id", async (req, res) => {
         res.status(500).json({ error: `Error grabbing cohorts` });
     }
 });
+app.get("/all-lesson-info", async (req, res) => {
+    const query = `
+        SELECT 
+            lesson.lesson_id,
+            lesson.title,
+            lesson.description,
+            lesson.start_date,
+            lesson.end_date,
+            lesson.number,
+            lesson.course_id,
+            COALESCE(course.name, 'NA') AS course_name,
+            COALESCE(instructor.first_name || '' || ' ' || instructor.last_name, 'NA') AS instructor_name,
+            COALESCE(student_counts.student_count, 0) AS student_count
+        FROM 
+            lesson
+        LEFT JOIN 
+            course ON lesson.course_id = course.course_id
+		LEFT JOIN 
+            instructorcourses ON course.course_id = instructorcourses.course_id
+        LEFT JOIN 
+            instructor ON instructorcourses.instructor_id = instructor.instructor_id
+		LEFT JOIN (
+            SELECT 
+                course_id,
+                COUNT(student_id) AS student_count
+            FROM 
+                enrollment
+            GROUP BY 
+                course_id
+        ) student_counts ON course.course_id = student_counts.course_id
+        WHERE course.deleted = FALSE
+        AND course.suspended = FALSE
+        GROUP BY 
+            lesson.lesson_id,
+			lesson.title,
+			lesson.description,
+			lesson.number,
+			course.name,
+			instructor.first_name,
+			instructor.last_name,
+			student_counts.student_count
+        ORDER BY 
+            lesson.lesson_id;
+        `
+
+    try {
+        const result = await client.query(query);
+        res.send(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: `Error grabbing cohorts` });
+    }
+});
+app.get("/all-lesson-info/:instructor_id", async (req, res) => {
+    const { instructor_id } = req.params;
+    const query = `
+        SELECT 
+            lesson.lesson_id,
+            lesson.title,
+            lesson.description,
+            lesson.start_date,
+            lesson.end_date,
+            lesson.number,
+            lesson.course_id,
+            COALESCE(course.name, 'NA') AS course_name,
+            COALESCE(instructor.first_name || '' || ' ' || instructor.last_name, 'NA') AS instructor_name,
+            COALESCE(student_counts.student_count, 0) AS student_count
+        FROM 
+            lesson
+        LEFT JOIN 
+            course ON lesson.course_id = course.course_id
+		LEFT JOIN 
+            instructorcourses ON course.course_id = instructorcourses.course_id
+        LEFT JOIN 
+            instructor ON instructorcourses.instructor_id = instructor.instructor_id
+		LEFT JOIN (
+            SELECT 
+                course_id,
+                COUNT(student_id) AS student_count
+            FROM 
+                enrollment
+            GROUP BY 
+                course_id
+        ) student_counts ON course.course_id = student_counts.course_id
+        WHERE course.deleted = FALSE
+        AND course.suspended = FALSE
+        AND instructor.instructor_id = $1
+        GROUP BY 
+            lesson.lesson_id,
+			lesson.title,
+			lesson.description,
+			lesson.number,
+			course.name,
+			instructor.first_name,
+			instructor.last_name,
+			student_counts.student_count
+        ORDER BY 
+            lesson.lesson_id;
+        `
+    try {
+        const result = await client.query(query, [instructor_id]);
+        res.send(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: `Error grabbing cohorts` });
+    }
+});
 app.post(`/lesson-info`, upload.array('files'), async (req, res) => {
     try {
         console.log(req.files);
@@ -1330,18 +1467,19 @@ app.get('/assignments/:studentID', async (req, res) => {
         res.status(500).json({ error: 'Error grabbing lesson_student info' });
     }
 });
-app.post('/new-assignment', async (req, res) => {
+app.post('/new-assignment', upload.single('file'), async (req, res) => {
     
-    const { name, lesson_id, due_date } = req.body;
+    const { name, lesson_id, due_date, total_score } = req.body;
+    const file = req.file;
 
-    if (!name || !lesson_id) {
+    if (!name || !course_id) {
         console.log('No id or title')
         return res.status(400).json({ message: 'Title and course ID are required' });
     }
 
     try {
-        const insertQuery = `INSERT INTO assignment (lesson_id, assignment_name, due_date) VALUES ($1, $2, $3) RETURNING *;`;
-        const values = [lesson_id, name, due_date];
+        const insertQuery = `INSERT INTO assignment (lesson_id, assignment_name, due_date, total_score, file) VALUES ($1, $2, $3, $4, $5) RETURNING *;`;
+        const values = [lesson_id, name, due_date === 'null' ? null : due_date, total_score === 'null' ? null : total_score, file === undefined ? null : file.buffer];
         const result = await client.query(insertQuery, values);
 
         res.status(201).json(result.rows[0]);
@@ -1351,6 +1489,43 @@ app.post('/new-assignment', async (req, res) => {
         res.status(500).json({ message: 'Error saving assignment' });
     }
 });
+app.post('/update-assignment', upload.single('file'), async (req, res) => {
+    
+    const { assignment_name, due_date, total_score, assignment_id } = req.body;
+    const file = req.file;
+
+    if (!assignment_name) {
+        console.log('No title')
+        return res.status(400).json({ message: 'Title is required' });
+    }
+
+    try {
+        const editQuery = `UPDATE assignment SET assignment_name = $1, due_date = $2, total_score = $3, file = $4 WHERE assignment_id = $5 RETURNING *;`;
+        const values = [assignment_name, due_date === 'null' ? null : due_date, total_score === 'null' ? null : total_score, file === undefined ? null : file.buffer, exam_id];
+        const result = await client.query(editQuery, values);
+
+        res.status(201).json(result.rows[0]);
+        
+    } catch (err) {
+        console.error('Error updating exam:', err);
+        res.status(500).json({ message: 'Error updating exam' });
+    }
+});
+app.put('/delete-assignment', async (req, res) => {
+
+    const values = [
+        req.body.assignment_id
+    ]
+    const query = 'DELETE FROM assignment WHERE assignment_id = $1';
+
+    try {
+        const result = await client.query(query, values);
+        res.json({message: "Deleted assignment successfully", assignment: result.rows[0]});
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({message: "Error in deleting assignment"});
+    }
+})
 
 
 app.get("/exams", async (req, res) => {
@@ -1378,10 +1553,10 @@ app.get('/exams/:studentID', async (req, res) => {
         res.status(500).json({ error: 'Error grabbing lesson_student info' });
     }
 });
-app.post('/new-exam', async (req, res) => {
+app.post('/new-exam', upload.single('file'), async (req, res) => {
     
-    console.log(req.body);
-    const { name, course_id, due_date } = req.body;
+    const { name, course_id, start_date, end_date, total_score } = req.body;
+    const file = req.file;
 
     if (!name || !course_id) {
         console.log('No id or title')
@@ -1389,17 +1564,54 @@ app.post('/new-exam', async (req, res) => {
     }
 
     try {
-        const insertQuery = `INSERT INTO exam (course_id, exam_name, due_date) VALUES ($1, $2, $3) RETURNING *;`;
-        const values = [course_id, name, due_date];
+        const insertQuery = `INSERT INTO exam (course_id, exam_name, start_date, end_date, total_score, file) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;`;
+        const values = [course_id, name, start_date === 'null' ? null : start_date, end_date === 'null' ? null : end_date, total_score === 'null' ? null : total_score, file === undefined ? null : file.buffer];
         const result = await client.query(insertQuery, values);
 
         res.status(201).json(result.rows[0]);
         
     } catch (err) {
-        console.error('Error saving assignment:', err);
-        res.status(500).json({ message: 'Error saving assignment' });
+        console.error('Error saving exam:', err);
+        res.status(500).json({ message: 'Error saving exam' });
     }
 });
+app.post('/update-exam', upload.single('file'), async (req, res) => {
+    
+    const { exam_name, start_date, end_date, total_score, exam_id } = req.body;
+    const file = req.file;
+
+    if (!exam_name) {
+        console.log('No title')
+        return res.status(400).json({ message: 'Title is required' });
+    }
+
+    try {
+        const editQuery = `UPDATE exam SET exam_name = $1, start_date = $2, end_date = $3, total_score = $4, file = $5 WHERE exam_id = $6 RETURNING *;`;
+        const values = [exam_name, start_date === 'null' ? null : start_date, end_date === 'null' ? null : end_date, total_score === 'null' ? null : total_score, file === undefined ? null : file.buffer, exam_id];
+        const result = await client.query(editQuery, values);
+
+        res.status(201).json(result.rows[0]);
+        
+    } catch (err) {
+        console.error('Error updating exam:', err);
+        res.status(500).json({ message: 'Error updating exam' });
+    }
+});
+app.put('/delete-exam', async (req, res) => {
+
+    const values = [
+        req.body.exam_id
+    ]
+    const query = 'DELETE FROM exam WHERE exam_id = $1';
+
+    try {
+        const result = await client.query(query, values);
+        res.json({message: "Deleted exam successfully", lesson: result.rows[0]});
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({message: "Error in deleting exam"});
+    }
+})
 
 
 app.get("/tasks", async (req, res) => {
@@ -1574,8 +1786,8 @@ app.get("/events", async (req, res) => {
                 e.exam_name AS title,
                 c.course_id,
                 c.name AS course_name,
-                e.due_date AS start,
-                NULL AS end
+                e.start_date AS start,
+                e.end_date AS end
             FROM 
                 exam e
             JOIN 
@@ -1676,8 +1888,8 @@ app.get("/events/:studentId", async (req, res) => {
                         e.exam_name AS title,
                         c.course_id,
                         c.name AS course_name,
-                        e.due_date AS start,
-                        NULL AS end,
+                        e.start_date AS start,
+                        e.end_date AS end
                         CASE 
                             WHEN EXISTS (
                                 SELECT 1 
@@ -1767,8 +1979,8 @@ app.get("/events-teacher/:instructor_id", async (req, res) => {
                 e.exam_name AS title,
                 c.course_id,
                 c.name AS course_name,
-                e.due_date AS start,
-                NULL AS end
+                e.start_date AS start,
+                e.end_date AS end
             FROM 
                 exam e
             JOIN 
@@ -2489,7 +2701,6 @@ const transporter = nodemailer.createTransport({
         pass: process.env.EMAIL_PASS, // App password (not your actual password)
     },
 });
-
 const sendConfirmationEmail = async (userEmail, confirmationLink) => {
     try {
         const mailOptions = {
@@ -2531,11 +2742,9 @@ const sendNewTeacherEmail = async (userEmail, confirmationLink) => {
     }
 };
 
-module.exports = { sendConfirmationEmail };
+module.exports = { sendConfirmationEmail, sendNewTeacherEmail };
 
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
-
-    // console.log("Connect to backend.")
 })
