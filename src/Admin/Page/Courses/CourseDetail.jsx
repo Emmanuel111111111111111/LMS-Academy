@@ -23,7 +23,6 @@ export const CourseDetail = () => {
     const [ isOpenClass, setIsOpenClass ] = useState(false);
     const [ isOpenExam, setIsOpenExam ] = useState(false);
     const [ isEditExam, setIsEditExam ] = useState(false);
-    const [ newLessonTitle, setNewLessonTitle ] = useState('');
     const [ titleErrorMsg, setTitleErrorMsg ] = useState(false);
     const [ item, setItem ] = useState('');
     

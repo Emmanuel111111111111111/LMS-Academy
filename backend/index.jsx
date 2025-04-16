@@ -1573,16 +1573,17 @@ app.post('/new-assignment', upload.single('file'), async (req, res) => {
 
         console.log(result);
 
-        const postQuery = `INSERT INTO assignment_files (assignment_id, file_name, file_type, file_size, file_data) VALUES ($1, $2, $3, $4, $5) RETURNING *;`;
-        const postValues = [
-            result.assignment_id,
-            file.originalname,
-            file.mimetype,
-            file.size,
-            file.buffer
-        ];
-        console.log(file);
-        await client.query(postQuery, postValues);
+        if (file !== undefined) {
+            const postQuery = `INSERT INTO assignment_files (assignment_id, file_name, file_type, file_size, file_data) VALUES ($1, $2, $3, $4, $5) RETURNING *;`;
+            const postValues = [
+                result.rows[0].assignment_id,
+                file.originalname,
+                file.mimetype,
+                file.size,
+                file.buffer
+            ];
+            await client.query(postQuery, postValues);
+        }
 
         res.status(201).json(result.rows[0]);
         
@@ -1602,11 +1603,46 @@ app.post('/update-assignment', upload.single('file'), async (req, res) => {
     }
 
     try {
-        const editQuery = `UPDATE assignment SET assignment_name = $1, due_date = $2, total_score = $3, file = $4 WHERE assignment_id = $5 RETURNING *;`;
-        const values = [assignment_name, due_date === 'null' ? null : due_date, total_score === 'null' ? null : total_score, file === undefined ? null : file.buffer, assignment_id];
+        const editQuery = `UPDATE assignment SET assignment_name = $1, due_date = $2, total_score = $3, file_name = $4 WHERE assignment_id = $5 RETURNING *;`;
+        const values = [assignment_name, due_date === 'null' ? null : due_date, total_score === 'null' ? null : total_score, file === undefined ? null : file.originalname, assignment_id];
         const result = await client.query(editQuery, values);
 
         res.status(201).json(result.rows[0]);
+
+        const checkQuery = 'SELECT * FROM assignment_files WHERE assignment_id = $1';
+        const checkResult = await client.query(checkQuery, [result.rows[0].assignment_id]);
+
+        if (checkResult.rows.length > 0) {
+            const updateQuery = `
+                UPDATE assignment_files SET
+                file_name = $2,
+                file_type = $3,
+                file_size = $4,
+                file_data = $5
+                WHERE assignment_id = $1
+                RETURNING *;
+            `;
+            await client.query(updateQuery, [
+                result.rows[0].assignment_id,
+                file.originalname,
+                file.mimetype,
+                file.size,
+                file.buffer
+            ]);
+        } else {
+            const insertQuery = `
+                INSERT INTO assignment_files (assignment_id, file_name, file_type, file_size, file_data)
+                VALUES ($1, $2, $3, $4, $5)
+                RETURNING *;
+            `;
+            await client.query(insertQuery, [
+                result.rows[0].assignment_id,
+                file.originalname,
+                file.mimetype,
+                file.size,
+                file.buffer
+            ]);
+        }
         
     } catch (err) {
         console.error('Error updating exam:', err);
@@ -1670,18 +1706,17 @@ app.post('/new-exam', upload.single('file'), async (req, res) => {
         const values = [course_id, name, start_date === 'null' ? null : start_date, end_date === 'null' ? null : end_date, total_score === 'null' ? null : total_score, file === undefined ? null : file.originalname];
         const result = await client.query(insertQuery, values);
 
-        console.log(result);
-
-        const postQuery = `INSERT INTO exam_files (exam_id, file_name, file_type, file_size, file_data) VALUES ($1, $2, $3, $4, $5) RETURNING *;`;
-        const postValues = [
-            result.exam_id,
-            file.originalname,
-            file.mimetype,
-            file.size,
-            file.buffer
-        ];
-        console.log(file);
-        await client.query(postQuery, postValues);
+        if (file !== undefined) {
+            const postQuery = `INSERT INTO exam_files (exam_id, file_name, file_type, file_size, file_data) VALUES ($1, $2, $3, $4, $5) RETURNING *;`;
+            const postValues = [
+                result.rows[0].exam_id,
+                file.originalname,
+                file.mimetype,
+                file.size,
+                file.buffer
+            ];
+            await client.query(postQuery, postValues);
+        }
 
         res.status(201).json(result.rows[0]);
         
@@ -1701,11 +1736,47 @@ app.post('/update-exam', upload.single('file'), async (req, res) => {
     }
 
     try {
-        const editQuery = `UPDATE exam SET exam_name = $1, start_date = $2, end_date = $3, total_score = $4, file = $5 WHERE exam_id = $6 RETURNING *;`;
-        const values = [exam_name, start_date === 'null' ? null : start_date, end_date === 'null' ? null : end_date, total_score === 'null' ? null : total_score, file === undefined ? null : file.buffer, exam_id];
+        const editQuery = `UPDATE exam SET exam_name = $1, start_date = $2, end_date = $3, total_score = $4, file_name = $5 WHERE exam_id = $6 RETURNING *;`;
+        const values = [exam_name, start_date === 'null' ? null : start_date, end_date === 'null' ? null : end_date, total_score === 'null' ? null : total_score, file === undefined ? null : file.originalname, exam_id];
         const result = await client.query(editQuery, values);
 
         res.status(201).json(result.rows[0]);
+
+        const checkQuery = 'SELECT * FROM exam_files WHERE exam_id = $1';
+        const checkResult = await client.query(checkQuery, [result.rows[0].exam_id]);
+
+        if (checkResult.rows.length > 0) {
+            const updateQuery = `
+                UPDATE exam_files SET
+                file_name = $2,
+                file_type = $3,
+                file_size = $4,
+                file_data = $5
+                WHERE exam_id = $1
+                RETURNING *;
+            `;
+            await client.query(updateQuery, [
+                result.rows[0].exam_id,
+                file.originalname,
+                file.mimetype,
+                file.size,
+                file.buffer
+            ]);
+        } else {
+            const insertQuery = `
+                INSERT INTO exam_files (exam_id, file_name, file_type, file_size, file_data)
+                VALUES ($1, $2, $3, $4, $5)
+                RETURNING *;
+            `;
+            await client.query(insertQuery, [
+                result.rows[0].exam_id,
+                file.originalname,
+                file.mimetype,
+                file.size,
+                file.buffer
+            ]);
+        }
+
         
     } catch (err) {
         console.error('Error updating exam:', err);

@@ -43,14 +43,14 @@ export const ClassDetails = () => {
         setIsLoading(true);
         try {
             if (sessionStorage.getItem("role") === 'Teacher') {
-                const result = await axios(TEST_URL + `/all-lesson-info/${sessionStorage.getItem("id")}`);
+                const result = await axios(BASE_URL + `/all-lesson-info/${sessionStorage.getItem("id")}`);
                 if (result.data.filter(e => e.lesson_id === parseInt(id)).length === 0) {
                     window.location.href = "/admin-dashboard/classes"
                 }
                 else { setClass(result.data.filter(e => e.lesson_id === parseInt(id))[0]); }
             }
             else if (sessionStorage.getItem("role") === 'Admin') {
-                const result = await axios(TEST_URL + `/all-lesson-info`);
+                const result = await axios(BASE_URL + `/all-lesson-info`);
                 if (result.data.filter(e => e.lesson_id === parseInt(id)).length === 0) {
                     window.location.href = "/admin-dashboard/classes"
                 }
@@ -184,7 +184,7 @@ export const ClassDetails = () => {
         newAssignment.file !== null && formData.append('file', newAssignment.file[0]);
 
         try {
-            const response = await fetch(TEST_URL + '/new-assignment', {
+            const response = await fetch(BASE_URL + '/new-assignment', {
                 method: 'POST',
                 body: formData,
             });
@@ -245,7 +245,7 @@ export const ClassDetails = () => {
         selected.assignment_file !== null && formData.append('file', selected.assignment_file[0]);
 
         try {
-            const response = await fetch(TEST_URL + '/update-assignment', {
+            const response = await fetch(BASE_URL + '/update-assignment', {
                 method: 'POST',
                 body: formData,
             });
@@ -517,10 +517,10 @@ export const ClassDetails = () => {
 
                         
                         <label className={styles.uploadButton}>
-                            {selected.assignment_file === null ? 'Select file' : 'Change file'}
+                            {selected.assignment_file_name === null ? 'Select file' : 'Change file'}
                             <input type="file" name="assignment_file" id="assignment_file" accept="image/png, image/jpeg" onChange={editAssignmentInput} />
                         </label>
-                        {showFileName && fileName}
+                        {showFileName ? fileName : selected.assignment_file_name}
 
 
                         <button type="submit" onClick={handleEditAssignment}>Submit</button>
