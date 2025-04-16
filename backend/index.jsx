@@ -777,6 +777,7 @@ app.get('/courses-instructor-students-lessons/:student_id', async (req, res) => 
                                     'assignment_id', a.assignment_id,
                                     'assignment_name', a.assignment_name,
                                     'due_date', a.due_date,
+                                    'asgn_file_name', a.file_name,
                                     'completed', CASE WHEN asn.assignment_id IS NOT NULL THEN true ELSE false END
                                 ))
                                 FROM assignment a
@@ -811,6 +812,25 @@ app.get('/courses-instructor-students-lessons/:student_id', async (req, res) => 
                     AND ls.student_id = $1
                 WHERE l.course_id = c.course_id
             ) AS lessons,
+            (
+                SELECT COALESCE(
+                    JSON_AGG(
+                        JSON_BUILD_OBJECT(
+                            'exam_id', e.exam_id,
+                            'exam_name', e.exam_name,
+                            'start_date', e.start_date,
+                            'end_date', e.end_date,
+                            'exam_file_name', e.file_name,
+                            'completed', CASE WHEN exs.exam_id IS NOT NULL THEN true ELSE false END
+                        )
+                    ),
+                    '[]'::json
+                )
+                FROM exam e
+                LEFT JOIN exam_student exs 
+                    ON e.exam_id = exs.exam_id AND exs.student_id = $1
+                WHERE e.course_id = c.course_id
+            ) AS exams,
             (
                 SELECT JSON_AGG(JSON_BUILD_OBJECT(
                     'instructor_id', instructor_id,
@@ -853,6 +873,7 @@ app.get('/courses-instructor-students-lessons/:student_id', async (req, res) => 
                     WHERE e.course_id = c.course_id
                 ) sub_students
             ) AS students
+             
         FROM 
             course c
         WHERE 
@@ -1449,6 +1470,24 @@ app.get('/lessons/:studentID', async (req, res) => {
         res.status(500).json({ error: 'Error grabbing lesson_student info' });
     }
 });
+app.post('/complete-lesson/:studentID/:lessonID', async (req, res) => {
+    try {
+        const { lessonID, studentID } = req.params;
+        const query = `
+            INSERT INTO lesson_student (lesson_id, student_id, completed, completed_date)
+            VALUES
+            ($1, $2, $3, $4)
+        `;
+        
+        const result = await client.query(query, [lessonID, studentID, true, new Date()]);
+        res.send(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error grabbing lesson_student info' });
+    }
+});
+
+
 
 app.get('/lesson-file/:fileId', async (req, res) => {
     const { fileId } = req.params;
@@ -1475,6 +1514,123 @@ app.get('/lesson-file/:fileId', async (req, res) => {
         res.status(500).json({ message: 'Error downloading file' });
     }
 });
+app.get('/exam-file/:fileId', async (req, res) => {
+    const { fileId } = req.params;
+
+    try {
+        const query = `
+            SELECT file_name, file_type, file_data 
+            FROM exam_files 
+            WHERE exam_id = $1
+        `;
+        const result = await client.query(query, [fileId]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'File not found' });
+        }
+
+        const file = result.rows[0];
+
+        res.setHeader('Content-Disposition', `attachment; filename="${file.file_name}"`);
+        res.setHeader('Content-Type', file.file_type);
+        res.send(file.file_data);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Error downloading file' });
+    }
+});
+app.get('/assignment-file/:fileId', async (req, res) => {
+    const { fileId } = req.params;
+
+    try {
+        const query = `
+            SELECT file_name, file_type, file_data 
+            FROM assignment_files 
+            WHERE assignment_id = $1
+        `;
+        const result = await client.query(query, [fileId]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'File not found' });
+        }
+
+        const file = result.rows[0];
+
+        res.setHeader('Content-Disposition', `attachment; filename="${file.file_name}"`);
+        res.setHeader('Content-Type', file.file_type);
+        res.send(file.file_data);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Error downloading file' });
+    }
+});
+
+
+app.post('/upload-student-exam/:exam_id/:student_id', upload.single('file'), async (req, res) => {
+    
+    const { exam_id, student_id } = req.params;
+    const file = req.file;
+
+    try {
+        const postQuery = `
+            INSERT INTO exam_student
+                (exam_id, student_id, submitted, submitted_date, graded, file_name, file_type, file_size, file_data)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *;`;
+        const postValues = [
+            exam_id,
+            student_id,
+            true,
+            new Date(),
+            false,
+            file.originalname,
+            file.mimetype,
+            file.size,
+            file.buffer
+        ];
+        const result = await client.query(postQuery, postValues);
+
+        res.status(201).json(result.status);
+
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Error uploading exam' });
+    }
+});
+app.post('/upload-student-assignment/:assignment_id/:student_id', upload.single('file'), async (req, res) => {
+    
+    const { assignment_id, student_id } = req.params;
+    const file = req.file;
+
+    try {
+        const postQuery = `
+            INSERT INTO assignment_student
+                (assignment_id, student_id, submitted, submitted_date, graded, file_name, file_type, file_size, file_data)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *;`;
+        const postValues = [
+            assignment_id,
+            student_id,
+            true,
+            new Date(),
+            false,
+            file.originalname,
+            file.mimetype,
+            file.size,
+            file.buffer
+        ];
+        await client.query(postQuery, postValues);
+
+        const result = await client.query(postQuery, postValues);
+
+        res.status(201).json(result.status);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Error uploading assignment' });
+    }
+});
+
+
 app.get('/assignment-file/:assignment_id/:student_id', async (req, res) => {
     const { assignment_id, student_id } = req.params;
 

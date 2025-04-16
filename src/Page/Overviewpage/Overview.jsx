@@ -268,7 +268,7 @@ export const Overview = () => {
                             {currentEvents.map((event, index) => (
                                 <tr key={index}>
                                     <td><input type="checkbox" /></td>
-                                    <td>{event.course_name} ... <span>{event.event_type}</span></td>
+                                    <td>{event.title}{' - '}<span>{event.event_type}</span>{' - '}{event.course_name}</td>
                                     <td><div className={styles.dueTime}><img src={getImageUrl('timer.png')} />{format(new Date(event.start), 'hh:mm a')}</div></td>
                                     <td className={new Date(event.start) <= new Date() && styles.dueDate}>{format(new Date(event.start), 'MMMM d, yyyy')}</td>
                                     <td><button><img src={getImageUrl('threeDots.png')} /></button></td>

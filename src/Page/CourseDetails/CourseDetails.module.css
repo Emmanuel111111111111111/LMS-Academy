@@ -264,6 +264,7 @@
     padding: 20px 16px;
     color: #0F172A;
     align-items: start;
+    border-bottom: 0.25px solid #E2E8F0;
 }
 .week:hover {
     background: #2C2F7E;
@@ -286,8 +287,30 @@
 
 .week .len {
     display: flex;
+    flex-direction: column;
+    color: #64748B;
+    text-align: right;
+    gap: 5px;
+}
+.week .lenn {
+    display: flex;
     gap: 4px;
     font-size: 14px;
     color: #64748B;
     text-align: right;
+}
+.week .download {
+    background: #CCCDE8;
+    padding: 4px;
+    border-radius: 7px;
+    /* font-size: 14px; */
+    /* font-weight: 500; */
+    color: #2C2F7E;
+    border: none;
+    text-align: center;
+    cursor: pointer;
+}
+
+input[type="file"] {
+    display: none;
 }
