@@ -47,7 +47,7 @@ export const LoginPage = () => {
           setErrorMesage(true);
           customToastError("Invalid username or password. Please try again.")
         }
-        else if (err.response.data.message === 'Invalid credentials') {
+        else if (err.response.data.message === 'Invalid password') {
           setErrorMesage(true);
           customToastError("Invalid username or password. Please try again.")
         }

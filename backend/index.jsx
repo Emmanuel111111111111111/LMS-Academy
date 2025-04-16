@@ -2075,7 +2075,7 @@ app.get("/events/:studentId", async (req, res) => {
                         c.course_id,
                         c.name AS course_name,
                         e.start_date AS start,
-                        e.end_date AS end
+                        e.end_date AS end,
                         CASE 
                             WHEN EXISTS (
                                 SELECT 1 
