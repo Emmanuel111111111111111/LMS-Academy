@@ -8,6 +8,7 @@ import Calendar from 'react-calendar';
 import "../../../App.css"
 import { customToast } from "../../../Components/Notifications";
 import { BASE_URL, TEST_URL } from "../../../../config";
+import { ConfirmModal } from "../../Components/Modals/ConfirmModal";
 
 
 export const ClassDetails = () => {
@@ -21,6 +22,7 @@ export const ClassDetails = () => {
     const [ selectedFiles, setSelectedFiles ] = useState([]);
     const [ fileNames, setFileNames ] = useState([]);
     const [ actionsOpen, setActionsOpen ] = useState({});
+    const [ actionsOpen2, setActionsOpen2 ] = useState({});
     const [ isOpenAssignment, setIsOpenAssignment ] = useState(false);
     const [ isEditAssignment, setIsEditAssignment ] = useState(false);
     const [ item, setItem ] = useState('');
@@ -168,6 +170,7 @@ export const ClassDetails = () => {
         e.preventDefault();
         e.stopPropagation();
     
+        setTitleErrorMsg(false);
         if (!newAssignment.name.trim()) {
             setTitleErrorMsg(true);
             return;
@@ -181,13 +184,13 @@ export const ClassDetails = () => {
         newAssignment.file !== null && formData.append('file', newAssignment.file[0]);
 
         try {
-            const response = await fetch(BASE_URL + '/new-assignment', {
+            const response = await fetch(TEST_URL + '/new-assignment', {
                 method: 'POST',
                 body: formData,
             });
             if (response.ok) {
                 customToast('Assignment added successfully');
-                loadCourseDetails();
+                loadLessonDetails();
             } else {
                 console.error("Failed to add assignment");
                 customToast('Error adding assignment. Please try again');
@@ -201,9 +204,8 @@ export const ClassDetails = () => {
         setFileName('');
         setNewAssignment({
             name: null,
-            course_id: null,
-            start_date: null,
-            end_date: null,
+            lesson_id: null,
+            due_date: null,
             total_score: null,
             file: null
         });
@@ -217,8 +219,7 @@ export const ClassDetails = () => {
             setSelected(prev => ({ ...prev, [event.target.name]: event.target.value.replace('T', ' ') + '+01' }))
         }
 
-        if (event.target.name === 'file') {
-            console.log('here we are')
+        if (event.target.name === 'assignment_file') {
             setSelected(prev => ({ ...prev, [event.target.name]: event.target.files }))
             setShowFileName(true);
             setFileName(event.target.files[0].name);
@@ -234,20 +235,22 @@ export const ClassDetails = () => {
             return;
         }
 
+        console.log(selected)
+
         const formData = new FormData();
         formData.append('assignment_name', selected.assignment_name);
         formData.append('due_date', selected.due_date);
         formData.append('total_score', selected.total_score);
         formData.append('assignment_id', selected.assignment_id);
-        selected.file !== null && formData.append('file', selected.file[0]);
+        selected.assignment_file !== null && formData.append('file', selected.assignment_file[0]);
 
         try {
-            const response = await fetch(BASE_URL + '/update-assignment', {
+            const response = await fetch(TEST_URL + '/update-assignment', {
                 method: 'POST',
                 body: formData,
             });
             if (response.ok) {
-                loadCourseDetails();
+                loadLessonDetails();
                 customToast('Assignmnet updated successfully');
             } else {
                 console.error("Failed to add assignment");
@@ -271,10 +274,18 @@ export const ClassDetails = () => {
             [index]: !prevState[index]
         }));
     };
+    const toggleAction2 = (event, index) => {
+        event.stopPropagation();
+        setActionsOpen2(prevState => ({
+            ...prevState,
+            [index]: !prevState[index]
+        }));
+    };
 
     const handleClickOutside = (event) => {
         if (actionsRef.current && !actionsRef.current.contains(event.target)) {
             setActionsOpen(false);
+            setActionsOpen2(false);
         }
     };
     useEffect(() => {
@@ -283,6 +294,21 @@ export const ClassDetails = () => {
             document.removeEventListener('click', handleClickOutside, true);
         };
     }, []);
+
+    const editAssignment = (event, assignment) => {
+        event.preventDefault();
+        setSelected(assignment);
+        console.log(assignment)
+        setIsEditAssignment(true);
+    }
+    const handleDelete = (event, thing, item) => {
+        console.log(thing);
+        event.preventDefault();
+        setSelected(thing);
+        setConfirmType('delete');
+        setItem(item);
+        setIsOpenConfirm(true);
+    }
 
 
     return(
@@ -362,6 +388,21 @@ export const ClassDetails = () => {
                                             {actionsOpen[i] && <div className={styles.theActions} ref={actionsRef}>
                                                 <h5>ACTION</h5>
                                                 <button type="button" onClick={()=>deleteFile(file.file_id)}><img src={getImageUrl('delete.png')} />DELETE</button>
+                                            </div>}
+                                        </div>
+                                    </div>
+                                ))}
+                                {theClass.assignments && theClass.assignments.map((assignment, i) => (
+                                    <div className={styles.section} key={i}>
+                                        <div className={styles.text}>
+                                            {assignment.assignment_name}
+                                        </div>
+                                        <div>
+                                            <button  type="button" className={styles.actionsButton} onClick={(e) => toggleAction2(e, i)}><img src={getImageUrl('threeDots.png')} /></button>
+                                            {actionsOpen2[i] && <div className={styles.theActions} ref={actionsRef}>
+                                                <h5>ACTION</h5>
+                                                <button type="button" onClick={(event)=>editAssignment(event, assignment)}><img src={getImageUrl('edit.png')} />EDIT</button>
+                                                <button type="button" onClick={(event)=>handleDelete(event, assignment, 'Assignment')}><img src={getImageUrl('delete.png')} />DELETE</button>
                                             </div>}
                                         </div>
                                     </div>
@@ -472,12 +513,12 @@ export const ClassDetails = () => {
                         <input type="text" name="total_scores" placeholder="Enter total possible marks" value={selected?.total_score} onChange={editAssignmentInput} />
                         
                         <label>Due Date</label>
-                        <input type="datetime-local" name="due_date" value={selected.end_date ? new Date(selected.end_date).toISOString().slice(0, 16) : ''} onChange={editAssignmentInput} />
+                        <input type="datetime-local" name="due_date" value={selected.due_date ? new Date(selected.due_date).toISOString().slice(0, 16) : ''} onChange={editAssignmentInput} />
 
                         
                         <label className={styles.uploadButton}>
-                            {selected.file === null ? 'Select file' : 'Change file'}
-                            <input type="file" name="file" id="file" accept="image/png, image/jpeg" onChange={editAssignmentInput} />
+                            {selected.assignment_file === null ? 'Select file' : 'Change file'}
+                            <input type="file" name="assignment_file" id="assignment_file" accept="image/png, image/jpeg" onChange={editAssignmentInput} />
                         </label>
                         {showFileName && fileName}
 
@@ -486,6 +527,9 @@ export const ClassDetails = () => {
                     </form>
                 </div>
             </Modal>
+
+            <ConfirmModal isOpen={isOpenConfirm} setOpen={setIsOpenConfirm} item={item} cohort={'none'} selected={selected} confirmType={confirmType} reload={loadLessonDetails} />
+            
         </div>
     )
 }

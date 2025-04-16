@@ -694,7 +694,7 @@ app.get('/courses-instructor-studentscount-lessons/:instructor_id', async (req, 
                         'start_date', e.start_date,
                         'end_date', e.end_date,
                         'total_score', e.total_score,
-                        'file', e.file
+                        'file_name', e.file_name
                     )),
                     '[]'
                 )
@@ -1123,113 +1123,6 @@ app.get("/lessons-info/:instructor_id", async (req, res) => {
         res.status(500).json({ error: `Error grabbing cohorts` });
     }
 });
-app.get("/all-lesson-info", async (req, res) => {
-    const query = `
-        SELECT 
-            lesson.lesson_id,
-            lesson.title,
-            lesson.description,
-            lesson.start_date,
-            lesson.end_date,
-            lesson.number,
-            lesson.course_id,
-            COALESCE(course.name, 'NA') AS course_name,
-            COALESCE(instructor.first_name || '' || ' ' || instructor.last_name, 'NA') AS instructor_name,
-            COALESCE(student_counts.student_count, 0) AS student_count
-        FROM 
-            lesson
-        LEFT JOIN 
-            course ON lesson.course_id = course.course_id
-		LEFT JOIN 
-            instructorcourses ON course.course_id = instructorcourses.course_id
-        LEFT JOIN 
-            instructor ON instructorcourses.instructor_id = instructor.instructor_id
-		LEFT JOIN (
-            SELECT 
-                course_id,
-                COUNT(student_id) AS student_count
-            FROM 
-                enrollment
-            GROUP BY 
-                course_id
-        ) student_counts ON course.course_id = student_counts.course_id
-        WHERE course.deleted = FALSE
-        AND course.suspended = FALSE
-        GROUP BY 
-            lesson.lesson_id,
-			lesson.title,
-			lesson.description,
-			lesson.number,
-			course.name,
-			instructor.first_name,
-			instructor.last_name,
-			student_counts.student_count
-        ORDER BY 
-            lesson.lesson_id;
-        `
-
-    try {
-        const result = await client.query(query);
-        res.send(result.rows);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: `Error grabbing cohorts` });
-    }
-});
-app.get("/all-lesson-info/:instructor_id", async (req, res) => {
-    const { instructor_id } = req.params;
-    const query = `
-        SELECT 
-            lesson.lesson_id,
-            lesson.title,
-            lesson.description,
-            lesson.start_date,
-            lesson.end_date,
-            lesson.number,
-            lesson.course_id,
-            COALESCE(course.name, 'NA') AS course_name,
-            COALESCE(instructor.first_name || '' || ' ' || instructor.last_name, 'NA') AS instructor_name,
-            COALESCE(student_counts.student_count, 0) AS student_count
-        FROM 
-            lesson
-        LEFT JOIN 
-            course ON lesson.course_id = course.course_id
-		LEFT JOIN 
-            instructorcourses ON course.course_id = instructorcourses.course_id
-        LEFT JOIN 
-            instructor ON instructorcourses.instructor_id = instructor.instructor_id
-		LEFT JOIN (
-            SELECT 
-                course_id,
-                COUNT(student_id) AS student_count
-            FROM 
-                enrollment
-            GROUP BY 
-                course_id
-        ) student_counts ON course.course_id = student_counts.course_id
-        WHERE course.deleted = FALSE
-        AND course.suspended = FALSE
-        AND instructor.instructor_id = $1
-        GROUP BY 
-            lesson.lesson_id,
-			lesson.title,
-			lesson.description,
-			lesson.number,
-			course.name,
-			instructor.first_name,
-			instructor.last_name,
-			student_counts.student_count
-        ORDER BY 
-            lesson.lesson_id;
-        `
-    try {
-        const result = await client.query(query, [instructor_id]);
-        res.send(result.rows);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: `Error grabbing cohorts` });
-    }
-});
 app.post(`/lesson-info`, upload.array('files'), async (req, res) => {
     try {
         console.log(req.files);
@@ -1257,7 +1150,6 @@ app.post(`/lesson-info`, upload.array('files'), async (req, res) => {
                     file.size,
                     file.buffer
                 ];
-                console.log(file);
                 await client.query(postQuery, postValues);
             }
         }
@@ -1267,7 +1159,152 @@ app.post(`/lesson-info`, upload.array('files'), async (req, res) => {
         console.log(err);
         res.status(500).json({ message:'Error updating lesson or adding files' });
     }
-})
+});
+app.get("/all-lesson-info", async (req, res) => {
+    const query = `
+        SELECT 
+            lesson.lesson_id,
+            lesson.title,
+            lesson.description,
+            lesson.start_date,
+            lesson.end_date,
+            lesson.number,
+            lesson.course_id,
+            COALESCE(course.name, 'NA') AS course_name,
+            COALESCE(instructor.first_name || ' ' || instructor.last_name, 'NA') AS instructor_name,
+            COALESCE(
+                        JSON_AGG(
+                            JSON_BUILD_OBJECT(
+                                'file_id', lesson_files.file_id,
+                                'file_name', lesson_files.file_name,
+                                'file_type', lesson_files.file_type,
+                                'file_size', lesson_files.file_size
+                            )
+                        ) FILTER (WHERE lesson_files.file_id IS NOT NULL), 
+                        '[]'
+                    ) AS lesson_files,
+            COALESCE(
+                JSON_AGG(
+                    DISTINCT JSONB_BUILD_OBJECT(
+                        'assignment_id', assignment.assignment_id,
+                        'assignment_name', assignment.assignment_name,
+                        'due_date', assignment.due_date,
+                        'total_score', assignment.total_score,
+                        'assignment_file_name', assignment.file_name
+                    )
+                ) FILTER (WHERE assignment.assignment_id IS NOT NULL),
+                '[]'
+            ) AS assignments
+        FROM 
+            lesson
+        LEFT JOIN 
+            course ON lesson.course_id = course.course_id
+        LEFT JOIN 
+            instructorcourses ON course.course_id = instructorcourses.course_id
+        LEFT JOIN 
+            instructor ON instructorcourses.instructor_id = instructor.instructor_id
+        LEFT JOIN 
+            assignment ON assignment.lesson_id = lesson.lesson_id
+        LEFT JOIN 
+            lesson_files ON lesson.lesson_id = lesson_files.lesson_id
+        WHERE 
+            course.deleted = FALSE
+        GROUP BY 
+            lesson.lesson_id,
+            lesson.title,
+            lesson.description,
+            lesson.start_date,
+            lesson.end_date,
+            lesson.number,
+            lesson.course_id,
+            course.name,
+            instructor.first_name,
+            instructor.last_name
+        ORDER BY 
+            lesson.lesson_id;
+        `
+
+    try {
+        const result = await client.query(query);
+        res.send(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: `Error grabbing lessons info` });
+    }
+});
+app.get("/all-lesson-info/:instructor_id", async (req, res) => {
+    const { instructor_id } = req.params;
+    const query = `
+        SELECT 
+            lesson.lesson_id,
+            lesson.title,
+            lesson.description,
+            lesson.start_date,
+            lesson.end_date,
+            lesson.number,
+            lesson.course_id,
+            COALESCE(course.name, 'NA') AS course_name,
+            COALESCE(instructor.first_name || ' ' || instructor.last_name, 'NA') AS instructor_name,
+            COALESCE(
+                        JSON_AGG(
+                            JSON_BUILD_OBJECT(
+                                'file_id', lesson_files.file_id,
+                                'file_name', lesson_files.file_name,
+                                'file_type', lesson_files.file_type,
+                                'file_size', lesson_files.file_size
+                            )
+                        ) FILTER (WHERE lesson_files.file_id IS NOT NULL), 
+                        '[]'
+                    ) AS lesson_files,
+            COALESCE(
+                JSON_AGG(
+                    DISTINCT JSONB_BUILD_OBJECT(
+                        'assignment_id', assignment.assignment_id,
+                        'assignment_name', assignment.assignment_name,
+                        'due_date', assignment.due_date,
+                        'total_score', assignment.total_score,
+                        'assignment_file_name', assignment.file_name
+                    )
+                ) FILTER (WHERE assignment.assignment_id IS NOT NULL),
+                '[]'
+            ) AS assignments
+        FROM 
+            lesson
+        LEFT JOIN 
+            course ON lesson.course_id = course.course_id
+        LEFT JOIN 
+            instructorcourses ON course.course_id = instructorcourses.course_id
+        LEFT JOIN 
+            instructor ON instructorcourses.instructor_id = instructor.instructor_id
+        LEFT JOIN 
+            assignment ON assignment.lesson_id = lesson.lesson_id
+        LEFT JOIN 
+            lesson_files ON lesson.lesson_id = lesson_files.lesson_id
+        WHERE 
+            course.deleted = FALSE
+            AND instructor.instructor_id = $1
+        GROUP BY 
+            lesson.lesson_id,
+            lesson.title,
+            lesson.description,
+            lesson.start_date,
+            lesson.end_date,
+            lesson.number,
+            lesson.course_id,
+            course.name,
+            instructor.first_name,
+            instructor.last_name
+        ORDER BY 
+            lesson.lesson_id;
+        `
+    try {
+        const result = await client.query(query, [instructor_id]);
+        res.send(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: `Error grabbing lesson info` });
+    }
+});
 app.get("/lessons-len", async (req, res) => {
     try {
         const result = await client.query("SELECT COUNT(*) FROM lesson");
@@ -1413,7 +1450,7 @@ app.get('/lessons/:studentID', async (req, res) => {
     }
 });
 
-app.get('/file/:fileId', async (req, res) => {
+app.get('/lesson-file/:fileId', async (req, res) => {
     const { fileId } = req.params;
 
     try {
@@ -1433,6 +1470,58 @@ app.get('/file/:fileId', async (req, res) => {
         res.setHeader('Content-Disposition', `attachment; filename="${file.file_name}"`);
         res.setHeader('Content-Type', file.file_type);
         res.send(file.file_data);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Error downloading file' });
+    }
+});
+app.get('/assignment-file/:assignment_id/:student_id', async (req, res) => {
+    const { assignment_id, student_id } = req.params;
+
+    try {
+        const query = `
+            SELECT file 
+            FROM assignment_student 
+            WHERE assignment_id = $1
+            AND student_id = $2
+        `;
+        const result = await client.query(query, [assignment_id, student_id]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'File not found' });
+        }
+
+        const file = result;
+
+        // res.setHeader('Content-Disposition', `attachment; filename="${file.file_name}"`);
+        res.setHeader('Content-Type', 'pdf');
+        res.send(file);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Error downloading file' });
+    }
+});
+app.get('/exam-file/:exam_id/:student_id', async (req, res) => {
+    const { exam_id, student_id } = req.params;
+
+    try {
+        const query = `
+            SELECT file 
+            FROM exam_student 
+            WHERE exam_id = $1
+            AND student_id = $2
+        `;
+        const result = await client.query(query, [exam_id, student_id]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'File not found' });
+        }
+
+        const file = result;
+
+        // res.setHeader('Content-Disposition', `attachment; filename="${file.file_name}"`);
+        // res.setHeader('Content-Type', file.file_type);
+        res.send(file);
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Error downloading file' });
@@ -1472,15 +1561,28 @@ app.post('/new-assignment', upload.single('file'), async (req, res) => {
     const { name, lesson_id, due_date, total_score } = req.body;
     const file = req.file;
 
-    if (!name || !course_id) {
+    if (!name || !lesson_id) {
         console.log('No id or title')
-        return res.status(400).json({ message: 'Title and course ID are required' });
+        return res.status(400).json({ message: 'Title and lesson ID are required' });
     }
 
     try {
-        const insertQuery = `INSERT INTO assignment (lesson_id, assignment_name, due_date, total_score, file) VALUES ($1, $2, $3, $4, $5) RETURNING *;`;
-        const values = [lesson_id, name, due_date === 'null' ? null : due_date, total_score === 'null' ? null : total_score, file === undefined ? null : file.buffer];
+        const insertQuery = `INSERT INTO assignment (lesson_id, assignment_name, due_date, total_score, file_name) VALUES ($1, $2, $3, $4, $5) RETURNING *;`;
+        const values = [lesson_id, name, due_date === 'null' ? null : due_date, total_score === 'null' ? null : total_score, file === undefined ? null : file.originalname];
         const result = await client.query(insertQuery, values);
+
+        console.log(result);
+
+        const postQuery = `INSERT INTO assignment_files (assignment_id, file_name, file_type, file_size, file_data) VALUES ($1, $2, $3, $4, $5) RETURNING *;`;
+        const postValues = [
+            result.assignment_id,
+            file.originalname,
+            file.mimetype,
+            file.size,
+            file.buffer
+        ];
+        console.log(file);
+        await client.query(postQuery, postValues);
 
         res.status(201).json(result.rows[0]);
         
@@ -1501,7 +1603,7 @@ app.post('/update-assignment', upload.single('file'), async (req, res) => {
 
     try {
         const editQuery = `UPDATE assignment SET assignment_name = $1, due_date = $2, total_score = $3, file = $4 WHERE assignment_id = $5 RETURNING *;`;
-        const values = [assignment_name, due_date === 'null' ? null : due_date, total_score === 'null' ? null : total_score, file === undefined ? null : file.buffer, exam_id];
+        const values = [assignment_name, due_date === 'null' ? null : due_date, total_score === 'null' ? null : total_score, file === undefined ? null : file.buffer, assignment_id];
         const result = await client.query(editQuery, values);
 
         res.status(201).json(result.rows[0]);
@@ -1564,9 +1666,22 @@ app.post('/new-exam', upload.single('file'), async (req, res) => {
     }
 
     try {
-        const insertQuery = `INSERT INTO exam (course_id, exam_name, start_date, end_date, total_score, file) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;`;
-        const values = [course_id, name, start_date === 'null' ? null : start_date, end_date === 'null' ? null : end_date, total_score === 'null' ? null : total_score, file === undefined ? null : file.buffer];
+        const insertQuery = `INSERT INTO exam (course_id, exam_name, start_date, end_date, total_score, file_name) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;`;
+        const values = [course_id, name, start_date === 'null' ? null : start_date, end_date === 'null' ? null : end_date, total_score === 'null' ? null : total_score, file === undefined ? null : file.originalname];
         const result = await client.query(insertQuery, values);
+
+        console.log(result);
+
+        const postQuery = `INSERT INTO exam_files (exam_id, file_name, file_type, file_size, file_data) VALUES ($1, $2, $3, $4, $5) RETURNING *;`;
+        const postValues = [
+            result.exam_id,
+            file.originalname,
+            file.mimetype,
+            file.size,
+            file.buffer
+        ];
+        console.log(file);
+        await client.query(postQuery, postValues);
 
         res.status(201).json(result.rows[0]);
         
@@ -1648,7 +1763,7 @@ app.get("/tasks", async (req, res) => {
                 e.exam_id AS id,
                 e.exam_name AS name,
                 c.name AS course_name,
-                e.due_date AS due_date,
+                e.end_date AS due_date,
                 exam_student.student_id AS student_id,
                 CONCAT(s.first_name, ' ', s.last_name) AS student_name,
                 exam_student.graded AS graded,
@@ -1711,7 +1826,7 @@ app.get("/tasks/:instructor_id", async (req, res) => {
                 e.exam_id AS id,
                 e.exam_name AS name,
                 c.name AS course_name,
-                e.due_date AS due_date,
+                e.end_date AS due_date,
                 exam_student.student_id AS student_id,
                 CONCAT(s.first_name, ' ', s.last_name) AS student_name,
                 exam_student.graded AS graded,

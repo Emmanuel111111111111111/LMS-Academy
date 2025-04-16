@@ -44,7 +44,7 @@ export const CourseDetails = () => {
 
     const handleDownload = async (file) => {
         try {
-            const response = await fetch(BASE_URL + `/file/${file.file_id}`);
+            const response = await fetch(BASE_URL + `/lesson-file/${file.file_id}`);
             if (!response.ok) {
                 throw new Error('Failed to download file');
             }

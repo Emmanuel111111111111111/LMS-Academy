@@ -58,7 +58,6 @@ export const CourseDetail = () => {
                 }
                 else {
                     setCourse(result.data.filter(e => e.course_id === parseInt(courseId))[0]);
-                    console.log(result.data.filter(e => e.course_id === parseInt(courseId))[0]);
                 }
             }
             
@@ -237,17 +236,16 @@ export const CourseDetail = () => {
         }
 
         if (event.target.name === 'file') {
-            console.log('here we are')
             setSelected(prev => ({ ...prev, [event.target.name]: event.target.files }))
             setShowFileName(true);
             setFileName(event.target.files[0].name);
-            console.log(event.target.files);
         }
     }
     const handleEditExam = async (e) => {
         e.preventDefault();
         e.stopPropagation();
     
+        setTitleErrorMsg(false);
         if (!selected.exam_name.trim()) {
             setTitleErrorMsg(true);
             return;
@@ -259,7 +257,7 @@ export const CourseDetail = () => {
         formData.append('end_date', selected.end_date);
         formData.append('total_score', selected.total_score);
         formData.append('exam_id', selected.exam_id);
-        formData.append('file', selected.file[0]);
+        selected.file !== null && formData.append('file', selected.file[0]);
 
         try {
             const response = await fetch(BASE_URL + '/update-exam', {
@@ -318,7 +316,6 @@ export const CourseDetail = () => {
     const editExam = (event, exam) => {
         event.preventDefault();
         setSelected(exam);
-        console.log(exam)
         setIsEditExam(true);
     }
     const handleDelete = (event, clas, item) => {
@@ -569,10 +566,10 @@ export const CourseDetail = () => {
 
                     
                     <label className={styles.uploadButton}>
-                        {selected.file === null ? 'Select file' : 'Change file'}
+                        {selected.file_name === null ? 'Select file' : 'Change file'}
                         <input type="file" name="file" id="file" accept="image/png, image/jpeg" onChange={editExamInput} />
                     </label>
-                    {showFileName && fileName}
+                    {showFileName ? fileName : selected.file_name}
 
 
                     <button type="submit" onClick={handleEditExam}>Submit</button>

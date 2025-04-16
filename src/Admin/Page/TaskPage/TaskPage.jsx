@@ -6,7 +6,7 @@ import Pagination from "../../../Components/Pagination/Pagination";
 import { format } from 'date-fns';
 import axios from 'axios';
 import { BASE_URL, TEST_URL } from "../../../../config";
-import { customToast } from "../../../Components/Notifications";
+import { customToast, customToastError } from "../../../Components/Notifications";
 
 
 export const TaskPage = () => {
@@ -29,13 +29,13 @@ export const TaskPage = () => {
         setIsLoading(true);
         try {
             if (sessionStorage.getItem('role') === 'Admin') {
-                const result = await axios(BASE_URL + "/tasks", {
+                const result = await axios(TEST_URL + "/tasks", {
                     timeout: 20000
                 });
                 setTasks(result.data);
             }
             else if (sessionStorage.getItem('role') === 'Teacher') {
-                const result = await axios(BASE_URL + `/tasks/${sessionStorage.getItem('id')}`, {
+                const result = await axios(TEST_URL + `/tasks/${sessionStorage.getItem('id')}`, {
                     timeout: 20000
                 });
                 setTasks(result.data);
@@ -96,6 +96,37 @@ export const TaskPage = () => {
             document.removeEventListener('click', handleClickOutside, true);
         };
     }, []);
+
+    const handleDownload = async (task) => {
+        console.log(task);
+        try {
+            var response;
+            if (task.type === 'assignment') {
+                response = await fetch(TEST_URL + `/assignment-file/${task.id}/${task.student_id}`);
+            } else if (task.type === 'exam') {
+                response = await fetch(TEST_URL + `/exam-file/${task.id}/${task.student_id}`);
+            }
+            console.log(response)
+            if (!response.ok) {
+                customToastError('Failed to download file');
+                throw new Error('Failed to download file');
+            }
+
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const fileName = task.student_name+'_'+task.name;
+            
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error downloading file:', error);
+        }
+    };
 
     
 
@@ -187,9 +218,9 @@ export const TaskPage = () => {
                                             </button>
                                             {actionsOpen[index]&& <div className={styles.theActions} ref={actionsRef}>
                                                 <h5>ACTION</h5>
-                                                <button><img src={getImageUrl('edit.png')} />VIEW TASK</button>
-                                                <button><img src={getImageUrl('approve.png')} />GRADE TASK</button>
-                                                <button><img src={getImageUrl('approve.png')} />DOWNLOAD</button>
+                                                {/* <button><img src={getImageUrl('edit.png')} />VIEW TASK</button> */}
+                                                <button><img src={getImageUrl('edit.png')} />GRADE TASK</button>
+                                                <button onClick={()=>handleDownload(task)}><img src={getImageUrl('approve.png')} />DOWNLOAD</button>
                                             </div>}
                                         </td>
                                     </tr>
