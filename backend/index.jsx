@@ -2768,6 +2768,7 @@ app.get("/certificates/:student_id", async (req, res) => {
         SELECT 
             cert.certificate_id,
             cert.student_id,
+            COALESCE(s.first_name || ' ' || s.last_name, 'NA') AS student_name,
             cert.course_id,
             cert.date_awarded,
             c.name AS course_name,
@@ -2853,6 +2854,8 @@ app.get("/certificates/:student_id", async (req, res) => {
             certificate cert
         JOIN 
             course c ON cert.course_id = c.course_id
+        JOIN
+            student s ON cert.student_id = s.student_id
         WHERE 
             cert.student_id = $1
         ORDER BY 

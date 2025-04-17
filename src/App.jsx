@@ -25,7 +25,8 @@ import { ActiveCourse } from './Page/Course/ActiveCourse'
 import { CompletedCourse } from './Page/Course/CompletedCourses';
 import { CourseDetails } from './Page/CourseDetails/CourseDetails';
 import { CalendarPage } from './Page/CalendarPage/Calendar';
-import { Certificate } from './Page/Certificate/Certificate'
+import { Certificate } from './Page/Certificate/Certificate';
+import { TheCertificate } from './Page/Certificate/TheCertificate';
 
 import { AdminOverview } from './Admin/Page/AdminOverviewpage/AdminOverview';
 import { AllCourses } from './Admin/Page/Courses/AllCourses';
@@ -101,6 +102,7 @@ function App() {
         { path: 'courses/detail/:courseID', element: <CourseDetails /> },
         { path: 'calendar', element: <CalendarPage /> },
         { path: 'certificate', element: <Certificate /> },
+        { path: 'certificate/:certId', element: <TheCertificate /> },
         { path: 'profile', element: <ProfilePage /> },
         { path: 'profile/:id', element: <ProfilePage /> },
         { path: 'settings', element: <BlankPage /> },

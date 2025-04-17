@@ -49,6 +49,10 @@ export const Certificate = () => {
         }
     }
 
+    const goToCert = (id) => {
+        window.location.href = `/dashboard/certificate/${id}`;
+    }
+
 
     return (
         <div className={styles.whole}>
@@ -69,7 +73,7 @@ export const Certificate = () => {
                 :
                     <div className={styles.course}>
                         {certificates.map((certif, index) => (
-                            <div className={styles.courseInfo}>
+                            <div className={styles.courseInfo} key={index}>
                                 <div className={styles.courseImage}>
                                     <img src={getImageUrl("frame11.png")} alt="h" />
                                 </div>
@@ -103,7 +107,7 @@ export const Certificate = () => {
                                         </div>
                                         <div className={styles.buttons}>
                                             <button className={styles.buttonOne}>View Certificate</button>
-                                            <button className={styles.buttonTwo}>
+                                            <button className={styles.buttonTwo} onClick={()=>goToCert(certif.certificate_id)}>
                                                 <img src={getImageUrl('blueDownload.png')} alt="" />
                                                 Download
                                             </button>

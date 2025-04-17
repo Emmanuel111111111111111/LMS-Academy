@@ -22,7 +22,7 @@ export const CourseDetails = () => {
     const loadCourseDetails = async () => {
         setIsLoading(true);
         try {
-            const result = await axios(TEST_URL + `/courses-instructor-students-lessons/${sessionStorage.getItem("id")}`);
+            const result = await axios(BASE_URL + `/courses-instructor-students-lessons/${sessionStorage.getItem("id")}`);
             if (result.data.filter(e => e.course_id === parseInt(courseID))[0] === undefined) {
                 window.location.href = "/dashboard/courses";
                 return
@@ -50,9 +50,9 @@ export const CourseDetails = () => {
             if (type === 'lesson') {
                 response = await fetch(BASE_URL + `/lesson-file/${file.file_id}`);
             } else if (type === 'assignment') {
-                response = await fetch(TEST_URL + `/assignment-file/${file.assignment_id}`);
+                response = await fetch(BASE_URL + `/assignment-file/${file.assignment_id}`);
             } else if (type === 'exam') {
-                response = await fetch(TEST_URL + `/exam-file/${file.exam_id}`);
+                response = await fetch(BASE_URL + `/exam-file/${file.exam_id}`);
             }
             
             if (!response.ok) {
@@ -91,7 +91,7 @@ export const CourseDetails = () => {
             var response = '';
 
             if (type === 'assignment') {
-                response = await fetch(TEST_URL + `/upload-student-assignment/${id}/${sessionStorage.getItem("id")}`, {
+                response = await fetch(BASE_URL + `/upload-student-assignment/${id}/${sessionStorage.getItem("id")}`, {
                     method: 'POST',
                     body: formData
                 })
@@ -100,7 +100,7 @@ export const CourseDetails = () => {
                 customToast("Successfully submitted your " + type)
             } else if (type === 'exam') {
                 console.log('here')
-                response = await fetch(TEST_URL + `/upload-student-exam/${id}/${sessionStorage.getItem("id")}`, {
+                response = await fetch(BASE_URL + `/upload-student-exam/${id}/${sessionStorage.getItem("id")}`, {
                     method: 'POST',
                     body: formData
                 })
@@ -119,7 +119,7 @@ export const CourseDetails = () => {
     }
 
     const handleComplete = async (les, type) => {
-        const response = await fetch(TEST_URL + `/complete-lesson/${sessionStorage.getItem("id")}/${les.lesson_id}`);
+        const response = await fetch(BASE_URL + `/complete-lesson/${sessionStorage.getItem("id")}/${les.lesson_id}`);
         console.log(response);
     }
 

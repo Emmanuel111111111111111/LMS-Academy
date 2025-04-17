@@ -36,7 +36,10 @@ export const Header = () => {
     else if (currentPath === "/dashboard/calendar") {
         PageTitle = "Calendar";
     }
-    else if (currentPath === "/dashboard/certificate") {
+    else if (
+        currentPath === "/dashboard/certificate" ||
+        currentPath.includes("/dashboard/certificate")
+    ) {
         PageTitle = "Certificates";
     }
     else if (currentPath === "/dashboard/settings") {
@@ -78,7 +81,7 @@ export const Header = () => {
                 </div>
                 <div className={styles.buttons}>
                     <button><img src={getImageUrl('bell.png')} /></button>
-                    <button onClick={toSettingsPage}><img src={getImageUrl('settings.png')} /></button>
+                    {/* <button onClick={toSettingsPage}><img src={getImageUrl('settings.png')} /></button> */}
                     <button className={styles.profile} onClick={toProfilePage}><img src={getImageUrl('profile.svg')} /></button>
                 </div>
             </div>
