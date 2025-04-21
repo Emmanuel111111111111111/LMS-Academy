@@ -26,7 +26,7 @@ export const PasswordPage = () => {
         console.log(values);
         setLoading(true);
         try {
-            const response = await axios.post(TEST_URL + '/signup',
+            const response = await axios.post(BASE_URL + '/signup',
                 values,
                 {timeout: 10000}
             );

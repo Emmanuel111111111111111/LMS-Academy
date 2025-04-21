@@ -247,7 +247,7 @@ export const SchedulePage = () => {
                             </div>}
 
                         </div>
-                        {newEventValues.type === 'Class' && <div className={styles.contain}>
+                        {newEventValues.type != 'Assignment' && <div className={styles.contain}>
                             <div>
                                 <h5>Start Date & Time</h5>
                                 <input type="datetime-local" name="start_date" onChange={handleInput} />
@@ -258,7 +258,7 @@ export const SchedulePage = () => {
                             </div>
                         </div>}
 
-                        {newEventValues.type != 'Class' && <div className={styles.contain}>
+                        {newEventValues.type === 'Assignment' && <div className={styles.contain}>
                             <div>
                                 <h5>Due Date & Time</h5>
                                 <input type="datetime-local" name="due_date" onChange={handleInput}/>

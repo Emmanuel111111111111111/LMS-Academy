@@ -184,6 +184,7 @@
     padding: 6px 4px;
     border-top: 1px solid #E4E4E4;
     border-bottom: 1px solid #E4E4E4;
+    text-transform: capitalize;
 }
 
 .tasksTable th:first-child,
@@ -331,65 +332,4 @@
 }
 .pag {
     flex: 30%
-}
-
-
-
-
-.addContent {
-    display: flex;
-    flex-direction: column;
-    height: fit-content;
-    max-height: 80vh;
-    /* height: 100%; */
-    width: 350px;
-    border-radius: 10px;
-    padding: 16px;
-    background: #FFFFFF;
-    border: 1px solid #BDD9FF;
-    box-shadow: 0px 3px 5px 0px #00000017;
-}
-.head {
-    display: flex;
-    justify-content: space-between;
-    padding-bottom: 8px;
-    border-bottom: 1.5px solid #F3F4F6;
-}
-.head button {
-    border: none;
-    outline: none;
-    background: transparent;
-}
-.contentBody {
-    display: flex;
-    flex-direction: column;
-    margin-top: 12px;
-    overflow: auto;
-}
-.contentBody label {
-    margin-bottom: 4px;
-    margin-top: 6px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #333333;
-}
-.contentBody input {
-    padding: 11px;
-    border-radius: 10px;
-    border: 1.5px solid #CBD0DC;
-    color: #5C5C5C;
-    outline: none;
-    margin-bottom: 12px;
-}
-.contentBody button {
-    width: 100%;
-    background: #2C2F7E;
-    margin-top: 12px;
-    padding: 12px;
-    border-radius: 10px;
-    color: #FFFFFF;
-    font-size: 16px;
-    font-weight: 600;
-    border: none;
-    outline: none;
 }

@@ -21,7 +21,7 @@ export const TheCertificate = () => {
         if (!isLoading) {
             setTimeout(() => {
                 generatePDF();
-            }, 1000);
+            }, 5000);
         }
     }, []);
 

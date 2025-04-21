@@ -55,18 +55,17 @@ export const StudentPage = () => {
     const fetchAllNotCourses = async (student_id) => {
         setIsLoading2(true);
         try {
-            if (sessionStorage.getItem('role') === 'Adminn') {
+            if (sessionStorage.getItem('role') === 'Admin') {
                 const result = await axios(BASE_URL + `/courses-not/${student_id}`, {
                     timeout: 20000
                 });
-                setAllNotCourses(result.data);
+                setAllCourses(result.data);
             }
-            else if (sessionStorage.getItem('role') === 'Admin') {
-                // const result = await axios(BASE_URL + `/courses-not/${student_id}/32`, {
-                const result = await axios(TEST_URL + `/courses-not/${student_id}/32`, {
+            else if (sessionStorage.getItem('role') === 'Teacher') {
+                const result = await axios(BASE_URL + `/courses-not/${student_id}/${sessionStorage.getItem("id")}`, {
                     timeout: 20000
                 });
-                setAllNotCourses(result.data);
+                setAllCourses(result.data);
             }
             setIsLoading2(false);
         } catch (err) {
@@ -77,15 +76,14 @@ export const StudentPage = () => {
     const fetchAllCourses = async (student_id) => {
         setIsLoading2(true);
         try {
-            if (sessionStorage.getItem('role') === 'Adminn') {
+            if (sessionStorage.getItem('role') === 'Admin') {
                 const result = await axios(BASE_URL + `/courses/${student_id}`, {
                     timeout: 20000
                 });
                 setAllCourses(result.data);
             }
-            else if (sessionStorage.getItem('role') === 'Admin') {
-                // const result = await axios(BASE_URL + `/coursesss/${student_id}/32`, {
-                const result = await axios(TEST_URL + `/coursesss/${student_id}/32`, {
+            else if (sessionStorage.getItem('role') === 'Teacher') {
+                const result = await axios(BASE_URL + `/coursesss/${student_id}/${sessionStorage.getItem("id")}`, {
                     timeout: 20000
                 });
                 setAllCourses(result.data);

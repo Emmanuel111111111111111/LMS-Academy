@@ -106,10 +106,10 @@ export const Certificate = () => {
                                             <progress className={styles.progress} id="progress" max={certif.lessons.length} value={certif.lessons.filter(e => e.completed).length} />
                                         </div>
                                         <div className={styles.buttons}>
-                                            <button className={styles.buttonOne}>View Certificate</button>
+                                            {/* <button className={styles.buttonOne}>View Certificate</button> */}
                                             <button className={styles.buttonTwo} onClick={()=>goToCert(certif.certificate_id)}>
                                                 <img src={getImageUrl('blueDownload.png')} alt="" />
-                                                Download
+                                                View and Download
                                             </button>
                                         </div>
                                     </div>

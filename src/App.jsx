@@ -45,6 +45,7 @@ import { CohortDetails } from './Admin/Page/CohortPage/CohortDetails';
 import { Classes } from './Admin/Page/ClassesPage/Classes';
 import { ClassDetails } from './Admin/Page/ClassesPage/ClassDetails';
 import { TaskPage } from './Admin/Page/TaskPage/TaskPage';
+import { GradesPage } from './Page/GradesPage/GradesPage';
 
 
 const ProtectedRoute = ({ children }) => {
@@ -100,6 +101,7 @@ function App() {
         { path: 'courses/active', element: <ActiveCourse /> },
         { path: 'courses/completed', element: <CompletedCourse /> },
         { path: 'courses/detail/:courseID', element: <CourseDetails /> },
+        { path: 'gradebook', element: <GradesPage /> },
         { path: 'calendar', element: <CalendarPage /> },
         { path: 'certificate', element: <Certificate /> },
         { path: 'certificate/:certId', element: <TheCertificate /> },

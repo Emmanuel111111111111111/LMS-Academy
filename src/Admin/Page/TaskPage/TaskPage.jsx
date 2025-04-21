@@ -7,6 +7,7 @@ import { format } from 'date-fns';
 import axios from 'axios';
 import { BASE_URL, TEST_URL } from "../../../../config";
 import { customToast, customToastError } from "../../../Components/Notifications";
+import Modal from "../../Components/Modals/Modal";
 
 
 export const TaskPage = () => {
@@ -17,25 +18,32 @@ export const TaskPage = () => {
     const [ search, setSearch ] = useState("");
     const [ actionsOpen, setActionsOpen ] = useState({});
     const [ isLoading, setIsLoading ] = useState(false);
+    const [ isLoading2, setIsLoading2 ] = useState(false);
+    const [ isOpenGrade, setIsOpenGrade ] = useState(false);
+    const [ selected, setSelected ] = useState({});
+    const [ errorMsg, setErrorMsg ] = useState(false);
+    const [ grade, setGrade ] = useState('');
     const scroll = useRef(null);
     const actionsRef = useRef(null);
 
 
     useEffect(() => {
         getTasks();
-    }, [])
+    }, []);
+
+    // console.log(tasks)
 
     const getTasks = async () => {
         setIsLoading(true);
         try {
             if (sessionStorage.getItem('role') === 'Admin') {
-                const result = await axios(TEST_URL + "/tasks", {
+                const result = await axios(BASE_URL + "/tasks", {
                     timeout: 20000
                 });
                 setTasks(result.data);
             }
             else if (sessionStorage.getItem('role') === 'Teacher') {
-                const result = await axios(TEST_URL + `/tasks/${sessionStorage.getItem('id')}`, {
+                const result = await axios(BASE_URL + `/tasks/${sessionStorage.getItem('id')}`, {
                     timeout: 20000
                 });
                 setTasks(result.data);
@@ -98,15 +106,14 @@ export const TaskPage = () => {
     }, []);
 
     const handleDownload = async (task) => {
-        console.log(task);
         try {
             var response;
             if (task.type === 'assignment') {
-                response = await fetch(TEST_URL + `/assignment-file/${task.id}/${task.student_id}`);
+                response = await fetch(BASE_URL + `/assignment-file/${task.id}`);
             } else if (task.type === 'exam') {
-                response = await fetch(TEST_URL + `/exam-file/${task.id}/${task.student_id}`);
+                response = await fetch(BASE_URL + `/exam-file/${task.id}`);
             }
-            console.log(response)
+
             if (!response.ok) {
                 customToastError('Failed to download file');
                 throw new Error('Failed to download file');
@@ -127,6 +134,46 @@ export const TaskPage = () => {
             console.error('Error downloading file:', error);
         }
     };
+
+    const openGrade = (task) => {
+        setSelected (task);
+        console.log(task);
+        setGrade('');
+        setIsOpenGrade(true);
+    }
+    const closeGrade = (task) => {
+        setSelected({});
+        setGrade('');
+        setIsOpenGrade(false);
+    }
+    const handleGrade = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsLoading2(true);
+
+        try {
+            var response;
+            if (selected.type === 'assignment') {
+                response = await axios.post(BASE_URL + `/grade-assignment/${selected.id}/${selected.student_id}`,
+                    {grade}
+                );
+            } else if (selected.type === 'exam') {
+                response = await axios.post(BASE_URL + `/grade-exam/${selected.id}/${selected.student_id}`,
+                    {grade}
+                );
+            }
+            customToast(`Successfully graded ${selected.type}.`);
+            getTasks();
+            closeGrade();
+            setIsLoading2(false);
+        } catch (error) {
+            setIsLoading2(false);
+            console.error("Failed to grade task");
+            customToastError(`Error while grading ${selected.type}. Please try again`);
+        }
+    };
+
+
 
     
 
@@ -219,7 +266,7 @@ export const TaskPage = () => {
                                             {actionsOpen[index]&& <div className={styles.theActions} ref={actionsRef}>
                                                 <h5>ACTION</h5>
                                                 {/* <button><img src={getImageUrl('edit.png')} />VIEW TASK</button> */}
-                                                <button><img src={getImageUrl('edit.png')} />GRADE TASK</button>
+                                                <button onClick={()=>openGrade(task)}><img src={getImageUrl('edit.png')} />GRADE TASK</button>
                                                 <button onClick={()=>handleDownload(task)}><img src={getImageUrl('approve.png')} />DOWNLOAD</button>
                                             </div>}
                                         </td>
@@ -252,6 +299,26 @@ export const TaskPage = () => {
                 
             </div>
         </div>
+
+        
+        <Modal isOpen={isOpenGrade}>
+            <div className={styles.addContent}>
+                <div className={styles.head}>
+                    <h3>Grade {selected.type}</h3>
+                    <button onClick={closeGrade} className={styles.close}><img src={getImageUrl('close.png')} /></button>
+                </div>
+                <form className={styles.contentBody}>
+
+                    <p>Grade {selected.student_name}'s {selected.type}: {selected.name}</p>
+        
+                    {errorMsg && <p style={{color: 'red', fontSize: '12px'}}>Title can't be empty</p>}
+                    <label htmlFor="grade">Grade</label>
+                    <input type="number" name="grade" id="grade" placeholder="Enter grade" value={grade} onChange={(e)=>setGrade(e.target.value)} />
+
+                    <button type="submit" onClick={handleGrade}>{isLoading2 ? '...' : 'Send Grade'}</button>
+                </form>
+            </div>
+        </Modal>
         </>
     )
 }

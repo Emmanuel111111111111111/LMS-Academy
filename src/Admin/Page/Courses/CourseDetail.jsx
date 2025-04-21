@@ -7,7 +7,7 @@ import { BASE_URL, TEST_URL } from "../../../../config";
 import Modal from "../../Components/Modals/Modal";
 import Calendar from "react-calendar";
 import "../../../App.css";
-import { customToast } from "../../../Components/Notifications";
+import { customToast, customToastError } from "../../../Components/Notifications";
 import { ConfirmModal } from "../../Components/Modals/ConfirmModal";
 
 
@@ -207,11 +207,11 @@ export const CourseDetail = () => {
                 loadCourseDetails();
             } else {
                 console.error("Failed to add exam");
-                customToast('Error adding exam. Please try again');
+                customToastError('Error adding exam. Please try again');
             }
         } catch (error) {
             console.error('Error adding exam:', error);
-            customToast('Error adding exam');
+            customToastError('Error adding exam');
         }
         setIsOpenExam(false);
         setShowFileName(false);

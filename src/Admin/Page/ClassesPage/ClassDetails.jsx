@@ -39,6 +39,10 @@ export const ClassDetails = () => {
         loadLessonDetails();
     }, [id]);
 
+    console.log(theClass)
+    console.log(theClass.start_date)
+    console.log(new Date(theClass.start_date))
+
     const loadLessonDetails = async () => {
         setIsLoading(true);
         try {
@@ -74,6 +78,11 @@ export const ClassDetails = () => {
             ...prevClass,
             [name]: value,
         }));
+
+        if ((e.target.name === 'start_date')
+        || (e.target.name === 'end_date')) {
+            setClass(prev => ({ ...prev, [e.target.name]: e.target.value.replace('T', ' ') + '+00' }))
+        }
 
         if (name === 'files') {
             const files = Array.from(e.target.files);
@@ -234,8 +243,6 @@ export const ClassDetails = () => {
             setTitleErrorMsg(true);
             return;
         }
-
-        console.log(selected)
 
         const formData = new FormData();
         formData.append('assignment_name', selected.assignment_name);
@@ -412,14 +419,6 @@ export const ClassDetails = () => {
 
                         <div className={styles.smaller}>
 
-                            <div className={styles.preview}>
-                                <div>
-                                    <h5>Preview Class</h5>
-                                    <p>View how others see this class</p>
-                                </div>
-                                <button type="button">Preview</button>
-                            </div>
-
                             <div className={styles.box}>
                                 <h5>Class Status</h5>
                                 <div className={styles.detailForm}>
@@ -449,6 +448,17 @@ export const ClassDetails = () => {
                                         <input type="checkbox" value="Special" name="" id="" />
                                         Special Class
                                     </label>
+                                </div>
+                            </div>
+
+
+                            <div className={styles.box}>
+                                <h5>Class Time</h5>
+                                <div className={styles.detailForm}>
+                                    <label htmlFor="">Start Date and Time</label>
+                                    <input type="datetime-local" name="start_date" value={theClass?.start_date ? new Date(theClass?.start_date).toISOString().slice(0, 16) : null} onChange={handleInputChange} />
+                                    <label htmlFor="">End Date and Time</label>
+                                    <input type="datetime-local" name="end_date" value={theClass?.end_date ? new Date(theClass?.end_date).toISOString().slice(0, 16) : null} onChange={handleInputChange} />
                                 </div>
                             </div>
 

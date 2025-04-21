@@ -170,13 +170,13 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
             }
 
             if (item.toLowerCase() === "exam") {
-                const result = await axios.put(TEST_URL + '/delete-exam', examValues)
+                const result = await axios.put(BASE_URL + '/delete-exam', examValues)
                 console.log(result.status);
                 handleSuccess();
             }
 
             if (item.toLowerCase() === "assignment") {
-                const result = await axios.put(TEST_URL + '/delete-assignment', assignmentValues)
+                const result = await axios.put(BASE_URL + '/delete-assignment', assignmentValues)
                 console.log(result.status);
                 handleSuccess();
             }

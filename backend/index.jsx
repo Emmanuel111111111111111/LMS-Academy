@@ -336,8 +336,6 @@ app.get("/courses/:student_id", async (req, res) => {
 app.get("/coursesss/:student_id/:instructor_id", async (req, res) => {
     
     const { student_id, instructor_id } = req.params;
-    console.log(student_id);
-    console.log(instructor_id);
     
     const query = `
         SELECT * FROM course 
@@ -388,9 +386,6 @@ app.get("/courses-not/:student_id", async (req, res) => {
 });
 app.get("/courses-not/:student_id/:instructor_id", async (req, res) => {
     const { student_id, instructor_id } = req.params;
-
-    console.log(student_id);
-    console.log(instructor_id);
 
     const query = `
         SELECT * FROM course c
@@ -1618,8 +1613,6 @@ app.post('/upload-student-assignment/:assignment_id/:student_id', upload.single(
             file.size,
             file.buffer
         ];
-        await client.query(postQuery, postValues);
-
         const result = await client.query(postQuery, postValues);
 
         res.status(201).json(result.status);
@@ -1694,22 +1687,6 @@ app.get("/assignments", async (req, res) => {
     } catch(err) {
         console.log(err);
         res.status(500).json({message: "Error fetching assignments"});
-    }
-});
-app.get('/assignments/:studentID', async (req, res) => {
-    try {
-        const id = req.params.course_id;
-        // const query = `
-        //     SELECT * FROM lesson l
-        //     LEFT JOIN lesson_student ls ON ls.student_id = ($1)
-        // `;
-        const query = "SELECT * FROM lesson_student WHERE student_id = ($1)";
-        
-        const result = await client.query(query, [id]);
-        res.send(result.rows);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Error grabbing lesson_student info' });
     }
 });
 app.post('/new-assignment', upload.single('file'), async (req, res) => {
@@ -1829,22 +1806,6 @@ app.get("/exams", async (req, res) => {
     } catch(err) {
         console.log(err);
         res.status(500).json({message: "Error fetching exams"});
-    }
-});
-app.get('/exams/:studentID', async (req, res) => {
-    try {
-        const id = req.params.course_id;
-        // const query = `
-        //     SELECT * FROM lesson l
-        //     LEFT JOIN lesson_student ls ON ls.student_id = ($1)
-        // `;
-        const query = "SELECT * FROM lesson_student WHERE student_id = ($1)";
-        
-        const result = await client.query(query, [id]);
-        res.send(result.rows);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Error grabbing lesson_student info' });
     }
 });
 app.post('/new-exam', upload.single('file'), async (req, res) => {
@@ -2341,6 +2302,124 @@ app.get("/events-teacher/:instructor_id", async (req, res) => {
     }
 });
 
+
+app.get("/grades/:studentId", async (req, res) => {
+    try {
+        const { studentId } = req.params;
+
+        const result = await client.query(`
+            SELECT * 
+                FROM (
+                    SELECT 
+                        'assignment' AS event_type,
+                        asn.assignment_id AS event_id,
+                        a.assignment_name AS title,
+                        c.course_id,
+                        c.name AS course_name,
+                        asn.submitted,
+                        asn.submitted_date,
+                        asn.graded,
+                        asn.grade,
+                        a.total_score
+                    FROM
+                        assignment_student asn
+                    JOIN 
+                        assignment a ON a.assignment_id = asn.assignment_id AND asn.student_id = $1
+                    JOIN 
+                        lesson l ON a.lesson_id = l.lesson_id
+                    JOIN 
+                        course c ON l.course_id = c.course_id
+                    WHERE 
+                        asn.student_id = $1
+
+                    UNION ALL
+
+                    SELECT 
+                        'exam' AS event_type,
+                        exs.exam_id AS event_id,
+                        e.exam_name AS title,
+                        c.course_id,
+                        c.name AS course_name,
+                        exs.submitted,
+                        exs.submitted_date,
+                        exs.graded,
+                        exs.grade,
+                        e.total_score
+                    FROM 
+                        exam_student exs
+                    JOIN 
+                        exam e ON e.exam_id = exs.exam_id AND exs.student_id = $1
+                    JOIN 
+                        course c ON e.course_id = c.course_id
+                    WHERE 
+                        exs.student_id = $1
+                ) AS events
+                ORDER BY 
+                    submitted_date ASC;
+            `,
+            [studentId]);
+        res.send(result.rows);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({message: "Error fetching assignments"});
+    }
+});
+app.post('/grade-assignment/:assignment_id/:student_id', async (req, res) => {
+    
+    const { assignment_id, student_id } = req.params;
+
+    try {
+        const updateQuery = `
+            UPDATE assignment_student SET
+            grade = $1,
+            graded = $2
+            WHERE assignment_id = $3
+            AND student_id = $4
+            RETURNING *;
+        `;
+        const result = await client.query(updateQuery, [
+            req.body.grade,
+            true,
+            assignment_id,
+            student_id
+        ]);
+        // const result = await client.query(updateQuery, postValues);
+
+        res.status(201).json(result.status);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Error grading assignment' });
+    }
+});
+app.post('/grade-exam/:exam_id/:student_id', async (req, res) => {
+    
+    const { exam_id, student_id } = req.params;
+
+    try {
+        const postQuery = `
+            UPDATE exam_student SET
+            grade = $1,
+            graded = $2
+            WHERE exam_id = $3
+            AND student_id = $4
+            RETURNING *;
+        `;
+        const postValues = [
+            req.body.grade,
+            true,
+            exam_id,
+            student_id
+        ];
+        const result = await client.query(postQuery, postValues);
+
+        res.status(201).json(result.status);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Error grading exam' });
+    }
+});
 
 
 app.get("/cohorts", async (req, res) => {

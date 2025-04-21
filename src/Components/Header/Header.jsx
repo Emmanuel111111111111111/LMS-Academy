@@ -33,6 +33,9 @@ export const Header = () => {
     else if (currentPath.includes("/dashboard/courses/detail")) {
         PageTitle = "Courses";
     }
+    else if (currentPath === "/dashboard/gradebook") {
+        PageTitle = "Gradebook";
+    }
     else if (currentPath === "/dashboard/calendar") {
         PageTitle = "Calendar";
     }
