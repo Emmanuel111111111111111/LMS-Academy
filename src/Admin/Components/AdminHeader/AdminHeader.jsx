@@ -73,7 +73,7 @@ export const AdminHeader = () => {
         PageTitle = "Student";
         linkList = [
             { title: "All", link: "/admin-dashboard/student" },
-            { title: "Pending", link: "/admin-dashboard/student/pending" },
+            // { title: "Pending", link: "/admin-dashboard/student/pending" },
         ];
     }
     else if (currentPath === "/admin-dashboard/roles") {

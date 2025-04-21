@@ -2,6 +2,9 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from './StudentPage.module.css';
 import { getImageUrl } from "../../../utilis";
 import Pagination from "../../../Components/Pagination/Pagination";
+import axios from 'axios';
+import { BASE_URL, TEST_URL } from "../../../../config";
+
 
 
 export const PendingStudentPage = () => {

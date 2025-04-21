@@ -48,30 +48,36 @@
 }
 
 
-.studentsTable {
+.studentsTable,
+.pendingStudentsTable {
     width: 100%;
     border-spacing: 0 8px;
 }
-.studentsTable thead {
+.studentsTable thead,
+.pendingStudentsTable thead {
     background: #F9F9F9;
     border: 1px solid #E4E4E4;
     font-size: 14px;
     font-weight: 600;
     color: #2C2F7E;
 }
-.studentsTable th {
+.studentsTable th,
+.pendingStudentsTable th {
     padding: 10px 4px;
     text-align: left;
     border-top: 1px solid #E4E4E4;
     border-bottom: 1px solid #E4E4E4;
 }
-.studentsTable td {
+.studentsTable td,
+.pendingStudentsTable td {
     padding: 6px 4px;
     border-top: 1px solid #E4E4E4;
     border-bottom: 1px solid #E4E4E4;
 }
 .studentsTable th:first-child,
-.studentsTable td:first-child {
+.studentsTable td:first-child,
+.pendingStudentsTable th:first-child,
+.pendingStudentsTable td:first-child {
     border-top-left-radius: 6px;
     border-bottom-left-radius: 6px;
     border: 1px solid #E4E4E4;
@@ -79,23 +85,28 @@
     padding-left: 10px;
 }
 .studentsTable th:last-child,
-.studentsTable td:last-child {
+.studentsTable td:last-child,
+.pendingStudentsTable th:last-child,
+.pendingStudentsTable td:last-child {
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px;
     border: 1px solid #E4E4E4;
     border-left: none;
 }
-.studentsTable td img {
+.studentsTable td img,
+.pendingStudentsTable td img {
     width: 16px;
     height: 16px;
 }
-.studentsTable tr {
+.studentsTable tr,
+.pendingStudentsTable tr {
     background: #FFFFFF;
     font-size: 12px;
     font-weight: 500;
     color: #545454;
 }
-.studentsTable .active {
+.studentsTable .active,
+.pendingStudentsTable .active {
     background: #EFFFE9;
     padding: 5px 10px;
     border-radius: 8px;
@@ -104,7 +115,8 @@
     color: #0C9E41;
     width: fit-content;
 }
-.studentsTable .inactive {
+.studentsTable .inactive,
+.pendingStudentsTable .inactive {
     background: #E1E1E1;
     padding: 5px 10px;
     border-radius: 8px;
@@ -113,7 +125,8 @@
     color: #343434;
     width: fit-content;
 }
-.studentsTable .actionsButton {
+.studentsTable .actionsButton,
+.pendingStudentsTable .actionsButton {
     border: 1px solid #A1B2D1;
     outline: none;
     background-color: transparent;
@@ -122,7 +135,8 @@
     display: flex;
     align-items: center;
 }
-.studentsTable .actionsButton img {
+.studentsTable .actionsButton img,
+.pendingStudentsTable .actionsButton img {
     width: 20px;
     height: 20px;
 }
