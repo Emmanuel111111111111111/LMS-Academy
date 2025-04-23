@@ -24,12 +24,11 @@ export const ConfirmationPage = () => {
   const confirmUser = async () => {
     setIsLoading(true);
     try {
-      const result = await axios(BASE_URL + `/confirm-student/${id}`,
+      const result = await axios.put(BASE_URL + `/confirm-student/${id}`,
         {
         timeout: 20000,
         }
       );
-      console.log(result)
       if (result.status != 200) {
         window.location.href = "/CWG";
       } else {

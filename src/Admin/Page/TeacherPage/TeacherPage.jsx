@@ -94,8 +94,7 @@ export const TeachersPage = () => {
         event.preventDefault();
         const validEndingsRegex = /@thefifthlab.com$|@cwg-plc.com$/g;
         if (newTeacherValues.email.match(validEndingsRegex)) {
-            console.log(newTeacherValues)
-                axios.post(BASE_URL + '/new-teacher', newTeacherValues)
+            axios.post(BASE_URL + '/new-teacher', newTeacherValues)
                 .then(res => customToast('Teacher added successfully'))
                 .catch(err => console.log(err));
             setOpen(false);

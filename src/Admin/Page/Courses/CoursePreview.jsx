@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { getImageUrl } from "../../../utilis.js";
 import styles from "./CoursePreview.module.css";
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { customToast } from "../../../Components/Notifications.jsx";
+import { customToast, customToastError } from "../../../Components/Notifications.jsx";
 import { BASE_URL, TEST_URL } from "../../../../config.js";
 
 
@@ -13,6 +13,8 @@ export const CoursePreview = () => {
     const { courseID } = useParams();
     const [course, setCourse] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const details = useRef(null);    
+    const instructor = useRef(null);    
 
     useEffect(() => {
         loadCourseDetails();
@@ -42,17 +44,29 @@ export const CoursePreview = () => {
     }
 
 
-    const handleDownload = async (file) => {
+    const handleDownload = async (file, type) => {
         try {
-            const response = await fetch(BASE_URL + `/file/${file.file_id}`);
+            var response;
+            if (type === 'lesson') {
+                response = await fetch(BASE_URL + `/lesson-file/${file.file_id}`);
+            } else if (type === 'assignment') {
+                response = await fetch(BASE_URL + `/assignment-file/${file.assignment_id}`);
+            } else if (type === 'exam') {
+                response = await fetch(BASE_URL + `/exam-file/${file.exam_id}`);
+            }
+            
             if (!response.ok) {
+                customToastError('Failed to download file. Please try again.');
                 throw new Error('Failed to download file');
             }
 
             const blob = await response.blob();
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            const fileName = file.file_name;
+            const fileName = type === 'lesson' ? file.file_name
+                : type === 'assignment' ? file.assignment_name
+                : type === 'exam' ? file.exam_name
+                : 'downloaded_file';
             
             a.href = url;
             a.download = fileName;
@@ -62,8 +76,12 @@ export const CoursePreview = () => {
             URL.revokeObjectURL(url);
         } catch (error) {
             console.error('Error downloading file:', error);
+            customToastError('Failed to download file');
         }
     };
+
+    const toDetails = (itemNumber) => details.current.scrollIntoView();
+    const toInstructor = () => instructor.current.scrollIntoView();
 
 
     return (
@@ -110,16 +128,15 @@ export const CoursePreview = () => {
                             <div className={styles.courseImg} style={{
                                 backgroundImage: `url(${getImageUrl('courseImg.jpeg')})`
                             }}>
-                                <button>Continue Course</button>
                             </div>
 
                             <div className={styles.tabs}>
-                                <button>Details</button>
-                                <button>Instructor</button>
-                                <button>Course</button>
+                                <button onClick={toDetails}>Details</button>
+                                <button onClick={toInstructor}>Instructor</button>
+                                {/* <button>Course</button> */}
                             </div>
 
-                            <div className={styles.theDetails}>
+                            <div className={styles.theDetails} ref={details}>
                                 {(course.description || course.obectives) && <div className={styles.details}>
                                     {course.description && <>
                                         <h3>Course Overview</h3>
@@ -136,7 +153,7 @@ export const CoursePreview = () => {
                                     </>}
                                 </div>}
 
-                                {course.instructors?.length > 0 && <>
+                                {course.instructors?.length > 0 && <div ref={instructor}>
 
                                     <h3>Instructor{course.instructors?.length > 1 && 's'}</h3>
 
@@ -149,17 +166,17 @@ export const CoursePreview = () => {
                                             <div className={styles.flex}>
                                                 <img className={styles.teachPic} src={getImageUrl('teach.svg')} alt="" />
                                                 <div>
-                                                    <div className={styles.teacherInfo}>
+                                                    {/* <div className={styles.teacherInfo}>
                                                         <img src={getImageUrl('review.svg')} alt="" />
                                                         40,445 Reviews
-                                                    </div>
+                                                    </div> */}
                                                     <div className={styles.teacherInfo}>
                                                         <img src={getImageUrl('hat.svg')} alt="" />
-                                                        500 Students
+                                                        {inst.student_count} Students
                                                     </div>
                                                     <div className={styles.teacherInfo}>
                                                         <img src={getImageUrl('play.svg')} alt="" />
-                                                        15 Courses
+                                                        {inst.course_count} Courses
                                                     </div>
                                                 </div>
                                             </div>
@@ -169,7 +186,7 @@ export const CoursePreview = () => {
                                         </div>
                                     ))}
 
-                                </>}
+                                </div>}
                             </div>
 
                         </div>
@@ -185,7 +202,8 @@ export const CoursePreview = () => {
                                 <div className={styles.accordionDiv}>
                                     {course.lessons?.length < 1 ? <p className={styles.noLessons}>No lessons yet</p>
                                     :
-                                    course.lessons?.map((lesson, i) => (
+                                    <>
+                                    {course.lessons?.map((lesson, i) => (
                                         <>
                                             <div key={lesson.id} className={styles.accordion}>
                                                 <div className={styles.accHeader} onClick={() => toggleAccordion(lesson.lesson_id)}>
@@ -202,24 +220,71 @@ export const CoursePreview = () => {
                                             {openAccId === lesson.lesson_id && <>
                                                 {lesson.content.length < 1 ? <p className={styles.noLessons}>No content for this lesson</p>
                                                 :
-                                                lesson.content.map((cont, i) => (
-                                                    <div className={styles.week} key={i} onClick={()=>handleDownload(cont)}>
+                                                <>
+                                                {lesson.content.map((cont, i) => (
+                                                    <div className={styles.week} key={i}>
                                                         <div className={styles.title}>
-                                                            <input type="checkbox" name="check" id="check" checked={lesson.completed} readOnly />                                                                    
+                                                            <input type="checkbox" name="check" id="check" />                                                                    
                                                             <h4>{cont.file_name}</h4>
                                                         </div>
-                                                        
+
                                                         <div className={styles.len}>
-                                                            <img src="" alt="" />
-                                                            File size: {Math.floor(cont.file_size / 1000)}KB
+                                                            <div className={styles.lenn}>
+                                                                <img src="" alt="" />
+                                                                File size: {Math.floor(cont.file_size / 1000)}KB
+                                                            </div>
+                                                            <button className={styles.download} onClick={()=>handleDownload(cont, 'lesson')} >Download</button>
                                                         </div>
                                                     </div>
 
                                                 ))}
+                                                {lesson.assignments.map((cont, i) => (
+                                                    <div className={styles.week} key={i}>
+                                                        <div className={styles.title}>
+                                                            <input type="checkbox" name="check" id="check" checked={cont.completed} />                                                                    
+                                                            <h4>{cont.assignment_name}</h4>
+                                                        </div>
+                                                        
+                                                        <div className={styles.len}>
+                                                            {cont.asgn_file_name !== null && <button className={styles.download} onClick={()=>handleDownload(cont, 'assignment')} >Download</button>}
+                                                            {(cont.due_date === null || cont.due_date < new Date()) && !cont.completed && <label className={styles.download}>Submit<input type="file" name="file" id="file" accept="image/png, image/jpeg" disabled /></label>}
+                                                        </div>
+                                                    </div>
+
+                                                ))}
+                                                </>
+                                                }
                                             </>}
                                         </>
 
                                     ))}
+                                    <div className={styles.accordion}>
+                                        <div className={styles.accHeader} onClick={() => toggleAccordion(1000)}>
+                                            <span style={{
+                                                ...styles.arrow,
+                                                transform: openAccId === 1000 ? 'rotate(180deg)' : 'rotate(0deg)'
+                                            }}>
+                                                ^
+                                            </span>
+                                            <h4>Exams</h4>
+                                        </div>
+                                    </div>
+                                    {openAccId === 1000 && course.exams?.map((exam, i) => (
+                                        <>
+                                        <div className={styles.week} key={exam.id}>
+                                            <div className={styles.title}>
+                                                <input type="checkbox" name="check" id="check" />                                                                    
+                                                <h4>{exam.exam_name}</h4>
+                                            </div>
+                                            
+                                            <div className={styles.len}>
+                                                {exam.exam_file_name !== null && (exam.start_date === null || exam.start_date > new Date()) && <button className={styles.download} onClick={()=>handleDownload(exam, 'exam')} >Download</button>}
+                                                {(exam.end_date === null || exam.end_date < new Date()) && !exam.completed && <label className={styles.download}>Submit<input type="file" name="file" id="file" accept="image/png, image/jpeg" disabled /></label>}
+                                            </div>
+                                        </div>
+                                        </>
+                                    ))}
+                                    </>}
                                 </div>
                             </div>
 

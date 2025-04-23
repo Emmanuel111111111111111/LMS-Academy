@@ -30,7 +30,6 @@ export const GradesPage = () => {
             const result = await axios(BASE_URL + `/grades/${sessionStorage.getItem("id")}`, {
                 timeout: 20000
             });
-            console.log(result.data);
             setGrades(result.data);
             setIsLoading(false);
         } catch (err) {
@@ -135,7 +134,7 @@ export const GradesPage = () => {
 
             <div className={styles.search}>
                 <img src={getImageUrl('searchIcon.png')} alt="" />
-                <input onChange={handleSearch} type="text" placeholder="Search by course or name" />
+                <input onChange={handleSearch} type="text" placeholder="Search by course, title or type" />
             </div>
 
             <div className={styles.tasks}>

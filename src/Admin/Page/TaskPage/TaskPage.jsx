@@ -31,8 +31,6 @@ export const TaskPage = () => {
         getTasks();
     }, []);
 
-    // console.log(tasks)
-
     const getTasks = async () => {
         setIsLoading(true);
         try {
@@ -137,7 +135,6 @@ export const TaskPage = () => {
 
     const openGrade = (task) => {
         setSelected (task);
-        console.log(task);
         setGrade('');
         setIsOpenGrade(true);
     }

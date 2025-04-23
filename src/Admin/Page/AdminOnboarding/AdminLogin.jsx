@@ -37,7 +37,6 @@ export const AdminLogin = () => {
       sessionStorage.setItem("type", 'teacher');
       sessionStorage.setItem("role", response.data.role);
       sessionStorage.setItem("last_logged", new Date());
-      console.log(response.data.first_name);
       window.location.href = "/admin-dashboard";
     } catch (err) {
       setIsLoading(false);

@@ -310,6 +310,9 @@
     text-align: center;
     cursor: pointer;
 }
+.week .download:hover {
+    background: #B9BAD6;
+}
 
 input[type="file"] {
     display: none;

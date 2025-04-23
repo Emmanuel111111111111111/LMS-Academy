@@ -190,7 +190,7 @@ export const AllCourses = () => {
 
     const handleEdit = (event, course) => {
         event.stopPropagation();
-        navigate(`detail/${course.course_id}`, {state: course.course_id });
+        window.location.href = `/admin-dashboard/courses/detail/${course.course_id}`;
         window.scrollTo({ top: 0});
     }
     const handleRemove = async (student) => {

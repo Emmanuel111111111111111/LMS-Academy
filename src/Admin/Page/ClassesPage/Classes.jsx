@@ -62,24 +62,13 @@ export const Classes = () => {
             else if (sessionStorage.getItem('role') === 'Teacher') {
                 const result = await axios(BASE_URL + `/courses-teacher/${sessionStorage.getItem('id')}`);
                 setAllCourses(result.data);
-                console.log(result.data);
             }
         } catch (err) {
             console.log(err);
         }
     }
-    const fetchAllCoursess = async () => {
-        try {
-            const result = await axios(BASE_URL + `/courses`);
-            setAllCourses(result.data)
-        } catch (err) {
-            console.log(err);
-        }
-    }
 
-    const handleToDetails = (event, clas) => {
-        window.location.href = `classes/${clas.lesson_id}`;
-    }
+    const handleToDetails = (event, clas) => window.location.href = `classes/${clas.lesson_id}`;
 
 
     const [ newClassValues, setNewClassValues ] = useState({

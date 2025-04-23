@@ -23,7 +23,6 @@ export const PasswordPage = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        console.log(values);
         setLoading(true);
         try {
             const response = await axios.post(BASE_URL + '/signup',

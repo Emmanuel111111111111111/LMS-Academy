@@ -59,7 +59,6 @@ export const ProfilePage = () => {
     }
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(newInfo)
         
         try {
 

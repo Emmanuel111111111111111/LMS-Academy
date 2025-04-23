@@ -82,7 +82,7 @@ export const AdminOverview = () => {
                 setLessonsLen(result.data);
             }
             else if (sessionStorage.getItem('role') === 'Teacher') {
-                const result = await axios(BASE_URL + `/students-len/${sessionStorage.getItem('id')}`, {
+                const result = await axios(BASE_URL + `/lessons-len/${sessionStorage.getItem('id')}`, {
                     timeout: 20000
                 });
                 setLessonsLen(result.data);
@@ -200,7 +200,7 @@ export const AdminOverview = () => {
                     
                     <div className={styles.eachOverview}>
                         <div className={styles.overviewText}>
-                            Total <br /> Lessons
+                            Total <br /> Classes
                             <div className={styles.whiteBox}><img src={getImageUrl('assignment.png')} /></div>
                         </div>
                         <div className={styles.loader}>

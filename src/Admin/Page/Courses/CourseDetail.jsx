@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { formatNumberComma, getImageUrl } from "../../../utilis";
 import styles from "./CourseDetail.module.css";
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { BASE_URL, TEST_URL } from "../../../../config";
 import Modal from "../../Components/Modals/Modal";
@@ -94,7 +94,7 @@ export const CourseDetail = () => {
             if (response.ok) {
                 customToast('Course was updated successfully')
                 // loadCourseDetails();
-                navigate('/admin-dashboard/courses');
+                window.location.href = '/admin-dashboard/courses';
             } else {
                 console.error("Failed to update course");
             }
@@ -105,7 +105,7 @@ export const CourseDetail = () => {
     };
 
     const handleCancel = () => {
-        navigate('/admin-dashboard/courses');
+        window.location.href = '/admin-dashboard/courses';
     }
 
 

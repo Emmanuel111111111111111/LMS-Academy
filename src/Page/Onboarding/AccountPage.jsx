@@ -30,7 +30,6 @@ export const AccountPage = () => {
     }
 
     const handleSubmit = async (event) => {
-        console.log(values);
         event.preventDefault();
         setIsLoading(true);
         try {

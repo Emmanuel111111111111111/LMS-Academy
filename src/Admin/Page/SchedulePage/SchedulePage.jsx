@@ -64,7 +64,6 @@ export const SchedulePage = () => {
             else if (sessionStorage.getItem('role') === 'Teacher') {
                 const result = await axios(BASE_URL + `/courses-teacher/${sessionStorage.getItem('id')}`);
                 setAllCourses(result.data);
-                console.log(result.data);
             }
         } catch (err) {
             console.log(err);

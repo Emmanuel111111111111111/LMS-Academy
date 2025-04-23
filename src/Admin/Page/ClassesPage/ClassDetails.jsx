@@ -39,10 +39,6 @@ export const ClassDetails = () => {
         loadLessonDetails();
     }, [id]);
 
-    console.log(theClass)
-    console.log(theClass.start_date)
-    console.log(new Date(theClass.start_date))
-
     const loadLessonDetails = async () => {
         setIsLoading(true);
         try {
@@ -60,7 +56,6 @@ export const ClassDetails = () => {
                 }
                 else {
                     setClass(result.data.filter(e => e.lesson_id === parseInt(id))[0]);
-                    console.log(result.data.filter(e => e.lesson_id === parseInt(id))[0]);
                 }
             }
             
@@ -232,7 +227,6 @@ export const ClassDetails = () => {
             setSelected(prev => ({ ...prev, [event.target.name]: event.target.files }))
             setShowFileName(true);
             setFileName(event.target.files[0].name);
-            console.log(event.target.files);
         }
     }
     const handleEditAssignment = async (e) => {
@@ -305,11 +299,9 @@ export const ClassDetails = () => {
     const editAssignment = (event, assignment) => {
         event.preventDefault();
         setSelected(assignment);
-        console.log(assignment)
         setIsEditAssignment(true);
     }
     const handleDelete = (event, thing, item) => {
-        console.log(thing);
         event.preventDefault();
         setSelected(thing);
         setConfirmType('delete');

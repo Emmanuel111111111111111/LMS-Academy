@@ -8,7 +8,6 @@ const nodemailer = require("nodemailer");
 
 const app = express();
 const port = process.env.PORT || 8081;
-// const upload = multer();
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 app.use(express.json());
@@ -50,7 +49,7 @@ app.get("/students/:id", async (req, res) => {
         res.status(500).json({message: "Error fetching student with id"});
     }
 });
-app.get("/confirm-student/:id", async (req, res) => {
+app.put("/confirm-student/:id", async (req, res) => {
     const id = req.params.id;
     const query = "UPDATE student SET confirmed = true WHERE student_id = $1"
     try {
@@ -58,7 +57,7 @@ app.get("/confirm-student/:id", async (req, res) => {
         res.send(result.rows);
     } catch(err) {
         console.log(err);
-        res.status(500).json({message: "Error fetching student with id"});
+        res.status(500).json({message: "Error confirming student"});
     }
 });
 app.get("/students-len", async (req, res) => {
@@ -141,7 +140,6 @@ app.post('/new-teacher', async (req, res) => {
     ];
     try {
         const result = await client.query(query, values);
-        console.log(result.rows[0]);
         const instructor_id = result.rows[0].instructor_id;
 
         if (req.body.course_id != null) {
@@ -172,7 +170,6 @@ app.post('/new-teacher', async (req, res) => {
         ];
 
         const logResult = await client.query(logQuery, logValues);
-        console.log(logResult.rows[0])
         res.json({message: "Instructor added successfully", instructor: result.rows[0]});
     } catch (err) {
         console.error(err);
@@ -231,7 +228,6 @@ app.put('/change-teacher-role', async (req, res) => {
         req.body.role,
         req.body.instructor_id
     ]
-    console.log(values);
     try {
         const result = await client.query(query, values);
         res.json({message: "Instructor role changed successfully", instructor: result.rows[0]});
@@ -484,11 +480,13 @@ app.get('/courses-instructor-studentscount-lessons', async (req, res) => {
             (
                 SELECT JSON_AGG(JSON_BUILD_OBJECT(
                     'instructor_id', instructor_id,
-                    'full_name', COALESCE(first_name || ' ' || last_name, 'NA'),
+                    'full_name', COALESCE(first_name || '' || ' ' || last_name, 'NA'),
                     'first_name', first_name,
                     'last_name', last_name,
                     'description', description,
-                    'title', title
+                    'title', title,
+                    'course_count', course_count,
+        			'student_count', student_count
                 ))
                 FROM (
                     SELECT DISTINCT 
@@ -496,7 +494,19 @@ app.get('/courses-instructor-studentscount-lessons', async (req, res) => {
                         i.first_name,
                         i.last_name,
                         i.description,
-                        i.title
+                        i.title,
+						(
+			                SELECT COUNT(DISTINCT ic2.course_id)
+			                FROM instructorCourses ic2
+			                WHERE ic2.instructor_id = i.instructor_id
+			            ) AS course_count,
+			            (
+			                SELECT COUNT(DISTINCT e.student_id)
+			                FROM instructorCourses ic2
+			                JOIN course c2 ON ic2.course_id = c2.course_id
+			                JOIN enrollment e ON c2.course_id = e.course_id
+			                WHERE ic2.instructor_id = i.instructor_id
+			            ) AS student_count
                     FROM instructorCourses ic
                     JOIN instructor i ON ic.instructor_id = i.instructor_id
                     WHERE ic.course_id = c.course_id
@@ -516,7 +526,8 @@ app.get('/courses-instructor-studentscount-lessons', async (req, res) => {
                                 SELECT JSON_AGG(JSON_BUILD_OBJECT(
                                     'assignment_id', a.assignment_id,
                                     'assignment_name', a.assignment_name,
-                                    'due_date', a.due_date
+                                    'due_date', a.due_date,
+                                    'asgn_file_name', a.file_name
                                 ))
                                 FROM assignment a
                                 WHERE a.lesson_id = l.lesson_id
@@ -546,14 +557,16 @@ app.get('/courses-instructor-studentscount-lessons', async (req, res) => {
             ) AS lessons,
             (
                 SELECT COALESCE(
-                    JSON_AGG(JSON_BUILD_OBJECT(
-                        'exam_id', e.exam_id,
-                        'exam_name', e.exam_name,
-                        'start_date', e.start_date,
-                        'end_date', e.end_date,
-                        'total_score', e.total_score
-                    )),
-                    '[]'
+                    JSON_AGG(
+                        JSON_BUILD_OBJECT(
+                            'exam_id', e.exam_id,
+                            'exam_name', e.exam_name,
+                            'start_date', e.start_date,
+                            'end_date', e.end_date,
+                            'exam_file_name', e.file_name
+                        )
+                    ),
+                    '[]'::json
                 )
                 FROM exam e
                 WHERE e.course_id = c.course_id
@@ -621,11 +634,13 @@ app.get('/courses-instructor-studentscount-lessons/:instructor_id', async (req, 
             (
                 SELECT JSON_AGG(JSON_BUILD_OBJECT(
                     'instructor_id', instructor_id,
-                    'full_name', COALESCE(first_name || ' ' || last_name, 'NA'),
+                    'full_name', COALESCE(first_name || '' || ' ' || last_name, 'NA'),
                     'first_name', first_name,
                     'last_name', last_name,
                     'description', description,
-                    'title', title
+                    'title', title,
+                    'course_count', course_count,
+        			'student_count', student_count
                 ))
                 FROM (
                     SELECT DISTINCT 
@@ -633,7 +648,19 @@ app.get('/courses-instructor-studentscount-lessons/:instructor_id', async (req, 
                         i.first_name,
                         i.last_name,
                         i.description,
-                        i.title
+                        i.title,
+						(
+			                SELECT COUNT(DISTINCT ic2.course_id)
+			                FROM instructorCourses ic2
+			                WHERE ic2.instructor_id = i.instructor_id
+			            ) AS course_count,
+			            (
+			                SELECT COUNT(DISTINCT e.student_id)
+			                FROM instructorCourses ic2
+			                JOIN course c2 ON ic2.course_id = c2.course_id
+			                JOIN enrollment e ON c2.course_id = e.course_id
+			                WHERE ic2.instructor_id = i.instructor_id
+			            ) AS student_count
                     FROM instructorCourses ic
                     JOIN instructor i ON ic.instructor_id = i.instructor_id
                     WHERE ic.course_id = c.course_id
@@ -829,11 +856,13 @@ app.get('/courses-instructor-students-lessons/:student_id', async (req, res) => 
             (
                 SELECT JSON_AGG(JSON_BUILD_OBJECT(
                     'instructor_id', instructor_id,
-                    'full_name', COALESCE(first_name || ' ' || last_name, 'NA'),
+                    'full_name', COALESCE(first_name || '' || ' ' || last_name, 'NA'),
                     'first_name', first_name,
                     'last_name', last_name,
                     'description', description,
-                    'title', title
+                    'title', title,
+                    'course_count', course_count,
+        			'student_count', student_count
                 ))
                 FROM (
                     SELECT DISTINCT 
@@ -841,7 +870,19 @@ app.get('/courses-instructor-students-lessons/:student_id', async (req, res) => 
                         i.first_name,
                         i.last_name,
                         i.description,
-                        i.title
+                        i.title,
+						(
+			                SELECT COUNT(DISTINCT ic2.course_id)
+			                FROM instructorCourses ic2
+			                WHERE ic2.instructor_id = i.instructor_id
+			            ) AS course_count,
+			            (
+			                SELECT COUNT(DISTINCT e.student_id)
+			                FROM instructorCourses ic2
+			                JOIN course c2 ON ic2.course_id = c2.course_id
+			                JOIN enrollment e ON c2.course_id = e.course_id
+			                WHERE ic2.instructor_id = i.instructor_id
+			            ) AS student_count
                     FROM instructorCourses ic
                     JOIN instructor i ON ic.instructor_id = i.instructor_id
                     WHERE ic.course_id = c.course_id
@@ -1141,7 +1182,6 @@ app.get("/lessons-info/:instructor_id", async (req, res) => {
 });
 app.post(`/lesson-info`, upload.array('files'), async (req, res) => {
     try {
-        console.log(req.files);
         const files = req.files;
 
         const putQuery = `UPDATE lesson SET title = $1, description = $2, level = $3, status = $4 WHERE lesson_id = $5`
@@ -1187,7 +1227,7 @@ app.get("/all-lesson-info", async (req, res) => {
             lesson.number,
             lesson.course_id,
             COALESCE(course.name, 'NA') AS course_name,
-            COALESCE(instructor.first_name || ' ' || instructor.last_name, 'NA') AS instructor_name,
+            COALESCE(instructor.first_name || '' || ' ' || instructor.last_name, 'NA') AS instructor_name,
             COALESCE(
                         JSON_AGG(
                             JSON_BUILD_OBJECT(
@@ -1260,7 +1300,7 @@ app.get("/all-lesson-info/:instructor_id", async (req, res) => {
             lesson.number,
             lesson.course_id,
             COALESCE(course.name, 'NA') AS course_name,
-            COALESCE(instructor.first_name || ' ' || instructor.last_name, 'NA') AS instructor_name,
+            COALESCE(instructor.first_name || '' || ' ' || instructor.last_name, 'NA') AS instructor_name,
             COALESCE(
                         JSON_AGG(
                             JSON_BUILD_OBJECT(
@@ -1380,8 +1420,6 @@ app.post('/delete-lesson-file', async (req, res) => {
 })
 app.post('/new-lesson', async (req, res) => {
 
-    console.log(req.body);
-    
     const { name, course_id, start_date, end_date, description } = req.body;
 
     if (!name || !course_id) {
@@ -1703,8 +1741,6 @@ app.post('/new-assignment', upload.single('file'), async (req, res) => {
         const insertQuery = `INSERT INTO assignment (lesson_id, assignment_name, due_date, total_score, file_name) VALUES ($1, $2, $3, $4, $5) RETURNING *;`;
         const values = [lesson_id, name, due_date === 'null' ? null : due_date, total_score === 'null' ? null : total_score, file === undefined ? null : file.originalname];
         const result = await client.query(insertQuery, values);
-
-        console.log(result);
 
         if (file !== undefined) {
             const postQuery = `INSERT INTO assignment_files (assignment_id, file_name, file_type, file_size, file_data) VALUES ($1, $2, $3, $4, $5) RETURNING *;`;
@@ -2627,7 +2663,6 @@ app.post('/new-cohort-course', async (req, res) => {
 })
 app.post('/suspend-course', async (req, res) => {
 
-    console.log(req.body)
     const values = [
         req.body.course_id
     ]
@@ -2679,7 +2714,6 @@ app.post('/remove-course', async (req, res) => {
 })
 app.post('/resume-course', async (req, res) => {
 
-    console.log(req.body)
     const values = [
         req.body.course_id
     ]
@@ -2847,7 +2881,7 @@ app.get("/certificates/:student_id", async (req, res) => {
         SELECT 
             cert.certificate_id,
             cert.student_id,
-            COALESCE(s.first_name || ' ' || s.last_name, 'NA') AS student_name,
+            COALESCE(s.first_name || '' || ' ' || s.last_name, 'NA') AS student_name,
             cert.course_id,
             cert.date_awarded,
             c.name AS course_name,
@@ -2910,7 +2944,7 @@ app.get("/certificates/:student_id", async (req, res) => {
             (
                 SELECT JSON_AGG(JSON_BUILD_OBJECT(
                     'instructor_id', instructor_id,
-                    'full_name', COALESCE(first_name || ' ' || last_name, 'NA'),
+                    'full_name', COALESCE(first_name || '' || ' ' || last_name, 'NA'),
                     'first_name', first_name,
                     'last_name', last_name,
                     'description', description,
@@ -3075,8 +3109,6 @@ app.post("/signup", async (req, res) => {
 
 app.post("/admin-signup", async (req, res) => {
 
-    console.log(req.body);
-
     const hashedPassword = await hashPassword(req.body.password);
 
     const query = 'UPDATE instructor SET password = $1 WHERE instructor_id = $2';
@@ -3086,7 +3118,6 @@ app.post("/admin-signup", async (req, res) => {
     ]
     try {
         const result = await client.query(query, values);
-        console.log(result);
         return res.status(201).json({ message: "Instructor password added successfully", result });
     } catch (err) {
         console.error(err);

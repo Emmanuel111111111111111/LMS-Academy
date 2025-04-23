@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { getImageUrl } from "../../utilis";
 import styles from "./CourseDetails.module.css";
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { customToast, customToastError } from "../../Components/Notifications.jsx";
 import { BASE_URL, TEST_URL } from "../../../config";
@@ -9,11 +9,12 @@ import { BASE_URL, TEST_URL } from "../../../config";
 
 export const CourseDetails = () => {
 
-    const navigate = useNavigate();
     const { courseID } = useParams();
     const [course, setCourse] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
+    const details = useRef(null);    
+    const instructor = useRef(null);    
 
     useEffect(() => {
         loadCourseDetails();
@@ -27,7 +28,6 @@ export const CourseDetails = () => {
                 window.location.href = "/dashboard/courses";
                 return
             }
-            console.log(result.data.filter(e => e.course_id === parseInt(courseID))[0]);
             setCourse(result.data.filter(e => e.course_id === parseInt(courseID))[0]);
             setIsLoading(false);
         } catch (err) {
@@ -99,7 +99,6 @@ export const CourseDetails = () => {
                 setUploading(false)
                 customToast("Successfully submitted your " + type)
             } else if (type === 'exam') {
-                console.log('here')
                 response = await fetch(BASE_URL + `/upload-student-exam/${id}/${sessionStorage.getItem("id")}`, {
                     method: 'POST',
                     body: formData
@@ -119,10 +118,12 @@ export const CourseDetails = () => {
     }
 
     const handleComplete = async (les, type) => {
-        const response = await fetch(BASE_URL + `/complete-lesson/${sessionStorage.getItem("id")}/${les.lesson_id}`);
-        console.log(response);
+        const response = await axios.post(BASE_URL + `/complete-lesson/${sessionStorage.getItem("id")}/${les.lesson_id}`);
+        customToast('You have successfully completed this lesson.')
     }
 
+    const toDetails = (itemNumber) => details.current.scrollIntoView();
+    const toInstructor = () => instructor.current.scrollIntoView();
 
     return (
         <>
@@ -172,16 +173,15 @@ export const CourseDetails = () => {
                             <div className={styles.courseImg} style={{
                                 backgroundImage: `url(${getImageUrl('courseImg.jpeg')})`
                             }}>
-                                <button>Continue Course</button>
                             </div>
 
                             <div className={styles.tabs}>
-                                <button>Details</button>
-                                <button>Instructor</button>
-                                <button>Course</button>
+                                <button onClick={toDetails}>Details</button>
+                                <button onClick={toInstructor}>Instructor</button>
+                                {/* <button>Course</button> */}
                             </div>
 
-                            <div className={styles.theDetails}>
+                            <div className={styles.theDetails} ref={details}>
                                 {(course.description || course.obectives) && <div className={styles.details}>
                                     {course.description && <>
                                         <h3>Course Overview</h3>
@@ -198,7 +198,7 @@ export const CourseDetails = () => {
                                     </>}
                                 </div>}
 
-                                {course.instructors?.length > 0 && <>
+                                {course.instructors?.length > 0 && <div ref={instructor}>
 
                                     <h3>Instructor{course.instructors?.length > 1 && 's'}</h3>
 
@@ -211,17 +211,17 @@ export const CourseDetails = () => {
                                             <div className={styles.flex}>
                                                 <img className={styles.teachPic} src={getImageUrl('teach.svg')} alt="" />
                                                 <div>
-                                                    <div className={styles.teacherInfo}>
+                                                    {/* <div className={styles.teacherInfo}>
                                                         <img src={getImageUrl('review.svg')} alt="" />
                                                         40,445 Reviews
-                                                    </div>
+                                                    </div> */}
                                                     <div className={styles.teacherInfo}>
                                                         <img src={getImageUrl('hat.svg')} alt="" />
-                                                        500 Students
+                                                        {inst.student_count} Students
                                                     </div>
                                                     <div className={styles.teacherInfo}>
                                                         <img src={getImageUrl('play.svg')} alt="" />
-                                                        15 Courses
+                                                        {inst.course_count} Courses
                                                     </div>
                                                 </div>
                                             </div>
@@ -231,7 +231,7 @@ export const CourseDetails = () => {
                                         </div>
                                     ))}
 
-                                </>}
+                                </div>}
                             </div>
 
                         </div>
@@ -269,7 +269,7 @@ export const CourseDetails = () => {
                                                 {lesson.content.map((cont, i) => (
                                                     <div className={styles.week} key={i}>
                                                         <div className={styles.title}>
-                                                            <input type="checkbox" name="check" id="check" onChange={()=>handleComplete(lesson)} value={cont.completed} />                                                                    
+                                                            <input type="checkbox" name="check" id="check" onChange={lesson.completed ? '' : ()=>handleComplete(lesson)} checked={lesson.completed} />                                                                    
                                                             <h4>{cont.file_name}</h4>
                                                         </div>
                                                         
