@@ -4,12 +4,38 @@ import styles from './Modal.module.css';
 import { getImageUrl } from "../../../utilis";
 import axios from "axios";
 import { BASE_URL, TEST_URL } from "../../../../config";
+import { customToast, customToastError } from "../../../Components/Notifications";
 
 
 export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmType, reload }) => {
 
     const [ isLoading, setIsLoading ] = useState(false);
-    const [ openSuccess, setOpenSuccess ] = useState(false);
+
+    const successToast = () => {
+        customToast(`${item} ${<b>
+            {item.toLowerCase() === "course" ? (selected.course_name ? selected.course_name : selected.name)
+            : item.toLowerCase() === 'teacher' ? selected.first_name + (selected.last_name != null ? ' ' + selected.last_name : '')
+            : item.toLowerCase() === 'class' ? (selected.lesson_title ? selected.lesson_title : selected.title)
+            : item.toLowerCase() === 'exam' ? (selected.exam_name ? selected.exam_name : selected.name)
+            : item.toLowerCase() === 'assignment' ? (selected.assignment_name ? selected.assignment_name : selected.name)
+            : ''}
+        </b>} ${
+            confirmType === 'suspend' ? 'suspended'
+            : confirmType === 'remove' ? 'removed'
+            : confirmType === 'delete' ? 'deleted'
+            : confirmType === 'resume' ? 'resumed'
+            : ''
+        } successfully.`)
+    }
+    const errorToast = () => {
+        customToastError(`Error ${
+            confirmType === 'suspend' ? 'suspending'
+            : confirmType === 'remove' ? 'removing'
+            : confirmType === 'delete' ? 'deleting'
+            : confirmType === 'resume' ? 'resuming'
+            : ''
+        } ${item}. Try again later.`)
+    }
 
 
     const handleSuspension = async () => {
@@ -33,20 +59,19 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
             if (item.toLowerCase() === "course") {
                 const result = await axios.post(BASE_URL + '/suspend-course', courseValues)
                 console.log(result.status);
-                handleSuccess();
             }
-
-            if (item.toLowerCase() === "teacher") {
+            else if (item.toLowerCase() === "teacher") {
                 const result = await axios.put(BASE_URL + '/suspend-teacher', teacherValues)
                 console.log(result.status);
-                handleSuccess();
             }
             
             setOpen(false);
             setIsLoading(false);
+            successToast();
         } catch (err) {
             console.log(err);
             setIsLoading(false);
+            errorToast();
         }
     }
 
@@ -69,23 +94,20 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
         // }
         try {
             if (item.toLowerCase() === "course") {
-                const result = await axios.post(BASE_URL + '/resume-course', courseValues)
-                .log(result);
-                handleSuccess();
+                await axios.post(BASE_URL + '/resume-course', courseValues)
             }
 
-            // if (item.toLowerCase() === "teacher") {
-            //     console.log('here')
-            //     const result = await axios.put(BASE_URL + '/suspend-teacher', teacherValues)
-            //     console.log(result);
-            //     handleSuccess();
+            // else if (item.toLowerCase() === "teacher") {
+            //     const result = await axios.put(BASE_URL + '/suspend-teacher', teacherValues);
             // }
             
             setOpen(false);
             setIsLoading(false);
+            successToast();
         } catch (err) {
             console.log(err);
             setIsLoading(false);
+            errorToast();
         }
     }
 
@@ -105,10 +127,11 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
             
             setOpen(false);
             setIsLoading(false);
-            handleSuccess();
+            successToast();
         } catch (err) {
             console.log(err);
             setIsLoading(false);
+            errorToast();
         }
     }
 
@@ -154,49 +177,37 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
             if (item.toLowerCase() === "course") {
                 const result = await axios.put(BASE_URL + '/delete-course', courseValues)
                 console.log(result.status);
-                handleSuccess();
             }
 
             if (item.toLowerCase() === "teacher") {
                 const result = await axios.put(BASE_URL + '/delete-teacher', teacherValues)
                 console.log(result.status);
-                handleSuccess();
             }
 
             if (item.toLowerCase() === "class") {
                 const result = await axios.put(BASE_URL + '/delete-lesson', lessonValues)
                 console.log(result.status);
-                handleSuccess();
             }
 
             if (item.toLowerCase() === "exam") {
                 const result = await axios.put(BASE_URL + '/delete-exam', examValues)
                 console.log(result.status);
-                handleSuccess();
             }
 
             if (item.toLowerCase() === "assignment") {
                 const result = await axios.put(BASE_URL + '/delete-assignment', assignmentValues)
                 console.log(result.status);
-                handleSuccess();
             }
             
             setOpen(false);
             setIsLoading(false);
+            successToast();
         } catch (err) {
             console.log(err);
             setIsLoading(false);
+            errorToast();
         }
     }
-
-    const handleSuccess = () => {
-        setOpenSuccess(true);
-        setTimeout(() => setOpenSuccess(false), 3000);
-        setTimeout(() => reload(), 3000);
-    }
-
-
-
 
     
     return (
@@ -226,32 +237,6 @@ export const ConfirmModal = ({ isOpen, setOpen, item, cohort, selected, confirmT
 
                 </div>
 
-            </div>
-        </Modal>
-
-
-        <Modal isOpen={openSuccess}>
-            <div className={styles.confirmMod}>
-                <p>
-                    {item}
-
-                    <b style={{marginLeft: '6px', marginRight: '6px'}}>{
-                        item.toLowerCase() === "course" ? (selected.course_name ? selected.course_name : selected.name)
-                        : item.toLowerCase() === 'teacher' ? selected.first_name + (selected.last_name != null ? ' ' + selected.last_name : '')
-                        : item.toLowerCase() === 'class' ? (selected.lesson_title ? selected.lesson_title : selected.title)
-                        : item.toLowerCase() === 'exam' ? (selected.exam_name ? selected.exam_name : selected.name)
-                        : item.toLowerCase() === 'assignment' ? (selected.assignment_name ? selected.assignment_name : selected.name)
-                        : ''
-                    }</b>
-                    
-                    {
-                        confirmType === 'suspend' ? 'suspended'
-                        : confirmType === 'remove' ? 'removed'
-                        : confirmType === 'delete' ? 'deleted'
-                        : confirmType === 'resume' ? 'resumed'
-                        : ''
-                    }
-                </p>
             </div>
         </Modal>
 

@@ -47,11 +47,11 @@
     display: inline-flex;
     align-items: center;
     background: #F0F0F0;
-    padding: 4px 6px;
+    padding: 7px 12px;
     gap: 4px;
     border-radius: 7px;
     color: #606060;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
     border: none;
     outline: none;
@@ -60,11 +60,11 @@
     display: inline-flex;
     align-items: center;
     background: #2C2F7E;
-    padding: 4px 6px;
+    padding: 7px 12px;
     gap: 4px;
     border-radius: 7px;
     color: #FFFFFF;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
     border: none;
     outline: none;

@@ -22,8 +22,6 @@ export const SchedulePage = () => {
     const [ search, setSearch ] = useState("");
     const [ viewType, setViewType ] = useState('timeGridWeek');
     const [ open, setOpen ] = useState(false);
-    const [ openSuccess, setOpenSuccess ] = useState(false);
-    const [ eventType, setEventType ] = useState("");
     const calendarRef = useRef(null);
     const calendarAPI = calendarRef?.current?.getApi();
 
@@ -157,32 +155,25 @@ export const SchedulePage = () => {
             if (newEventValues.type === 'Class') {
                 response = await axios.post(BASE_URL + '/new-lesson', newEventValues);
                 setIsLoading2(false);
-                handleSuccess('Class');
+                customToast('Successfully added class');
             }
             else if (newEventValues.type === 'Assignment') {
                 response = await axios.post(BASE_URL + '/new-assignment', newEventValues);
                 setIsLoading2(false);
-                handleSuccess('Assignment');
+                customToast('Successfully added assignment');
             }
             else if (newEventValues.type === 'Exam') {
                 response = await axios.post(BASE_URL + '/new-exam', newEventValues);
                 setIsLoading2(false);
-                handleSuccess('Exam');
+                customToast('Successfully added exam');
             }
             setOpen(false);
+            fetchEvents();
             
         } catch (err) {
             console.log(err);
             setIsLoading2(false);
         }
-    }
-
-
-    const handleSuccess = (type) => {
-        setEventType(type);
-        setOpenSuccess(true);
-        setTimeout(() => setOpenSuccess(false), 3000);
-        setTimeout(() => fetchEvents(), 3000);
     }
 
 
@@ -358,12 +349,6 @@ export const SchedulePage = () => {
                 </div>
             }
         </div>
-
-        <Modal isOpen={openSuccess}>
-            <div className={styles.added}>
-                {eventType} ADDED!
-            </div>
-        </Modal>
         </>
     )
 }

@@ -269,12 +269,11 @@ app.get("/courses-teacher/:id", async (req, res) => {
     }
 });
 app.post('/new-course', async (req, res) => {
-    const query = "INSERT INTO course (name, duration, type, date_added) VALUES ($1, $2, $3, $4)";
+    const query = "INSERT INTO course (name, type, date_added) VALUES ($1, $2, $3)";
     const values = [
         req.body.name,
-        req.body.duration,
         req.body.type,
-        req.body.date
+        new Date()
     ]
     try {
         const result = await client.query(query, values);
@@ -283,7 +282,7 @@ app.post('/new-course', async (req, res) => {
         const logValues = [
             activity,
             req.body.user,
-            req.body.date
+            new Date()
         ];
 
         await client.query(logQuery, logValues);

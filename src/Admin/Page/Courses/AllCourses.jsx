@@ -8,16 +8,13 @@ import Modal from "../../Components/Modals/Modal";
 import { ConfirmModal } from "../../Components/Modals/ConfirmModal";
 import Pagination from "../../../Components/Pagination/Pagination";
 import { BASE_URL, TEST_URL } from "../../../../config";
+import { customToast, customToastError } from "../../../Components/Notifications";
 
 export const AllCourses = () => {
 
     const [ courses, setCourses ] = useState([]);
-    const [ isOpen, setIsOpen ] = useState(false);
     const [ openCreate, setOpenCreate ] = useState(false);
     const [ openCourseInfo, setOpenCourseInfo ] = useState(false);
-    const [ openSuccess, setOpenSuccess ] = useState(false);
-    const [ eventType, setEventType ] = useState("");
-    const [ buttonType, setButtonType ] = useState("");
     const [ actionsOpen, setActionsOpen ] = useState({});
     const [ actionsOpen2, setActionsOpen2 ] = useState(false);
     const [ selected, setSelected ] = useState({});
@@ -36,9 +33,8 @@ export const AllCourses = () => {
     const [ studentsPerPage, setStudentsPerPage ] = useState(5);
     
     const actionsRef = useRef(null);
-    const createRef = useRef(null);
     const scroll = useRef(null);
-    const navigate = useNavigate();
+
 
     useEffect(() => {
         fetchCoursesTeachersStudents();
@@ -133,7 +129,6 @@ export const AllCourses = () => {
         duration_number: '',
         duration_unit: 'hour',
         duration: '',
-        date: new Date().toISOString().slice(0,19).replace('T', ' '),
         user: sessionStorage.getItem('full_name'),
     })
 
@@ -152,25 +147,21 @@ export const AllCourses = () => {
         event.preventDefault();
         setIsLoading2(true);
         try {
-            const response = await axios.post(BASE_URL + '/new-course', newEventValues, {
+            await axios.post(BASE_URL + '/new-course', newEventValues, {
                 timeout: 20000,
             });
 
             setOpenCreate(false);
-            handleSuccess('course');
+            customToast('Successfully added course');
+            fetchCoursesTeachersStudents();
             setIsLoading2(false);
         } catch (err) {
             console.log(err);
             setIsLoading2(false);
+            customToastError("Failed to add course. Please try again")
         }
     }
 
-    const handleSuccess = (type) => {
-        setEventType(type);
-        setOpenSuccess(true);
-        setTimeout(() => setOpenSuccess(false), 3000);
-        setTimeout(() => fetchCoursesTeachersStudents(), 3000);
-    }
     const handleCloseCreate = () => {
         setOpenCreate(false);
     };
@@ -264,9 +255,6 @@ export const AllCourses = () => {
     const handleClickOutside = (event) => {
         if (actionsRef.current && !actionsRef.current.contains(event.target)) {
             setActionsOpen(false);
-        }
-        if (createRef.current && !createRef.current.contains(event.target)) {
-            setIsOpen(false);
         }
     };
     useEffect(() => {
@@ -511,12 +499,6 @@ export const AllCourses = () => {
                     {/* <button className={styles.yes}>Submit</button> */}
                 </div>
                         
-            </div>
-        </Modal>
-
-        <Modal isOpen={openSuccess}>
-            <div className={styles.added}>
-                {eventType} ADDED!
             </div>
         </Modal>
 

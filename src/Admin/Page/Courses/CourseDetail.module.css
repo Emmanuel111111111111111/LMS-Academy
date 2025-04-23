@@ -46,10 +46,10 @@
 .buttons .buttonOne {
     border: 1.5px solid #2C2F7E;
     background: transparent;
-    padding: 4px 10px;
+    padding: 7px 12px;
     width: 80px;
     border-radius: 7px;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
     color: #2C2F7E;
 }
@@ -57,9 +57,9 @@
     border: 1.5px solid #2C2F7E;
     background: #2C2F7E;
     width: 80px;
-    padding: 4px 10px;
+    padding: 7px 12px;
     border-radius: 7px;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
     color: #FFFFFF;
 }

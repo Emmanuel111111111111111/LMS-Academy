@@ -118,7 +118,7 @@ export const CourseDetails = () => {
     }
 
     const handleComplete = async (les, type) => {
-        const response = await axios.post(BASE_URL + `/complete-lesson/${sessionStorage.getItem("id")}/${les.lesson_id}`);
+        await axios.post(BASE_URL + `/complete-lesson/${sessionStorage.getItem("id")}/${les.lesson_id}`);
         customToast('You have successfully completed this lesson.');
         loadCourseDetails();
     }

@@ -89,7 +89,7 @@ export const ActivityLogPage = () => {
 
                 <div className={styles.buttons}>
                     <button className={styles.buttonOne}>Sort By<img src={getImageUrl('sortIcon.png')} /></button>
-                    <button className={styles.buttonTwo}>Create Event<img src={getImageUrl('whitePlus.png')} /></button>
+                    {/* <button className={styles.buttonTwo}>Create Event<img src={getImageUrl('whitePlus.png')} /></button> */}
                 </div>
             </div>
 
@@ -114,7 +114,7 @@ export const ActivityLogPage = () => {
                                 <tr>
                                     <td><input type="checkbox" /></td>
                                     <td>{activity.activity}</td>
-                                    <td>{activity.user}</td>
+                                    <td>{activity.actor}</td>
                                     <td>{format(new Date (activity.date), 'MMMM dd, yyyy hh:mm a')}</td>
                                     <td>
                                         <button className={styles.actionsButton} onClick={()=>toggleAction(index)}><img src={getImageUrl('threeDots.png')} /></button>

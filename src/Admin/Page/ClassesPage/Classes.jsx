@@ -12,10 +12,7 @@ export const Classes = () => {
 
     const [ classes, setClasses ] = useState([]);
     const [ allCourses, setAllCourses ] = useState([]);
-    const [ startDate, setStartDate ] = useState(null);
-    // const [ isOpen, setIsOpen ] = useState(false);
     const [ open, setOpen ] = useState(false);
-    const [ openSuccess, setOpenSuccess ] = useState(false);
     const [ actionsOpen, setActionsOpen ] = useState({});
     const [ isLoading, setIsLoading ] = useState(false);
     const [ isLoading2, setIsLoading2 ] = useState(false);
@@ -108,19 +105,14 @@ export const Classes = () => {
 
             const response = await axios.post(BASE_URL + '/new-lesson', newClassValues);
             setIsLoading2(false);
-            handleSuccess();
             handleClose();
+            customToast('Successfully added new class.')
             
         } catch (err) {
             console.log(err);
             setIsLoading2(false);
+            customToastError('Error adding class. Try again');
         }
-    }
-
-    const handleSuccess = () => {
-        setOpenSuccess(true);
-        setTimeout(() => setOpenSuccess(false), 3000);
-        setTimeout(() => fetchClasses(), 3000);
     }
 
     const handleDelete = (e, clas) => {
@@ -258,12 +250,6 @@ export const Classes = () => {
             </form>
         </Modal>
 
-
-        <Modal isOpen={openSuccess}>
-            <div className={styles.added}>
-                Class ADDED!
-            </div>
-        </Modal>
 
         <ConfirmModal isOpen={isOpenConfirm} setOpen={setIsOpenConfirm} item={'Class'} cohort={'none'} selected={selected} confirmType={confirmType} reload={fetchClasses} />
 

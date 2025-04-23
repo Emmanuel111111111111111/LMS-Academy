@@ -94,17 +94,20 @@ export const TeachersPage = () => {
         event.preventDefault();
         const validEndingsRegex = /@thefifthlab.com$|@cwg-plc.com$/g;
         if (newTeacherValues.email.match(validEndingsRegex)) {
-            axios.post(BASE_URL + '/new-teacher', newTeacherValues)
-                .then(res => customToast('Teacher added successfully'))
-                .catch(err => console.log(err));
-            setOpen(false);
-            fetchTeachers();
+            try {
+                axios.post(BASE_URL + '/new-teacher', newTeacherValues)
+                    .then(res => customToast('Teacher added successfully'))
+                    .catch(err => console.log(err));
+                setOpen(false);
+                fetchTeachers();
+            } catch (err) {
+                console.log(err);
+                customToastError('Error adding teacher. Please try again.')
+            }
         }
         else {
             customToastError('Email must be a CWG or Fifthlab email.')
         }
-        
-        
     }
     const handleRoleChange = async (event, id) => {
         const values = {
@@ -118,6 +121,7 @@ export const TeachersPage = () => {
             fetchTeachers();
         } catch (err) {
             console.log(err);
+            customToastError("Error changing this teacher's role. Please try again.")
         }
         
     }
