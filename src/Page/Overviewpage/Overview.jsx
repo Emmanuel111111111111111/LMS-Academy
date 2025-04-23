@@ -220,7 +220,7 @@ export const Overview = () => {
                                 <p>{course.description}</p>
                                 <div className={styles.courseData}>
                                     <div className={styles.profile}><img src={getImageUrl('profile.svg')} alt="" />{course.instructors[0].full_name}</div>
-                                    {course.lessons.length > 0 && <div><img src={getImageUrl('instructors.png')} alt="" />Lesson {Math.min(...course.lessons.filter(e => e.completed === false).map(e => e.number))}</div>}
+                                    {course.lessons.length > 0 && <div><img src={getImageUrl('instructors.png')} alt="" />Lesson {course.lessons.filter(e => e.completed === true).length + 1}</div>}
                                     {/* <div><img src={getImageUrl('assignment.png')} alt="" />Assignment {course.currentAssignment}</div> */}
                                     {course.duration != null && <div>
                                         <img src={getImageUrl('timer.png')} />
