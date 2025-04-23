@@ -3,8 +3,7 @@ import { Navigate, Routes, Route, RouterProvider, createBrowserRouter } from 're
 import styles from './App.module.css'
 import { Toaster } from "react-hot-toast";
 
-
-import { CWGpage } from './Page/CWGpage/CWGpage'
+import { CWGPage } from './Page/CWGPage/CWGPage';
 import { LoginPage } from './Page/Onboarding/LoginPage';
 import { AdminLogin } from './Admin/Page/AdminOnboarding/AdminLogin';
 import { ConfirmationPage } from './Page/Onboarding/ConfirmationPage';
@@ -73,8 +72,8 @@ const AdminProtectedRoute = ({ children }) => {
 function App() {
 
   const router = createBrowserRouter([
-    { path: '/', element: <CWGpage /> },
-    { path: '/CWG', element: <CWGpage /> },
+    { path: '/', element: <CWGPage /> },
+    { path: '/CWG', element: <CWGPage /> },
     { path: '/Login', element: <LoginPage /> },
     { path: '/confirm-email/:id', element: <ConfirmationPage /> },
     { path: '/Admin-login', element: <AdminLogin /> },

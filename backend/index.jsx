@@ -1447,6 +1447,8 @@ app.get('/lessons/:studentID', async (req, res) => {
                 l.lesson_id,
                 l.title AS lesson_title,
                 l.number AS lesson_number,
+                l.start_date,
+                l.end_date,
                 c.course_id,
                 c.name AS course_name,
                 COALESCE(

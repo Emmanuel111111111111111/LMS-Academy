@@ -5,7 +5,7 @@ import axios from 'axios';
 import { format } from "date-fns";
 import Modal from "../../Components/Modals/Modal";
 import { BASE_URL, TEST_URL } from "../../../../config";
-import { customToast } from "../../../Components/Notifications";
+import { customToast, customToastError } from "../../../Components/Notifications";
 
 export const CohortPage = () => {
 
@@ -30,8 +30,7 @@ export const CohortPage = () => {
         } catch (err) {
             console.log(err);
             setIsLoading(false);
-            customToast("We're having trouble loading the cohorts. Please try again later.")
-            // setErrorMessage(true);
+            customToastError("We're having trouble loading the cohorts. Please try again later.")
         }
     }
     
@@ -62,12 +61,13 @@ export const CohortPage = () => {
             axios.post(BASE_URL + '/new-cohort', newCohortValues)
             .then(res => {
                 setIsOpenCohort(false);
-                customToast('Cohort added')
+                customToast('Cohort added successfully')
                 fetchCohorts();
             })
         } catch (err) {
             console.log(err);
             setIsLoading2(true);
+            customToastError('Error adding cohort.')
         }
     }
 
@@ -136,7 +136,7 @@ export const CohortPage = () => {
                                         />
                                     </div>
                                     <button className={styles.viewButton} onClick={()=>handleViewCohort(coho.cohort_id)}>
-                                        <img src={getImageUrl('view.png')} alt="" />
+                                        <img src={getImageUrl('view.svg')} alt="" />
                                         View
                                     </button>
                                 </div>

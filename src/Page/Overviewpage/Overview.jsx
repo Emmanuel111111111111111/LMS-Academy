@@ -10,8 +10,6 @@ import { customToast } from "../../Components/Notifications.jsx";
 
 export const Overview = () => {
 
-    const [ name, setName ] = useState("");
-
     const [ allLess, setAllLess ] = useState([]);
     const [ completedLess, setCompletedLess ] = useState([]);
     const [ dueLess, setDueLess ] = useState([]);
@@ -53,7 +51,7 @@ export const Overview = () => {
             setCompletedLess(result.data.filter(e => e.completed === true));
             setLoadingCL(false);
 
-            setDueLess(result.data.filter(e => e.completed === false));
+            setDueLess(result.data.filter(e => new Date(e.end_date) < new Date()).filter(e => e.completed === false));
             setLoadingDL(false);
 
             setAllAssign(result.data.filter(e => e.assignments.length > 0));
@@ -180,7 +178,7 @@ export const Overview = () => {
                             <div className={styles.blueBox}><img src={getImageUrl('instructors.png')} /></div>
                         </div>
                         <div className={styles.loader}>
-                            {loadingCL ? '...' :
+                            {loadingDL ? '...' :
                             dueLess.length + '/' + allLess.length}
                             <progress className={styles.progress} id="progress" value={dueLess.length} max={allLess.length} />
                         </div>
@@ -192,7 +190,7 @@ export const Overview = () => {
                             <div className={styles.blueBox}><img src={getImageUrl('assignment.png')} /></div>
                         </div>
                         <div className={styles.loader}>
-                            {loadingCL ? '...' :
+                            {loadingDA ? '...' :
                             dueAssign.length + '/' + allAssign.length}
                             <progress className={styles.progress} id="progress" value={dueAssign.length} max={allAssign.length} />
                         </div>

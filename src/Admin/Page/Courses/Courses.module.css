@@ -2,6 +2,7 @@
     margin-left: 280px;
     margin-top: 80px;
     width: 100%;
+    max-width: 1500px;
     min-height: 100vh;
     padding: 16px 24px;
     background: #F8F9FD;
